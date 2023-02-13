@@ -1,0 +1,114 @@
+---
+title: "Three distinct patterns of mental health response after a sport accident"
+subtitle: "Supplementary Material"
+author: "Psychiatry Study Team"
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
+
+output: 
+  bookdown::word_document2:   
+    reference_docx: ms_template.docx
+    
+bibliography: ptsd_biblio.bib
+csl: frontiers_medical.csl
+
+header-includes:
+  \usepackage{longtable}
+  \usepackage{tabu}
+  \usepackage{caption}
+  \usepackage{makecell}
+  \usepackage{pdflscape}
+  \usepackage{array}
+  \usepackage{booktabs}
+  \usepackage{threeparttable}
+  \usepackage{threeparttablex}
+  \usepackage{wrapfig}
+  \usepackage{multirow}
+  \usepackage[normalem]{ulem}
+  \usepackage{colortbl}
+  \usepackage{xcolor}
+  \usepackage{float} \floatplacement{figure}{H} \floatplacement{table}{H}
+  \newcommand{\beginsupplement}{\setcounter{table}{0}  \renewcommand{\thetable}{S\arabic{table}}       \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
+---
+
+```{r, setup, include = FALSE}
+
+knitr::opts_chunk$set(echo = FALSE, 
+                      warning = FALSE, 
+                      message = FALSE, 
+                      dev = "png", 
+                      dpi = 600, 
+                      tab.cap.pre = 'Supplementary Table ', 
+                      tab.cap.sep = " ", 
+                      tab.cap.style = 'Table Heading')
+
+set_flextable_defaults(font.family = 'Cambria', font.size = 9)
+
+
+```
+
+\newpage
+
+# Supplementary Methods
+
+\newpage
+
+# Supplementary Tables
+
+```{r tab-analysis-vars, tab.cap = 'Variables used in the analysis pipeline. The table is available in a supplementary Excel file.'}
+
+suppl_tables$analysis_vars[1, 1] %>% 
+  mutate(Section = '') %>% 
+  set_names(' ') %>% 
+  flextable
+
+```
+
+```{r tab-mental-battery, tab.cap = 'Mental health assessment battery. The table is available in a supplementary Excel file.'}
+
+suppl_tables$mental_battery[1, 1] %>% 
+  mutate(Section = '') %>% 
+  set_names(' ') %>% 
+  flextable
+
+```
+
+\newpage
+
+```{r tab-incl-excl, tab.cap = 'Significant and near signifcant (unadjusted p < 0.05) differences between individuals excluded from analysis and analyzed study participants. Numeric variables are presented as medians with interquartile ranges (IQR). Categorical variables are presented as percentages and counts within the complete observation set.'}
+
+flextable::flextable(suppl_tables$incl_excl) %>% 
+  flextable::width(1, width = 3.2, unit = 'cm') %>% 
+  flextable::width(2:3, width = 5.5, unit = 'cm') %>% 
+  flextable::width(4, width = 2.4, unit = 'cm') %>% 
+  flextable::width(5, width = 2.3, unit = 'cm') %>% 
+  footnote(1, 4:5, 
+           value = as_paragraph('Numeric variables: Mann-Whitney test with r effect size statistic; categorical variables: \u03c/\u00B2 test with Cramer V effec size statistic. P values were corrected for multiple testing with the false discovery method (FDR)'), 
+           part = 'header', 
+           ref_symbols = 'a') %>% 
+  footnote(3:4, 1, 
+           value = as_paragraph('AIS: acute injury severity score'), 
+           part = 'body', 
+           ref_symbols = 'b') %>% 
+  footnote(7:10, 1, 
+           value = as_paragraph('PTGI: post-traumatic growth inventory'), 
+           part = 'body', 
+           ref_symbols = 'c') %>% 
+  footnote(11, 1, 
+           value = as_paragraph('PSS4: 4-item perceived stress scale'), 
+           part = 'body', 
+           ref_symbols = 'd') %>% 
+  footnote(12, 1, 
+           value = as_paragraph('SOC-9L: Leipzig 9-item sense of soherence scale'), 
+           part = 'body', 
+           ref_symbols = 'e') %>% 
+  theme_vanilla
+
+```
+
+\newpage
+
+# Supplementary Figures
+
+\newpage
+
+# References

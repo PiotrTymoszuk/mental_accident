@@ -1,0 +1,166 @@
+---
+title: "Three distinct patterns of mental health response after a sport accident"
+subtitle: "Manuscript"
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
+
+author: 
+  - Katharina Hüfner, MD:
+      institute: [psych]
+      email: Katharina.Huefner@i-med.ac.at
+      correspondence: true
+  - Hanna Salvotti, MD:
+      institute: [psych]
+  - Piotr Tymoszuk, PhD:
+      institute: [daas]
+
+institute:
+  - psych: Department of Psychiatry, Psychotherapy, Psychosomatics and Medical Psychology, University Hospital for Psychiatry II, Medical University of Innsbruck, Innsbruck, Austria
+  
+keywords: "sport accident, mental health, post-traumatic syndrome disorder, post-traumatic growth"
+
+output: 
+  bookdown::word_document2:   
+    reference_docx: ms_template.docx
+
+bibliography: ptsd_biblio.bib
+
+csl: frontiers_medical.csl
+
+header-includes:
+  \usepackage{longtable}
+  \usepackage{tabu}
+  \usepackage{caption}
+  \usepackage{makecell}
+  \usepackage{pdflscape}
+  \usepackage{array}
+  \usepackage{booktabs}
+  \usepackage{threeparttable}
+  \usepackage{threeparttablex}
+  \usepackage{wrapfig}
+  \usepackage{multirow}
+  \usepackage[normalem]{ulem}
+  \usepackage{colortbl}
+  \usepackage{xcolor}
+  \usepackage{float} \floatplacement{figure}{H} \floatplacement{table}{H}
+  \newcommand{\beginsupplement}{\setcounter{table}{0}  \renewcommand{\thetable}{S\arabic{table}}       \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
+---
+
+```{r, setup, include = FALSE}
+
+library(bookdown)
+library(flextable)
+
+knitr::opts_chunk$set(echo = FALSE, 
+                      warning = FALSE, 
+                      message = FALSE, 
+                      dev = "png", 
+                      dpi = 600)
+
+set_flextable_defaults(font.family = 'Cambria', 
+                       font.size = 10)
+
+
+```
+
+\newpage
+
+# Abstract
+
+\newpage
+
+# Keywords
+
+sport accident, mental health, post-traumatic syndrome disorder, post-traumatic growth
+
+\newpage
+
+# Introduction
+
+\newpage
+
+# Methods
+
+\newpage
+
+# Results
+
+\newpage
+
+# Discussion
+
+# Conclusion
+
+\newpage
+
+# Acknowledgments
+
+# Author's contribution
+
+# Conflict of interest
+
+# Data and code availability
+
+An R data (RDa) file with anonymized patient data will be made available upon request to the corresponding author. 
+The study analysis pipeline is available at https://github.com/PiotrTymoszuk/mental_accident.
+
+\newpage
+
+# Tables
+
+```{r tab-cohort-demo, tab.cap = 'Demographic and socioeconomic characteristic of the study cohort. Numeric variables are presented as medians with interquartile ranges (IQR). Categorical variables are presented as percentages and counts within the complete observation set.'}
+
+flextable::flextable(tables$cohort_demo) %>% 
+  flextable::width(1:2, width = 5.5, unit = 'cm') %>% 
+  theme_vanilla
+
+```
+
+\newpage
+
+```{r tab-cohort-accident, tab.cap = 'Characteristic of the sport accident, injury, psychological management and accident consequences. Numeric variables are presented as medians with interquartile ranges (IQR). Categorical variables are presented as percentages and counts within the complete observation set.'}
+
+flextable::flextable(tables$cohort_accident) %>% 
+  flextable::width(1, width = 5.5, unit = 'cm') %>% 
+  flextable::width(1:2, width = 7, unit = 'cm') %>% 
+  footnote(2, 1, 
+           value = as_paragraph('ski/snowdoard: alpine skiing, snowboarding and cross-country skiing\nsledding: sledding or bobsled\nmountain: hiking, climbing and skitouring\nbiking: mountainbike, tour and road cycling'), 
+           part = 'body', 
+           ref_symbols = 'a') %>% 
+  footnote(8, 1, 
+           value = as_paragraph('AIS: acute injury severity score'), 
+           part = 'body', 
+           ref_symbols = 'b') %>% 
+  theme_vanilla
+
+```
+
+\newpage
+
+```{r tab-cohort-mental, tab.cap = 'Mental health characteristic of the study participants at survey completion. Numeric variables are presented as medians with interquartile ranges (IQR). Categorical variables are presented as percentages and counts within the complete observation set.'}
+
+flextable::flextable(tables$cohort_mental) %>% 
+  flextable::width(1:2, width = 5.5, unit = 'cm') %>% 
+  footnote(1, 1, 
+           value = as_paragraph('PSS4: 4-item perceived stress scale; GAD-7: 7-item general anxiety disorder scale; PHQ: patient health questionnaire; EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale; SOC-9L: Leipzig 9-item sense of coherence questionnaire; RS13: 13-item resilience scale; CAGE: Cut/Annoyed/Guilty/Eye substance abuse scale; PCL-5 DSM-5: PTSD Checklist for DSM-5; PTGI: post-traumatic growth inventory'), 
+           part = 'header', 
+           ref_symbols = 'a') %>% 
+  theme_vanilla
+
+```
+
+
+\newpage
+
+# Figures
+
+```{r fig-consort, fig.width = mm_inch(figures$consort$w), fig.height = mm_inch(figures$consort$h), fig.cap = 'Flow diagram of the analysis inclusion process.'}
+
+figures$consort$plot
+
+```
+
+__Figure \@ref(fig:fig-consort). Flow diagram of the analysis inclusion process.__ 
+
+\newpage
+
+# References
