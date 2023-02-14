@@ -4,4 +4,5 @@
   
   print(source_all(c('import.R', 
                      'exploration.R', 
+                     'factor.R', 
                      'paper.R')))

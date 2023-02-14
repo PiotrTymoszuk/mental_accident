@@ -11,12 +11,11 @@
   library(exda)
   library(soucer)
   library(furrr)
-  library(writexl)
   library(rstatix)
   library(trafo)
   library(psych)
   library(clustTools)
-  
+
   insert_head()
   
   source_all('./tools/tools.R', 

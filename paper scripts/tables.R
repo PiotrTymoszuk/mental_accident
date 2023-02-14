@@ -79,8 +79,8 @@
   suppl_tables$incl_excl <- excl$result_tbl %>% 
     mdtable(label = 'table_s3_included_excluded', 
             ref_name = 'incl_excl', 
-            caption = paste('Significant and near signifcant', 
-                            '(unadjusted p < 0.05) differences between', 
+            caption = paste('Significant and near significant', 
+                            '(non-adjusted p < 0.05) differences between', 
                             'individuals excluded from analysis', 
                             'and analyzed study participants.', 
                             'Numeric variables are presented as medians', 
@@ -88,7 +88,82 @@
                             'variables are presented as percentages', 
                             'and counts within the complete', 
                             'observation set.'))
+  
+# Supplementary Table S4: effects of age ------
+  
+  insert_msg('Table S4: effects of age')
+  
+  suppl_tables$age <- age$result_tbl %>% 
+    mdtable(label = 'table_s4_age', 
+            ref_name = 'age', 
+            caption = paste('Significant and near significant', 
+                            '(false discovery rate-adjusted p < 0.1)', 
+                            'demographic, socioeconomic, accident-related', 
+                            'and mental health factors', 
+                            'associated with age.', 
+                            'Numeric variables are presented as medians', 
+                            'with interquartile ranges (IQR). Categorical', 
+                            'variables are presented as percentages', 
+                            'and counts within the complete', 
+                            'observation set.'))
 
+# Supplementary Table S5: effects of gender ------
+  
+  insert_msg('Table S5: effects of gender')
+  
+  suppl_tables$gender <- gender$result_tbl %>% 
+    mdtable(label = 'table_s5_gender', 
+            ref_name = 'gender', 
+            caption = paste('Significant and near significant', 
+                            '(false discovery rate-adjusted p < 0.1)', 
+                            'demographic, socioeconomic, accident-related', 
+                            'and mental health factors', 
+                            'associated with gender.', 
+                            'Numeric variables are presented as medians', 
+                            'with interquartile ranges (IQR). Categorical', 
+                            'variables are presented as percentages', 
+                            'and counts within the complete', 
+                            'observation set.'))
+  
+# Supplementary Table S6: effects of mental illness -------
+  
+  insert_msg('Table S6: Effect of mental illness')
+  
+  ## filtering out variables presented already in the supplementary figure
+  
+  suppl_tables$mental <- mental$result_tbl %>% 
+    filter(!Variable %in% c('PCL-5 DSM-5 cluster D score', 
+                            'PTSD cluster D+', 
+                            'PCL-5 DSM-5 cluster E score', 
+                            'PTSD cluster E+', 
+                            'RS13 score', 
+                            'RS13 coping class', 
+                            'PSS4 score', 
+                            'PHQ-9 score', 
+                            'PHQ-15 score', 
+                            'PHQ-panic score', 
+                            'Depression+ (PHQ-9 ≥11)', 
+                            'SOC-9L score', 
+                            'GAD-7 score', 
+                            'Anxiety+ (GAD-7 ≥10)', 
+                            'EUROHIS-QOL 8 QoL score', 
+                            'EUROHIS-QOL 8 health score', 
+                            'EUROHIS-QOL 8 energy score', 
+                            'EUROHIS-QOL 8 activity score', 
+                            'EUROHIS-QOL 8 self-esteem score')) %>% 
+    mdtable(label = 'table_s6_metal_illness', 
+            ref_name = 'mental', 
+            caption = paste('Significant and near significant', 
+                            '(false discovery rate-adjusted p < 0.1)', 
+                            'demographic, socioeconomic, accident-related', 
+                            'and mental health factors', 
+                            'associated with mental illness.', 
+                            'Numeric variables are presented as medians', 
+                            'with interquartile ranges (IQR). Categorical', 
+                            'variables are presented as percentages', 
+                            'and counts within the complete', 
+                            'observation set.'))
+  
 # Saving the tables in the disc -----
   
   insert_msg('Saving the tables')

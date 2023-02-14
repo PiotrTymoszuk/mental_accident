@@ -74,9 +74,11 @@ suppl_tables$mental_battery[1, 1] %>%
 
 \newpage
 
-```{r tab-incl-excl, tab.cap = 'Significant and near signifcant (unadjusted p < 0.05) differences between individuals excluded from analysis and analyzed study participants. Numeric variables are presented as medians with interquartile ranges (IQR). Categorical variables are presented as percentages and counts within the complete observation set.'}
+```{r tab-incl-excl, tab.cap = 'Significant and near significant (non-adjusted p < 0.05) differences between individuals excluded from analysis and analyzed study participants. Numeric variables are presented as medians with interquartile ranges (IQR). Categorical variables are presented as percentages and counts within the complete observation set.'}
 
-flextable::flextable(suppl_tables$incl_excl) %>% 
+suppl_tables$incl_excl %>% 
+  map_dfc(stri_replace, fixed = '\nrange', replacement = ', range') %>% 
+  flextable %>% 
   flextable::width(1, width = 3.2, unit = 'cm') %>% 
   flextable::width(2:3, width = 5.5, unit = 'cm') %>% 
   flextable::width(4, width = 2.4, unit = 'cm') %>% 
@@ -85,20 +87,20 @@ flextable::flextable(suppl_tables$incl_excl) %>%
            value = as_paragraph('Numeric variables: Mann-Whitney test with r effect size statistic; categorical variables: \u03c/\u00B2 test with Cramer V effec size statistic. P values were corrected for multiple testing with the false discovery method (FDR)'), 
            part = 'header', 
            ref_symbols = 'a') %>% 
-  footnote(3:4, 1, 
+  footnote(3, 1, 
            value = as_paragraph('AIS: acute injury severity score'), 
            part = 'body', 
            ref_symbols = 'b') %>% 
-  footnote(7:10, 1, 
+  footnote(6:9, 1, 
            value = as_paragraph('PTGI: post-traumatic growth inventory'), 
            part = 'body', 
            ref_symbols = 'c') %>% 
-  footnote(11, 1, 
+  footnote(10, 1, 
            value = as_paragraph('PSS4: 4-item perceived stress scale'), 
            part = 'body', 
            ref_symbols = 'd') %>% 
-  footnote(12, 1, 
-           value = as_paragraph('SOC-9L: Leipzig 9-item sense of soherence scale'), 
+  footnote(11, 1, 
+           value = as_paragraph('SOC-9L: Leipzig 9-item sense of coherence scale'), 
            part = 'body', 
            ref_symbols = 'e') %>% 
   theme_vanilla
@@ -107,7 +109,156 @@ flextable::flextable(suppl_tables$incl_excl) %>%
 
 \newpage
 
+```{r tab-age, tab.cap = 'Significant and near significant (false discovery rate-adjusted p < 0.1) demographic, socioeconomic, accident-related and mental health factors associated with age. Numeric variables are presented as medians with interquartile ranges (IQR). Categorical variables are presented as percentages and counts within the complete observation set.'}
+
+suppl_tables$age %>% 
+  map_dfc(stri_replace, fixed = '\nrange', replacement = ', range') %>% 
+  flextable %>% 
+  flextable::width(1, width = 3.2, unit = 'cm') %>% 
+  flextable::width(2:4, width = 4.3, unit = 'cm') %>% 
+  flextable::width(5, width = 2.3, unit = 'cm') %>% 
+  flextable::width(6, width = 2.1, unit = 'cm') %>% 
+  footnote(1, 5:6, 
+           value = as_paragraph('Numeric variables: Kruskal-Wallis test with \u03B7\u00B2 effect size statistic; categorical variables: \u03c/\u00B2 test with Cramer V effec size statistic. P values were corrected for multiple testing with the false discovery method (FDR)'), 
+           part = 'header', 
+           ref_symbols = 'a') %>% 
+  footnote(5, 1, 
+           value = as_paragraph('PTGI: post-traumatic growth inventory'), 
+           part = 'body', 
+           ref_symbols = 'b') %>%
+  footnote(6, 1, 
+           value = as_paragraph('SOC-9L: Leipzig 9-item sense of coherence scale'), 
+           part = 'body', 
+           ref_symbols = 'c') %>%
+  footnote(7, 1, 
+           value = as_paragraph('PHQ: patient health questionnaire'), 
+           part = 'body', 
+           ref_symbols = 'd') %>% 
+  footnote(8, 1, 
+           value = as_paragraph('EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale'), 
+           part = 'body', 
+           ref_symbols = 'e') %>% 
+  theme_vanilla
+
+```
+
+\newpage
+
+```{r tab-gender, tab.cap = 'Significant and near significant (false discovery rate-adjusted p < 0.1) demographic, socioeconomic, accident-related and mental health factors associated with gender. Numeric variables are presented as medians with interquartile ranges (IQR). Categorical variables are presented as percentages and counts within the complete observation set.'}
+
+suppl_tables$gender %>% 
+  map_dfc(stri_replace, fixed = '\nrange', replacement = ', range') %>% 
+  flextable %>% 
+  flextable::width(1, width = 3.2, unit = 'cm') %>% 
+  flextable::width(2:3, width = 5.5, unit = 'cm') %>% 
+  flextable::width(4, width = 2.5, unit = 'cm') %>% 
+  flextable::width(5, width = 2.3, unit = 'cm') %>% 
+  footnote(1, 4:5, 
+           value = as_paragraph('Numeric variables: Mann-Whitney test with r effect size statistic; categorical variables: \u03c/\u00B2 test with Cramer V effec size statistic. P values were corrected for multiple testing with the false discovery method (FDR)'), 
+           part = 'header', 
+           ref_symbols = 'a') %>% 
+  footnote(3, 1, 
+           value = as_paragraph('PCL-5 DSM-5: post-traumatic syndrome disorder checklist for DSM-5'), 
+           part = 'body', 
+           ref_symbols = 'b') %>% 
+  footnote(4:7, 1, 
+           value = as_paragraph('PTGI: post-traumatic growth inventory'), 
+           part = 'body', 
+           ref_symbols = 'c') %>% 
+  theme_vanilla()
+
+```
+
+\newpage
+
+```{r tab-mental, tab.cap = 'Significant and near significant (false discovery rate-adjusted p < 0.1) demographic, socioeconomic, accident-related and mental health factors associated with mental illness. Numeric variables are presented as medians with interquartile ranges (IQR). Categorical variables are presented as percentages and counts within the complete observation set.'}
+
+suppl_tables$mental %>% 
+  map_dfc(stri_replace, fixed = '\nrange', replacement = ', range') %>% 
+  flextable %>% 
+  flextable::width(1, width = 3.2, unit = 'cm') %>% 
+  flextable::width(2:3, width = 5.5, unit = 'cm') %>% 
+  flextable::width(4, width = 2.5, unit = 'cm') %>% 
+  flextable::width(5, width = 2.3, unit = 'cm') %>% 
+  footnote(1, 4:5, 
+           value = as_paragraph('Numeric variables: Mann-Whitney test with r effect size statistic; categorical variables: \u03c/\u00B2 test with Cramer V effec size statistic. P values were corrected for multiple testing with the false discovery method (FDR)'), 
+           part = 'header', 
+           ref_symbols = 'a') %>% 
+  footnote(5:6, 1, 
+           value = as_paragraph('PTSD: post-traumatic syndrome disorder; PCL-5 DSM-5: PTSD checklist for DSM-5'), 
+           part = 'body', 
+           ref_symbols = 'b') %>% 
+  footnote(7, 1, 
+           value = as_paragraph('EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale'), 
+           part = 'body', 
+           ref_symbols = 'c') %>% 
+  theme_vanilla
+
+```
+
+\newpage
+
 # Supplementary Figures
+
+```{r fig-parts-mental-cohort, fig.width = mm_inch(suppl_figures$parts_mental_cohort$w), fig.height = mm_inch(suppl_figures$parts_mental_cohort$h), fig.cap = 'Injured body regions and detailed scoring of quality of life, post-traumatic syndrome disorder and post-traumatic growth in the study cohort.'}
+
+suppl_figures$parts_mental_cohort$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-parts-mental-cohort). Injured body regions and detailed scoring of quality of life, post-traumatic syndrome disorder and post-traumatic growth in the study cohort.__ 
+
+_For categorical variables, percentages of complete observations are presented as bars. Numeric variables are presented in violin plots with red diamonds denoting medians, interquartile ranges presented as red whiskers and single observations depicted as points. The number of complete cases is displayed in the plot captions._ 
+_(A) Distribution of injured body regions. (B) Scoring of the domains of the EUROHIS project 8-item quality of life scale (EUROHIS-QOL 8). (C) Scoring of the post-traumatic syndrome disorder (PTSD) clusters with the PCL-5 DSM-5 tool and percentages of participants screened positive for the PTSD clusters. (E) Scoring of the factors of the post-traumatic growth with the post-traumatic growth inventory (PTGI) tool._
+
+\newpage
+
+```{r fig-age-mental, fig.width = mm_inch(suppl_figures$age_mental$w), fig.height = mm_inch(suppl_figures$age_mental$h), fig.cap = 'Association of measures of mental health after the accident with participant age.'}
+
+suppl_figures$age_mental$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-age-mental). Association of measures of mental health after the accident with participant's age.__ 
+
+_Study participants were stratified by age as young adults ($\leq$ 30 years), middle-aged (31 - 65 years) and elderly (> 65 years). Differences in demographic, socioeconomic, accident-related and mental health variables between the age strata were assessed by Kruskal-Wallis test with $\eta^2$ effect size statistic. P values were corrected for multiple testing with false discovery rate method. Scores of panic (PHQ: patient health questionnaire), resilience (RS-13: 13-item resilience scale), reduced sense of coherence (SOC-9L: Leipzig 9-item sense of coherence scale), diminished life quality (EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale) and of post-traumatic growth (PTGI: post-traumatic growth inventory) are presented in violin plots. Single observations are depicted as points. Red diamond with whiskers represent medians with interquartile ranges. Effect sizes and p values are indicated in the plot captions or in the plot Y axes. Numbers of complete observations are presented in the plot X axes or plot legends._
+
+\newpage
+
+```{r fig-gender-mental, fig.width = mm_inch(suppl_figures$gender_mental$w), fig.height = mm_inch(suppl_figures$gender_mental$h), fig.cap = 'Association of measures of mental health after the accident with participant gender.'}
+
+suppl_figures$gender_mental$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-gender-mental). Association of measures of mental health after the accident with participant's gender.__ 
+
+_Differences in scoring of post-traumatic syndrome (PTSD) disorder clusters (PCL-5 DSM-5: PTSD checklist for DSM-5) and post-traumatic growth factors (PTGI: post-traumatic growth inventory) between the genders were assessed by Mann-Whitney test with r effect size statistic. P values were corrected for multiple testing with false discovery rate method. Scores are presented in violin plots. Single observations are depicted as points. Red diamond with whiskers represent medians with interquartile ranges. Effect sizes and p values are indicated in the plot Y axes. Numbers of complete observations are presented in the plot legend._
+
+\newpage
+
+```{r fig-mental-illness-base, fig.width = mm_inch(suppl_figures$mental_illness_base$w), fig.height = mm_inch(suppl_figures$mental_illness_base$h), fig.cap = 'Readouts of anxiety, depression, stress, loss of sense of coherence and of resilience in participants with and without mental illness.'}
+
+suppl_figures$mental_illness_base$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-mental-illness-base). Readouts of anxiety, depression, stress, loss of sense of coherence and of resilience in participants with and without mental illness.__ 
+
+_Differences in symptoms of anxiety (GAD-7: 7-item general anxiety disorder scale), depression (PHQ-9: patient health questionnaire), somatization (PHQ-15), panic (PHQ-panic module), stress (PSS4: 4-item perceived stress scale), loss of sense of coherence (SOC-9L: Leipzig 9-item sense of coherence questionnaire) and of resilience in participants with and without mental illness. For categorical variables, statistical significance was determined by $\chi^2$ test with Cramer V effect size statistic. For numeric variables, statistical significance was investigated by Mann-Whitney test with r effect size statistic. P values were corrected for multiple testing with false discovery rate (FDR) method. Distribution of categorical variable levels is presented in stack plots. Numerical variables are presented in violin plots with single observations depicted as points and red diamond with whiskers representing medians with interquartile ranges. Effect sizes and p values are displayed in the plot captions. Numbers of complete observations are indicated in the plot X axes. _
+
+\newpage
+
+```{r fig-mental-illness-ext, fig.width = mm_inch(suppl_figures$mental_illness_ext$w), fig.height = mm_inch(suppl_figures$mental_illness_ext$h), fig.cap = 'Signs of diminished quality of life and symptoms of post-traumatic syndrome disorder in participants with and without mental illness.'}
+
+suppl_figures$mental_illness_ext$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-mental-illness-ext). Signs of diminished quality of life and symptoms of post-traumatic syndrome disorder in participants with and without mental illness.__ 
+
+_Differences in (A) scoring of diminished quality of life (EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale), and (B) scoring of post-traumatic syndrome (PTSD) disorder clusters and frequency PTSD cluster positivity (PCL-5 DSM-5: PTSD checklist for DSM-5) and were compared between participants with and without mental illness. For categorical variables, statistical significance was determined by $\chi^2$ test with Cramer V effect size statistic. For numeric variables, statistical significance was investigated by Mann-Whitney test with r effect size statistic. P values were corrected for multiple testing with false discovery rate (FDR) method. Frequencies of PTSD cluster-positive participants are presented in bar plots. Numeric scores are presented in violin plots with single observations depicted as points and red diamond with whiskers representing medians with interquartile ranges. Effect sizes and p values are indicated in the plot Y axes. Numbers of complete observations are presented in the plot legend._
+
 
 \newpage
 

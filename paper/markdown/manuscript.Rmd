@@ -109,8 +109,11 @@ The study analysis pipeline is available at https://github.com/PiotrTymoszuk/men
 
 ```{r tab-cohort-demo, tab.cap = 'Demographic and socioeconomic characteristic of the study cohort. Numeric variables are presented as medians with interquartile ranges (IQR). Categorical variables are presented as percentages and counts within the complete observation set.'}
 
-flextable::flextable(tables$cohort_demo) %>% 
-  flextable::width(1:2, width = 5.5, unit = 'cm') %>% 
+tables$cohort_demo %>% 
+  map_dfc(stri_replace, fixed = '\nrange', replacement = ', range') %>% 
+  flextable %>% 
+  flextable::width(1, width = 5.5, unit = 'cm') %>% 
+  flextable::width(2, width = 7.5, unit = 'cm') %>% 
   theme_vanilla
 
 ```
@@ -119,9 +122,11 @@ flextable::flextable(tables$cohort_demo) %>%
 
 ```{r tab-cohort-accident, tab.cap = 'Characteristic of the sport accident, injury, psychological management and accident consequences. Numeric variables are presented as medians with interquartile ranges (IQR). Categorical variables are presented as percentages and counts within the complete observation set.'}
 
-flextable::flextable(tables$cohort_accident) %>% 
+tables$cohort_accident %>% 
+  map_dfc(stri_replace, fixed = '\nrange', replacement = ', range') %>% 
+  flextable %>% 
   flextable::width(1, width = 5.5, unit = 'cm') %>% 
-  flextable::width(1:2, width = 7, unit = 'cm') %>% 
+  flextable::width(2, width = 7.5, unit = 'cm') %>% 
   footnote(2, 1, 
            value = as_paragraph('ski/snowdoard: alpine skiing, snowboarding and cross-country skiing\nsledding: sledding or bobsled\nmountain: hiking, climbing and skitouring\nbiking: mountainbike, tour and road cycling'), 
            part = 'body', 
@@ -138,10 +143,13 @@ flextable::flextable(tables$cohort_accident) %>%
 
 ```{r tab-cohort-mental, tab.cap = 'Mental health characteristic of the study participants at survey completion. Numeric variables are presented as medians with interquartile ranges (IQR). Categorical variables are presented as percentages and counts within the complete observation set.'}
 
-flextable::flextable(tables$cohort_mental) %>% 
-  flextable::width(1:2, width = 5.5, unit = 'cm') %>% 
+tables$cohort_mental %>% 
+  map_dfc(stri_replace, fixed = '\nrange', replacement = ', range') %>% 
+  flextable %>% 
+  flextable::width(1, width = 5.5, unit = 'cm') %>% 
+  flextable::width(2, width = 7.5, unit = 'cm') %>% 
   footnote(1, 1, 
-           value = as_paragraph('PSS4: 4-item perceived stress scale; GAD-7: 7-item general anxiety disorder scale; PHQ: patient health questionnaire; EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale; SOC-9L: Leipzig 9-item sense of coherence questionnaire; RS13: 13-item resilience scale; CAGE: Cut/Annoyed/Guilty/Eye substance abuse scale; PCL-5 DSM-5: PTSD Checklist for DSM-5; PTGI: post-traumatic growth inventory'), 
+           value = as_paragraph('PSS4: 4-item perceived stress scale; GAD-7: 7-item general anxiety disorder scale; PHQ: patient health questionnaire; EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale; SOC-9L: Leipzig 9-item sense of coherence questionnaire; RS13: 13-item resilience scale; CAGE: Cut/Annoyed/Guilty/Eye substance abuse scale; PCL-5 DSM-5: PTSD checklist for DSM-5; PTGI: post-traumatic growth inventory; PTSD: post-traumatic syndrome disorder'), 
            part = 'header', 
            ref_symbols = 'a') %>% 
   theme_vanilla

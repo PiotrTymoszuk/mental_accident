@@ -171,6 +171,18 @@
   }
   
   pss2date <- function(x) as.Date(x/86400, origin = "1582-10-14")
+  
+# plot axis labels with n numbers ------
+  
+  label_n <- function(data, split_factor, sep = '\nn = ') {
+    
+    split_expr <- enexpr(split_factor)
+    
+    counts <- count(data, !!split_expr)
+    
+    map2_chr(counts[[1]], counts[[2]], paste, sep = sep)
+    
+  }
 
 # variable:label translation, color setup -----
 
@@ -182,6 +194,212 @@
     
     return(colors()[grep('gr(a|e)y', grDevices::colors(), invert = T)] %>% 
              sample(size = color_no))
+    
+  }
+  
+# Frequency computation and plots ------
+  
+  count_binary <- function(data) {
+    
+    ## counting of binary factors
+    
+    data <-  data %>% 
+      map_dfc(~as.numeric(.x) - 1) %>% 
+      filter(complete.cases(.))
+    
+    data %>% 
+      colSums %>% 
+      compress(names_to = 'variable',
+               values_to = 'n') %>% 
+      mutate(n_total = nrow(data), 
+             fraction = n/n_total, 
+             percent = fraction * 100)
+    
+  }
+  
+  plot_freq_bars <- function(data, 
+                             freq_var = 'percent', 
+                             cat_var = 'variable', 
+                             split_factor = NULL, 
+                             plot_title = NULL, 
+                             plot_subtitle = NULL, 
+                             x_lab = '% of cohort', 
+                             bar_color = 'steelblue', 
+                             fill_scale = scale_fill_brewer(), 
+                             show_freqs = TRUE, ...) {
+    
+    ## plots a simple bar plot of frequencies
+    
+    if(is.null(split_factor)) {
+      
+      freq_plot <- data %>% 
+        ggplot(aes(x = .data[[freq_var]], 
+                   y = .data[[cat_var]])) + 
+        geom_bar(stat = 'identity', 
+                 color = 'gray20', 
+                 fill = bar_color)
+      
+    } else {
+      
+      freq_plot <- data %>% 
+        ggplot(aes(x = .data[[freq_var]], 
+                   y = .data[[cat_var]], 
+                   fill = .data[[split_factor]])) + 
+        geom_bar(stat = 'identity', 
+                 color = 'gray20', 
+                 position = position_dodge(0.9)) + 
+        fill_scale
+      
+    }
+    
+    freq_plot <- freq_plot + 
+      globals$common_theme + 
+      theme(axis.title.y = element_blank()) + 
+      labs(title = plot_title,
+           subtitle = plot_subtitle, 
+           x = x_lab)
+    
+    if(show_freqs) {
+      
+      freq_plot <- freq_plot + 
+        geom_text(aes(label = signif(.data[[freq_var]], 2)), ...)
+      
+    }
+    
+    return(freq_plot)
+    
+  }
+  
+# Factor effect testing and violin plot panels -------
+  
+  format_fct_test <- function(test_data) {
+    
+    test_data %>% 
+      mutate(plot_cap = paste(eff_size, significance, sep = ', '), 
+             plot_type = ifelse(test == 'Chi-squared test', 
+                                'stack', 'violin'), 
+             y_lab = ifelse(test == 'Chi-squared test', 
+                            '% of strata', 
+                            exchange(variable, 
+                                     dict = ptsd$var_lexicon, 
+                                     key = 'variable', 
+                                     value = 'axis_lab')))
+    
+  }
+  
+  plot_fct <- function(data, 
+                       test_data, 
+                       factor = 'age', 
+                       fill_scale = scale_fill_brewer()) {
+    
+    ## draws a series of violin or stack plots
+    
+    list(variable = test_data[['variable']], 
+         plot_title = exchange(test_data[['variable']], 
+                               dict = ptsd$var_lexicon, 
+                               key = 'variable', 
+                               value = 'label') %>% 
+           stri_capitalize, 
+         plot_subtitle = test_data[['plot_cap']], 
+         type = test_data[['plot_type']], 
+         y_lab = test_data[['y_lab']]) %>% 
+      pmap(plot_variable, 
+           data, 
+           split_factor = factor, 
+           scale = 'percent', 
+           cust_theme = globals$common_theme, 
+           x_n_labs = TRUE) %>% 
+      map(~.x + 
+            fill_scale + 
+            theme(axis.title.x = element_blank())) %>% 
+      set_names(test_data[['variable']])
+    
+  }
+  
+  plot_fct_panels <- function(data, 
+                              test_data, 
+                              factor = 'age', 
+                              fill_scale = scale_fill_brewer()) {
+    
+    ## generates violin plot panels
+    ## for the QoL, PTSD and PTG domains
+    ## split by the given factor
+    
+    ## plotting variables
+    
+    variables <- 
+      list(eurohis = c('eurohis_qol', 
+                       'eurohis_health', 
+                       'eurohis_energy', 
+                       'eurohis_finances', 
+                       'eurohis_activity', 
+                       'eurohis_selfesteem', 
+                       'eurohis_relationship', 
+                       'eurohis_housing'), 
+           dsm = c('dsm5_B', 
+                   'dsm5_C', 
+                   'dsm5_D', 
+                   'dsm5_E'), 
+           ptgi = c('ptgi_fctI', 
+                    'ptgi_fctII', 
+                    'ptgi_fctIII', 
+                    'ptgi_fctIV', 
+                    'ptgi_fctV'))
+    
+    ## X axis labels with effect sizes and significance
+    
+    ax_labs <- variables %>% 
+      exchange(dict = ptsd$var_lexicon, 
+               key = 'variable', 
+               value = 'label') %>% 
+      map(stri_replace, 
+          regex = '\\s{1}score$', 
+          replacement = '') %>% 
+      map(stri_replace, 
+          regex = '.*\\s{1}.*\\s{1}', 
+          replacement = '')
+    
+    stats <- variables %>% 
+      map(~filter(test_data, variable %in% .x)) %>% 
+      map2(., variables, 
+           ~mutate(.x, variable = factor(variable, .y))) %>% 
+      map(arrange, variable) %>% 
+      map(~.x$plot_cap)
+    
+    ax_labs <- 
+      map2(ax_labs, stats, 
+           paste, sep = '\n')
+    
+    ## plot panels
+    
+    plots <- 
+      list(variables = variables, 
+           plot_title = c('EUROHIS QOL domains', 
+                          'PCL-5 DSM-5 clusters', 
+                          'PTGI factors')) %>% 
+      pmap(draw_violin_panel, 
+           data = data, 
+           split_factor = factor, 
+           distr_geom = 'violin', 
+           point_alpha = 0.25, 
+           point_hjitter = 0.1, 
+           point_wjitter = 0.05, 
+           point_size = 1, 
+           cust_theme = globals$common_theme, 
+           x_lab = 'Score', 
+           plot_subtitle = data %>% 
+             label_n(.data[[factor]], sep = ': n = ') %>% 
+             paste(collapse = ', '), 
+           scale = 'width', 
+           dodge_w = 0.9)
+    
+    list(x = plots, 
+         y = variables, 
+         z = ax_labs) %>% 
+      pmap(function(x, y, z) x + 
+             fill_scale + 
+             scale_y_discrete(limits = rev(y), 
+                              labels = rev(z)))
     
   }
   
