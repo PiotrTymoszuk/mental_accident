@@ -25,6 +25,7 @@
   cohort$var_class <- 
     list(demo = c('obs_time', 
                   'age', 
+                  'age_class', 
                   'sex', 
                   'residence_alpine_region', 
                   'education', 
@@ -33,9 +34,8 @@
                   'trauma_risk_profession', 
                   'household_income_class', 
                   'smoking_status', 
-                  'drug_status', 
+                  'cage_total_class', 
                   'somatic_comorbidity', 
-                  #'somatic_comorbidity_type', 
                   'psych_comorbidity', 
                   'traumatic_event', 
                   'prime_trauma_event', 
@@ -47,12 +47,15 @@
                       'accident_injured_persons', 
                       'accident_rescue', 
                       'injury_sev_strata', 
+                      'hospitalization', 
+                      'surgery_done', 
                       'psych_support_post_accident', 
+                      'psych_support_need', 
                       'accident_aftermath', 
                       'same_sport_type_post_accident', 
-                      'caution_post_accident'), 
+                      'caution_post_accident', 
+                      'flashback_frequency'), 
          mental = c(## gneral measures of mental health and QoL
-                    'pss4_total', 
                     'gad7_total', 
                     'gad7_total_class', 
                     'phq9_total', 
@@ -63,13 +66,10 @@
                     'soc9l_total', 
                     'rs13_total', 
                     'rs13_total_class', 
-                    'cage_total_class', 
                     ## accident-specific measures
-                    #'unwilling_flashback', 
-                    'flashback_frequency', 
+                    'ptgi_total', 
                     'dsm5_total', 
-                    'dsm5_cluster_class', 
-                    'ptgi_total'))
+                    'dsm5_cluster_class'))
   
   ## splitting the main table
   
@@ -232,11 +232,7 @@
                    plot_subtitle = paste('n =', 
                                          cohort$ptsd_cluster$frequency$n_total[[1]])) + 
     scale_y_discrete(limits = rev(cohort$ptsd_cluster$variables), 
-                     labels = exchange(rev(cohort$ptsd_cluster$variables), 
-                                       dict = ptsd$var_lexicon, 
-                                       key = 'variable', 
-                                       value = 'label') %>% 
-                       stri_extract(regex = 'B|C|D|E'))
+                     labels = function(x) stri_extract(x, regex = 'B|C|D|E'))
   
 # END -----
   

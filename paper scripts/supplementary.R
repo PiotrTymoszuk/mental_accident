@@ -11,18 +11,21 @@
   insert_msg('Figure S1: injured parts and mental health, cohort')
   
   suppl_figures$parts_mental_cohort <- 
-    list(cohort$injury$plot, 
+    list(cohort$injury$plot + 
+           expand_limits(x = 50), 
          cohort$mental_details$plots$eurohis, 
+         cohort$mental_details$plots$ptgi, 
+         ggdraw(), 
          cohort$mental_details$plots$dsm, 
-         cohort$ptsd_cluster$plot, 
-         cohort$mental_details$plots$ptgi) %>% 
+         cohort$ptsd_cluster$plot + 
+           expand_limits(x = 13)) %>% 
     plot_grid(plotlist = ., 
               ncol = 2, 
               align = 'hv', 
               axis = 'tblr', 
               labels = c('A', 'B', 'C', '', 'D'), 
               label_size = 10, 
-              rel_heights = c(1.4, 1, 1.1)) %>% 
+              rel_heights = c(1.4, 1.1, 1)) %>% 
     as_figure(label = 'figure_s1_parts_mental_cohort', 
               ref_name = 'parts_mental_cohort', 
               caption = paste('Injured body regions and detailed scoring', 
@@ -32,164 +35,231 @@
               w = 180, 
               h = 210)
   
-# Figure S2: mental features associated with participant's age ------
+# Figure S2: cluster development ------
   
-  insert_msg('Figure S2: age and mental health')
+  insert_msg('Figure S2: cluster development')
   
-  ## upper panel: panic, resilience and sense of coherence
+  ## upper panel: variance and cross-validation
   
-  suppl_figures$age_mental$upper <- age$plots[c("phqd_panic_total", 
-                                                "rs13_total", 
-                                                "soc9l_total")] %>% 
-    map(~.x + theme(legend.position = 'none')) %>% 
+  suppl_figures$clust_dev$upper <- 
+    plot_grid(clust_devel$result_plot, 
+              ncol = 2, 
+              rel_widths = c(0.8, 0.2))
+  
+  ## bottom panel: WSS and silhouette
+  
+  suppl_figures$clust_dev$bottom <- semi_clust$diagn_plots %>% 
+    map(~.x + 
+          labs(subtitle = paste0(.x$labels$subtitle, 
+                                ', n = ', 
+                                nrow(clust_globals$analysis_tbl$training))) + 
+          theme(plot.tag = element_blank())) %>% 
     plot_grid(plotlist = ., 
-              ncol = 3, 
-              align = 'hv', 
-              axis = 'tblr')
-  
-  ## bottom panel: panels of plots for QoL and PTG
-  
-  suppl_figures$age_mental$bottom <- 
-    plot_grid(age$panels$eurohis + 
-                theme(legend.position = 'none', 
-                      plot.subtitle = element_blank()), 
-              plot_grid(age$panels$ptgi + 
-                          theme(legend.position = 'none', 
-                                plot.subtitle = element_blank()), 
-                        get_legend(age$panels[[1]] + 
-                                     scale_fill_brewer(labels = age$analysis_tbl %>% 
-                                                         label_n(age), 
-                                                       palette = 'Blues') + 
-                                     theme(legend.position = 'bottom')), 
-                        nrow = 2, 
-                        rel_heights = c(0.68, 0.32)), 
-              ncol = 2)
+              ncol = 2, 
+              align = 'hv')
   
   ## the entire figure
   
-  suppl_figures$age_mental <- 
-    plot_grid(suppl_figures$age_mental$upper, 
-              ggdraw(), 
-              suppl_figures$age_mental$bottom, 
-              nrow = 3, 
-              rel_heights = c(1, 0.1, 2.2)) %>% 
-    as_figure(label = 'figure_s2_age_mental_health', 
-              ref_name = 'age_mental', 
-              caption = paste("Association of measures of mental health", 
-                              "after the accident with participant's age"), 
+  suppl_figures$clust_dev <- 
+    plot_grid(suppl_figures$clust_dev$upper, 
+              suppl_figures$clust_dev$bottom, 
+              nrow = 2, 
+              rel_heights = c(1.1, 1), 
+              labels = LETTERS, 
+              label_size = 10) %>% 
+    as_figure(label = 'figure_s2_cluster_development', 
+              ref_name = 'clust_dev', 
+              caption = paste('Definition of the mental clusters', 
+                              'in the training subset', 
+                              'of the study cohort.'), 
               w = 180, 
-              h = 210)
+              h = 150)
   
-# Figure S3: mental health features associated with gender ------
+# Figure S3: semi-supervised clustering -------
   
-  insert_msg('Figures S3: mental health and gender')
+  insert_msg('Figure S3: semi-supervised clustering')
   
-  suppl_figures$gender_mental <- gender$panels[c("dsm", "ptgi")] %>% 
+  ## upper panel: UMAPS
+  
+  suppl_figures$semi_clust$upper <- semi_clust$data_umap %>% 
+    map2(., paste('UMAP,', c('training', 'test')), 
+         ~.x + labs(title = .y)) %>%  
+    map2(., semi_clust$variance$variance, 
+         ~.x + 
+           theme(legend.position = 'bottom', 
+                 plot.tag = element_blank()) + 
+           labs(subtitle = paste0(.x$labels$subtitle, 
+                                  ', expl. variance = ', 
+                                  signif(.y, 2)))) %>% 
+    plot_grid(plotlist = ., 
+              ncol = 2, 
+              align = 'hv', 
+              axis = 'tblr')
+  
+  ## bottom panel: distance heat maps
+  
+  suppl_figures$semi_clust$bottom <- semi_clust$dist_hm %>% 
+    map2(., paste('Distance heat map,', c('training', 'test')), 
+         ~.x + 
+           theme(plot.tag = element_blank()) +
+           scale_fill_gradient2(low = 'firebrick', 
+                                mid = 'white',
+                                high = 'steelblue', 
+                                midpoint = 1, 
+                                limits = c(0, 2), 
+                                oob = scales::squish, 
+                                name = 'distance') + 
+           labs(title = .y))
+  
+  suppl_figures$semi_clust$bottom <- suppl_figures$semi_clust$bottom %>% 
     map(~.x + 
-          theme(legend.position = 'none', 
-                plot.subtitle = element_blank())) %>% 
+          theme(legend.position = 'none')) %>% 
     plot_grid(plotlist = ., 
               ncol = 2, 
               align = 'hv', 
               axis = 'tblr') %>% 
-    plot_grid(get_legend(gender$panels[[1]] + 
-                           scale_fill_brewer(labels = ptsd$dataset %>% 
-                                               label_n(sex), 
-                                             palette = 'Oranges') + 
+    plot_grid(get_legend(suppl_figures$semi_clust$bottom[[1]] + 
+                           theme(legend.position = 'bottom')), 
+              nrow = 2, 
+              rel_heights = c(0.85, 0.15))
+  ## the entire figure
+  
+  suppl_figures$semi_clust <- 
+    plot_grid(suppl_figures$semi_clust$upper, 
+              suppl_figures$semi_clust$bottom, 
+              nrow = 2, 
+              rel_heights = c(1, 1.2), 
+              labels = LETTERS, 
+              label_size = 10) %>% 
+    as_figure(label = 'figure_s3_semi_supervised_clustering', 
+              ref_name = 'semi_clust', 
+              caption = paste('Semi-supervised clustering.'), 
+              w = 180, 
+              h = 200)
+  
+# Figure S4: feature heat maps -------
+  
+  insert_msg('Figure S4: feature heat maps')
+  
+  suppl_figures$feat_hm <- feat_clust$clust_hm %>% 
+    map(~.x + 
+          theme(legend.position = 'none', 
+                plot.tag = element_blank(), 
+                strip.background.y = element_blank(), 
+                strip.text.y = element_blank(), 
+                plot.title.position = 'plot')) %>% 
+    plot_grid(plotlist = ., 
+              ncol = 2, 
+              align = 'hv', 
+              axis = 'tblr') %>% 
+    plot_grid(get_legend(feat_clust$clust_hm[[1]] +
                            theme(legend.position = 'bottom')), 
               nrow = 2, 
               rel_heights = c(0.9, 0.1)) %>% 
-    as_figure(label = 'figure_s3_gender_mental', 
-              ref_name = 'gender_mental', 
-              caption = paste(paste("Association of measures of mental health", 
-                                    "after the accident with", 
-                                    "participant's gender")), 
+    as_figure(label = 'figure_s4_clustering_feature_heatmaps', 
+              ref_name = 'feat_hm', 
+              caption = paste('Levels of psychometric clustering', 
+                              'scores in the mental clusters.'), 
               w = 180, 
-              h = 100)
+              h = 140)
+
+# Figure S5: additional background factors ------
   
-# Figure S4: basic mental health features associated with mental illness -----
+  insert_msg('Figure S5: additional background factors')
   
-  insert_msg('Figure S4: basic mental health features in mental illness strata')
+  suppl_figures$demo <- clust_bcg$plots %>% 
+    map(~.x[c('age_class', 
+              'education', 
+              'prior_accident', 
+              'traumatic_event')]) %>% 
+    transpose %>% 
+    map2(., c('Age', 'Education',  
+              'Prior accident', 'Trauma event'), 
+         function(x, y) plot_grid(plotlist = map2(x, 
+                                                  paste(y, 
+                                                        c('training', 'test'), 
+                                                        sep = ', '), 
+                                                  ~.x + 
+                                                    labs(title = .y) + 
+                                                    theme(legend.position = 'none')), 
+                                  ncol = 2, 
+                                  align = 'hv') %>% 
+           plot_grid(get_legend(x[[1]] + 
+                                  theme(legend.position = 'bottom')), 
+                     nrow = 2, 
+                     rel_heights = c(0.85, 0.15))) %>% 
+           plot_grid(plotlist = ., 
+                     ncol = 2, 
+                     align = 'hv', 
+                     labels = LETTERS, 
+                     label_size = 10)
   
-  suppl_figures$mental_illness_base <- 
-    plot_grid(mental$plots$gad7_total + 
-                theme(legend.position = 'none'), 
-              mental$plots$gad7_total_class, 
-              mental$plots$phq9_total + 
-                theme(legend.position = 'none'), 
-              mental$plots$phq9_total_class, 
-              mental$plots$phq_events_total + 
-                theme(legend.position = 'none'), 
-              mental$plots$phqd_panic_total + 
-                theme(legend.position = 'none'), 
-              mental$plots$pss4_total + 
-                theme(legend.position = 'none'), 
-              mental$plots$soc9l_total + 
-                theme(legend.position = 'none'), 
-              mental$plots$rs13_total + 
-                theme(legend.position = 'none'), 
-              mental$plots$rs13_total_class, 
+  suppl_figures$demo <- suppl_figures$demo %>% 
+    as_figure(label = 'figure_s5_demographic_factors', 
+              ref_name = 'demo', 
+              caption = paste('Age, education,', 
+                              'prior accidents and traumatic events', 
+                              'in the mental clusters.'), 
+              w = 180, 
+              h = 140)
+  
+# Figure S6: additinal accident details -------
+  
+  insert_msg('Figure S6: additional accident details')
+
+  suppl_figures$accident <- clust_bcg$plots %>% 
+    map(~.x[c('sport_type', 'accident_rescue', 'accident_rescue_mode')]) %>%
+    transpose %>% 
+    map(function(x) map(x, 
+                        ~.x + 
+                          theme(legend.position = 'none')) %>% 
+          c(list(get_legend(x[[1]])))) %>% 
+    unlist(recursive = FALSE) %>% 
+    plot_grid(plotlist = ., 
+              ncol = 3, 
+              align = 'hv', 
+              axis = 'tblr', 
+              labels = c('A', '', '', 
+                         'B', '', '', 
+                         'C', '', ''), 
+              label_size = 10) %>% 
+    as_figure(label = 'figure_s6_accident_details', 
+              ref_name = 'accident', 
+              caption = paste('Accident sport type and accident rescue', 
+                              'in the mental clusters.'), 
+              w = 180, 
+              h = 220)
+  
+# Figure S7: OneR, accuracy and kappa -------
+  
+  insert_msg('Figure S7: oneR')
+  
+  suppl_figures$oneR <- 
+    class_one$plots$global[c("Accuracy", "Kappa")] %>% 
+    map2(., 
+         c('Cluster classification, single factors, accuracy', 
+           'Cluster classification, single factors, kappa'), 
+         ~.x + 
+           labs(title = .y) +
+           theme(legend.position = 'none', 
+                 plot.title.position = 'plot', 
+                 plot.title = element_text(hjust = 0.3))) %>% 
+    plot_grid(plotlist = ., 
               ncol = 2, 
               align = 'hv', 
-              axis = 'tblr') %>%
-    as_figure(label = 'figure_s4_mental_illness_base', 
-              ref_name = 'mental_illness_base', 
-              caption = paste('Readouts of anxiety, depression,', 
-                              'stress, loss of sense of coherence and of', 
-                              'resilience in participants with and without', 
-                              'mental illness.'), 
-              w = 180, 
-              h = 240)
-  
-# Figure S5: quality of life and PTSD in mental illness ------
-  
-  insert_msg('Figure S5: mental illness and QoL and PTSD')
-  
-  ## right panel: PTSD
-  
-  suppl_figures$mental_illness_ext$right <- 
-    list(mental$panels$dsm, 
-         mental$ptsd_cluster$plot +
-           expand_limits(x = 35)) %>% 
-    map(~.x + 
-          theme(legend.position = 'none', 
-                plot.subtitle = element_blank())) %>% 
-    plot_grid(plotlist = ., 
-              nrow = 2, 
-              align = 'hv', 
-              axis = 'tblr')
-  
-  ## left panel: QoL
-  
-  suppl_figures$mental_illness_ext$left <- 
-    plot_grid(mental$panels$eurohis + 
-                theme(legend.position = 'none', 
-                      plot.subtitle = element_blank()), 
-              get_legend(mental$panels[[1]] + 
-                           scale_fill_brewer(palette = 'Greys', 
-                                             labels = ptsd$dataset %>% 
-                                               label_n(psych_comorbidity), 
-                                             name = 'Mental illness') + 
+              axis = 'tblr') %>% 
+    plot_grid(get_legend(class_one$plots$global[[1]] + 
                            theme(legend.position = 'bottom')), 
               nrow = 2, 
-              rel_heights = c(0.9, 0.1))
-  
-  ## the entire figure
-  
-  suppl_figures$mental_illness_ext <- 
-    plot_grid(suppl_figures$mental_illness_ext$left, 
-              suppl_figures$mental_illness_ext$right, 
-              ncol = 2, 
-              labels = LETTERS, 
-              label_size = 10) %>% 
-    as_figure(label = 'figure_s5_mental_illness_qol_ptsd', 
-              ref_name = 'mental_illness_ext', 
-              caption = paste('Signs of diminished quality of life', 
-                              'and symptoms of post-traumatic', 
-                              'syndrome disorder in participants', 
-                              'with and without mental illness.'), 
+              rel_heights = c(0.9, 0.1)) %>% 
+    as_figure(label = 'figure_s7_cluster_classification_single_factors', 
+              ref_name = 'oneR', 
+              caption = paste('Prediction of the mental cluster assignment', 
+                              'by single demographic, socioeconomic,', 
+                              'clinical and accident-related factors.'), 
               w = 180, 
-              h = 160)
+              h = 120)
+  
   
 # Saving the figures on the disc -------
   

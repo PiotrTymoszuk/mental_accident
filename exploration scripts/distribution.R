@@ -80,6 +80,37 @@
          subtitle = 'Mean to variance ratio. Poisson: mean = variance', 
          x = 'mean:variance ratio')
   
+# Gini indexes -------  
+  
+  insert_msg('Gini indexes')
+  
+  ## numeric values
+  
+  distr$gini_tbl <- 
+    ptsd$dataset[eda_globals$variables$variable] %>% 
+    map(as.numeric) %>% 
+    map(~.x[!is.na(.x)]) %>% 
+    map_dbl(Gini) %>% 
+    compress(names_to = 'variable', 
+             values_to = 'Gini')
+  
+  ## plot
+  
+  distr$gini_plot <- distr$gini_tbl %>% 
+    ggplot(aes(x = Gini,
+               y = reorder(variable, Gini))) + 
+    geom_bar(stat = 'identity', 
+             color = 'gray20', 
+             fill = 'cornsilk') + 
+    scale_y_discrete(labels = eda_globals$variables$variable %>% 
+                       exchange(ptsd$var_lexicon, 
+                                key = 'variable', 
+                                value = 'label')) + 
+    globals$common_theme + 
+    theme(axis.title.y = element_blank()) + 
+    labs(title = 'Variable variability', 
+         x = 'Gini index')
+  
 # END ------
   
   insert_tail()

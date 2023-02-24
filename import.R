@@ -10,6 +10,9 @@
   library(tidyverse)
   library(rlang)
   library(trafo)
+  library(caret)
+  library(rstatix)
+  library(furrr)
 
   source_all('./tools/tools.R', 
              message = TRUE, crash = TRUE)
@@ -83,6 +86,11 @@
                            'Lower limbs', 
                            'Other external') %>% 
     set_names(globals$injury_vars)
+  
+  ## data partition colors
+  
+  globals$part_colors <- c(training = 'steelblue', 
+                           test = 'coral3')
 
 # reading the recoding scheme -----
   
@@ -140,16 +148,46 @@
   insert_msg('Removal of the zero-age and child age records')
   
   ptsd$cleared <- ptsd$cleared %>% 
-    filter(age >= 16)
+    filter(is.na(age) | age >= 16)
   
 # manual polishing -----
   
   insert_msg('Manual polishing')
   
   ptsd$cleared <- ptsd$cleared %>% 
-    mutate(hosp_date = pss2date(hosp_date), 
+    mutate(age_class = cut(age, 
+                           c(-Inf, 30, 65, Inf), 
+                           c('young', 'middle', 'elderly')), 
+           ward_date = pss2date(ward_date), 
+           hospitalization = ifelse(hospitalization == 'X', 'yes', 'no'), 
+           hospitalization = factor(hospitalization, c('no', 'yes')), 
            survey_date = pss2date(survey_date), 
-           obs_time = floor(as.numeric(survey_date - hosp_date)), 
+           obs_time = floor(as.numeric(survey_date - ward_date)), 
+           accident_month = stri_split_fixed(accident_date, 
+                                             pattern = '-', 
+                                             simplify = TRUE)[, 2], 
+           accident_month = as.numeric(accident_month), 
+           accident_season = ifelse(accident_month %in% c(12, 1, 2), 
+                                    'winter', 
+                                    ifelse(accident_month %in% c(3, 4, 5), 
+                                           'spring', 
+                                           ifelse(accident_month %in% c(6, 7, 8), 
+                                                  'summer', 
+                                                  'fall'))),
+           accident_season = ifelse(is.na(accident_season), 
+                                    'no information', accident_season), 
+           accident_season = factor(accident_season, 
+                                    c('spring', 'summer', 'fall', 
+                                      'winter', 'no information')), 
+           accident_hour = stri_extract(accident_time, 
+                                        regex = '^\\d{2}'), 
+           accident_hour = as.numeric(accident_hour), 
+           accident_daytime = ifelse(accident_hour %in% 6:18, 
+                                     'day', 'night'), 
+           accident_daytime = ifelse(is.na(accident_daytime), 
+                                     'no information', accident_daytime), 
+           accident_daytime = factor(accident_daytime, 
+                                     c('day', 'night', 'no information')), 
            weight_class = stri_replace(weight_class, regex = '\\s{1}$', replacement = ''), 
            weight_class = ifelse(weight_class == '', NA, weight_class), 
            weight_class = factor(weight_class, 
@@ -160,23 +198,44 @@
            height_class = ifelse(height_class == '', NA, height_class), 
            height_class = factor(height_class), 
            mother_tongue = factor(mother_tongue, c('German', 'English', 'Other')), 
-           education = factor(education, c('primary', 'apprenticeship', 'secondary', 'tertiary')), 
-           employment_status = factor(employment_status, c('employed', 
-                                                           'household', 
-                                                           'unemployed', 
-                                                           'student', 
-                                                           'retired')), 
+           education = car::recode(as.character(education), 
+                                   "'primary' = 'primary/apprenticeship'; 
+                                'apprenticeship' = 'primary/apprenticeship'"), 
+           education = factor(education, 
+                              c('primary/apprenticeship', 
+                                'secondary', 'tertiary')), 
+           employment_status = car::recode(as.character(employment_status), 
+                                           "'household' = 'unemployed'; 
+                                        'unemployed' = 'unemployed'"), 
+           employment_status = factor(employment_status, 
+                                      c('employed', 
+                                        'unemployed',
+                                        'student', 
+                                        'retired')), 
+           household_income_class = car::recode(as.character(household_income_class), 
+                                                "'no income' = 'no income'; 
+                                             '< 15000 Euro' = '< 30000 EUR'; 
+                                             '15000 - 30000 Euro' = '< 30000 EUR'; 
+                                             '30000 - 45000 Euro' = '30000 - 45000 EUR'; 
+                                             '> 45000 Euro' = '\u2265 45000 EUR'"), 
            household_income_class = factor(household_income_class, 
                                            c('no income', 
-                                             '< 15000 Euro', 
-                                             '15000 - 30000 Euro', 
-                                             '30000 - 45000 Euro', 
-                                             '> 45000 Euro')), 
+                                             '< 30000 EUR', 
+                                             '30000 - 45000 EUR', 
+                                             '\u2265 45000 EUR')),
+           high_income = ifelse(as.character(household_income_class) == '\u2265 45000 EUR', 
+                                'yes', 'no'), 
+           high_income = factor(high_income, c('no', 'yes')), 
+           injury_severity_ais = as.numeric(injury_severity_ais), 
+           injury_severity_ais = ifelse(injury_severity_ais > 10, 
+                                        NA, injury_severity_ais), 
            injury_sev_strata = cut(injury_severity_ais, 
                                    c(0, 1, 2, 3, 10), 
                                    c('0', '1', '2', '3+'), 
                                    right = FALSE), 
            injury_sev_strata = droplevels(injury_sev_strata), 
+           surgery_diagnosis = ifelse(surgery_diagnosis %in% c('0', ''), 
+                                      NA, surgery_diagnosis), 
            accident_culprit = ifelse(accident_culprit == 'Anderes: !!TEXT', 
                                      'other reason', 
                                      accident_culprit), 
@@ -188,29 +247,35 @@
                                           'Durch einen durch Dritte verursachten Fehler' = 'third party'; 
                                           'Durch einen Schicksalsschlag' = 'blow of fate'; 
                                           'Durch einen von Ihnen verursachten Fehler' = 'self'; 
-                                          '' = NA; '0' = NA"), 
-           accident_culprit = factor(accident_culprit, c('self', 
-                                                         'tour partner', 
-                                                         'third party', 
-                                                         'blow of fate', 
-                                                         'natural diseaster', 
-                                                         'other reason')), 
-           accident_injured_persons = factor(accident_injured_persons, c('only self', 
-                                                                         'self and partner', 
-                                                                         '3+ persons')), 
+                                          '' = NA; '0' = NA"),
+           accident_culprit = ifelse(as.character(accident_culprit) != 'self', 
+                                     'non-self', 'self'), 
+           accident_culprit = factor(accident_culprit, c('self', 'non-self')), 
+           accident_injured_persons = ifelse(is.na(accident_injured_persons), 
+                                             'no information', accident_injured_persons), 
+           accident_injured_persons = factor(accident_injured_persons, 
+                                             c('only self', 
+                                               'self and partner', 
+                                               '3+ persons', 
+                                               'no information')), 
+           accident_rescue = car::recode(accident_rescue, 
+                                         "'tour partner' = 'partner/third party'; 
+                                         'third party' = 'partner/third party'"), 
            accident_rescue = factor(accident_rescue , c('self', 
-                                                        'tour partner', 
-                                                        'rescue team', 
-                                                        'third party')), 
+                                                        'partner/third party', 
+                                                        'rescue team')), 
            accident_rescue_mode = ifelse(accident_rescue != 'rescue team', 
                                          'no rescue team involved', 
                                          accident_rescue_mode), 
            accident_rescue_mode = ifelse(accident_rescue_mode == 'Anderes: !!TEXT', 
                                          'other', accident_rescue_mode), 
-           accident_rescue_mode = factor(accident_rescue_mode, c('no rescue team involved', 
+           accident_rescue_mode = car::recode(accident_rescue_mode, 
+                                              "'no rescue team involved' = 'no professional rescue'; 
+                                              'on ground with stretcher' = 'on ground'; 
+                                              'on ground by foot' = 'on ground'"), 
+           accident_rescue_mode = factor(accident_rescue_mode, c('no professional rescue', 
                                                                  'airborne', 
-                                                                 'on ground with stretcher', 
-                                                                 'on ground by foot', 
+                                                                 'on ground', 
                                                                  'other')), 
            accident_rescue_waiting_time = stri_replace(accident_rescue_waiting_time, 
                                                        regex = '\\s{1}$', 
@@ -225,21 +290,22 @@
                                           c('no change', 'more cautious', 'less cautious')), 
            flashback_frequency = ifelse(unwilling_flashback == 'no', 
                                         'no flashbacks', flashback_frequency), 
-           flashback_frequency = factor(flashback_frequency, c('no flashbacks', 
-                                                               '> 1 – 2 per week', 
-                                                               'several per month', 
-                                                               '1 – 2 per month', 
-                                                               '1 – 2 per year')), 
-           psych_support_assessment = ifelse(psych_support_post_accident == 'no', 
-                                             'no psychological support', 
-                                             psych_support_assessment), 
-           psych_support_assessment = factor(psych_support_assessment, 
-                                             c('no psychological support', 
-                                               'unsatisfactory', 
-                                               'low satisfactory', 
-                                               'middle satisfactory', 
-                                               'highly satifactory', 
-                                               'support rejected')), 
+           flashback_frequency = car::recode(as.character(flashback_frequency), 
+                                             "'no flashbacks' = 'none'; 
+                                          '> 1 – 2 per week' = '> 1/month'; 
+                                          'several per month' = '> 1/month'; 
+                                          '1 – 2 per month' = '> 1/month'; 
+                                          '1 – 2 per year' = '> 1/year'"), 
+           flashback_frequency = factor(flashback_frequency, 
+                                        c('none', '> 1/month', '> 1/year')), 
+           psych_support_post_accident = ifelse(psych_therapy_post_accident == 'yes', 
+                                                'yes', 
+                                                as.character(psych_support_post_accident)), 
+           psych_support_post_accident = factor(psych_support_post_accident, 
+                                                c('no', 'yes')), 
+           psych_support_need = ifelse(psych_support_post_accident == 'yes', 
+                                       'no', as.character(psych_support_need)), 
+           psych_support_need = factor(psych_support_need, c('no', 'yes')), 
            somatic_comorbidity_type = ifelse(somatic_comorbidity_type == 'Anderes: !!TEXT', 
                                              'other', 
                                              somatic_comorbidity_type), 
@@ -272,6 +338,21 @@
            smoking_length_years = ifelse(smoking_status == 'no', 
                                          0, smoking_length_years))
   
+# profession text extraction -------
+  
+  insert_msg('Profession text extraction')
+  
+  ## medical vs non-medical profession
+  
+  ptsd$cleared  <- ptsd$cleared %>%
+    mutate(medical_profession = stri_detect(tolower(profession_text), 
+                                            regex = '(arzt)|(schwester)|(therapeut)|(ärzt)|(pfleg)'), 
+           medical_profession_A = stri_detect(tolower(profession_text_A), 
+                                              regex = '(arzt)|(schwester)|(therapeut)|(ärzt)|(pfleg)'), 
+           medical_profession = ifelse(medical_profession | medical_profession_A, 
+                                       'yes', 'no'), 
+           medical_profession = factor(medical_profession, c('no', 'yes')))
+
 # major categories of sport types ------
   
   insert_msg('Recoding of the sport type')
@@ -304,6 +385,40 @@
            sport_type = factor(sport_type, 
                                c('ski/snowboard', 'sledding', 
                                  'mountain', 'biking', 'other')))
+  
+# Counts of injured body regions ------
+  
+  insert_msg('Counts of injured body regions')
+  
+  ptsd$cleared$injured_count <- ptsd$cleared[globals$injury_vars] %>% 
+    map(as.numeric) %>% 
+    map(~.x - 1) %>% 
+    reduce(`+`)
+  
+  ptsd$cleared <- ptsd$cleared %>% 
+    mutate(injured_count = ifelse(!is.na(injured_count), 
+                                  injured_count, 
+                                  ifelse(!is.na(injury_severity_ais), 
+                                         1, NA)))
+  
+# additional severity readouts ------
+  
+  insert_msg('Additional severity readouts')
+  
+  ## they are: need for a surgery defined as a presence of surgery diagnosis
+  ## number of surgical diagnoses
+
+  ptsd$cleared <- ptsd$cleared %>% 
+    mutate(surgery_done = ifelse(is.na(surgery_diagnosis), 'no', 'yes'), 
+           surgery_done = factor(surgery_done, c('no', 'yes')), 
+           surgery_complexity = stri_replace(surgery_diagnosis, 
+                                             regex = '/$', 
+                                             replacement = ''), 
+           surgery_complexity = stri_split(surgery_complexity, fixed = '/'), 
+           surgery_complexity = map_dbl(surgery_complexity, length), 
+           surgery_complexity = ifelse(surgery_done == 'no', 
+                                       0, surgery_complexity))
+  
   
 # PCL5-DSM5 item factor level setup -------
   
@@ -740,6 +855,70 @@
            eurohis_relationship = eurohis_q7, 
            eurohis_housing = eurohis_q8)
   
+# Coding interactions for modeling -------
+  
+  insert_msg('Coding for interactions')
+  
+  ## appending the table with interactions (expert opinion)
+  ## may be optionally investigated by linear modeling
+
+  ptsd$cleared <- ptsd$cleared %>% 
+    mutate(support_injury = car::recode(as.character(injury_sev_strata), 
+                                        "'1' = '1'; 
+                                        '2' = '2+'; 
+                                        '3+' = '2+'"),
+           support_injury = factor(support_injury, c('1', '2+')), 
+           support_injury = interaction(support_injury, 
+                                        psych_support_post_accident), 
+           support_rescue = car::recode(as.character(accident_rescue), 
+                                        "'self' = 'self'; 
+                                        'partner/third party' = 'non-self'; 
+                                        'rescue team' = 'non-self'"), 
+           support_rescue = factor(support_rescue, 
+                                   c('self', 'non-self')), 
+           support_rescue = interaction(support_rescue, 
+                                        psych_support_post_accident), 
+           injury_rescue = interaction(injury_sev_strata, 
+                                       accident_rescue), 
+           injury_support_need = car::recode(as.character(injury_sev_strata), 
+                                             "'1' = '1'; 
+                                              '2' = '2+'; 
+                                              '3+' = '2+'"), 
+           injury_support_need = factor(injury_support_need, c('1', '2+')), 
+           injury_support_need = interaction(injury_support_need, 
+                                             psych_support_need), 
+           rescue_support_need = car::recode(as.character(accident_rescue), 
+                                             "'self' = 'self'; 
+                                              'partner/third party' = 'non-self'; 
+                                             'rescue team' = 'non-self'"), 
+           rescue_support_need = factor(rescue_support_need, 
+                                        c('self', 'non-self')), 
+           rescue_support_need = interaction(rescue_support_need, 
+                                             psych_support_need), 
+           support_aftermath = interaction(accident_aftermath, 
+                                           psych_support_post_accident), 
+           aftermath_support_need = interaction(accident_aftermath, 
+                                                psych_support_need))
+  
+# Approximate BMI -------
+  
+  insert_msg('Approximate BMI')
+  
+  ## the values are quite discretely distributed - wont be included in modeling
+  ## and cohort characteristic
+  
+  ptsd$cleared <- ptsd$cleared %>% 
+    mutate(approx_weight = stri_split(weight_class, fixed = '-'), 
+           approx_weight = map(approx_weight, as.numeric), 
+           approx_weight = map_dbl(approx_weight, mean), 
+           approx_height = stri_split(height_class, fixed = '-'), 
+           approx_height = map(approx_height, as.numeric), 
+           approx_height = map_dbl(approx_height, mean), 
+           approx_bmi = approx_weight/(approx_height/100)^2, 
+           weight_class = cut(approx_bmi, 
+                              c(-Inf, 25, 30, Inf), 
+                              c('normal', 'overweight', 'obese')))
+  
 # Generating the variable lexicon -----
   
   insert_msg('Clearing the variable lexicon')
@@ -764,23 +943,27 @@
 
   ptsd$var_lexicon <- ptsd$var_lexicon %>% 
     filter(variable %in% names(ptsd$cleared))
-  
+
 # Creating a table with the participants with complete mental health battery ------
   
   insert_msg('Filtering: complete mental helath battery')
   
-  ## IDs of participants invited to the interview
+  ## IDs of participants who completed the interview
   
   ptsd$interview_ID <- 
-    read.spss('./data/PTSD Datei mit Unfallcodes NUR Eingeladene23.08.sav', 
+    read.spss('./data/PTSD Datei mit Unfallcodes ohne Namen NUR BEANTWORTER 23.08 Kopie.sav', 
               to.data.frame = TRUE)$Passwort
   
   ## mental health variables used for clustering
+  ## PSS4 (stress) with poor consistency is removed from further analysis
   
   ptsd$mental_variables <- ptsd$var_lexicon %>% 
     filter(type == 'response', 
            format == 'numeric') %>% 
     .$variable
+  
+  ptsd$mental_variables <- 
+    ptsd$mental_variables[ptsd$mental_variables != 'pss4_total']
   
   ## participants with the complete mental health variable panel
   
@@ -790,10 +973,75 @@
     .$ID
   
   ptsd$dataset <- ptsd$cleared %>% 
-    filter(ID %in% ptsd$interview_ID, 
-           age >= 16) %>% 
     filter(ID %in% ptsd$complete_ID) %>% 
     map_dfc(function(x) if(is.factor(x)) droplevels(x) else x)
+  
+# Patching some missing information on injuries for the included participants -----
+  
+  insert_msg('Patching missing injury information')
+  
+  ## based on self report, surgery diagnoses and similar
+  
+  ptsd$injury_patch <- read_tsv('./data/injury_patch.tsv') %>% 
+    mutate(injury_sev_strata = cut(injury_severity_ais, 
+                                   c(0, 1, 2, 3, 10), 
+                                   c('0', '1', '2', '3+'), 
+                                   right = FALSE), 
+           injury_sev_strata = droplevels(injury_sev_strata))
+  
+  for(i in globals$injury_vars) {
+    
+    ptsd$injury_patch <- ptsd$injury_patch %>% 
+      mutate(!!i := car::recode(.data[[i]], "'0' = 'no'; '1' = 'yes'"), 
+             !!i := factor(.data[[i]], c('no', 'yes')))
+    
+  }
+  
+  ptsd$injury_patch$injured_count <- ptsd$injury_patch[globals$injury_vars] %>% 
+    map(as.numeric) %>% 
+    map(~.x - 1) %>% 
+    reduce(`+`)
+  
+  ptsd$injury_patch <- ptsd$injury_patch %>% 
+    mutate(injured_count = ifelse(!is.na(injured_count), 
+                                  injured_count, 
+                                  ifelse(!is.na(injury_severity_ais), 
+                                         1, NA)))
+  
+  ptsd$injury_patch <- ptsd$injury_patch %>% 
+    select(ID, any_of(names(ptsd$dataset)))
+  
+  ## patching
+  
+  ptsd$dataset <- 
+    ptsd$dataset[c('ID', names(ptsd$dataset)[!names(ptsd$dataset) %in% names(ptsd$injury_patch)])]
+  
+  ptsd$dataset <- left_join(ptsd$dataset, 
+                            ptsd$injury_patch, 
+                            by = 'ID')
+  
+# Training and test datasets based on randomization results -----
+  
+  insert_msg('Training and test datasets')
+  
+  if(file.exists('./cache/randomization.RData')) {
+    
+    insert_msg('Loading cached randomization results')
+    
+    load('./cache/randomization.RData')
+    
+  } else {
+    
+    source_all('./import scripts/randomization.R')
+    
+  }
+  
+  ptsd$rand_scheme <- rand$analysis_tbl[c('ID', rand$best_partitions[1])] %>% 
+    set_names(c('ID', 'partition'))
+  
+  ptsd$dataset <- left_join(ptsd$dataset, 
+                            ptsd$rand_scheme, 
+                            by = 'ID')
   
 # END -----
   

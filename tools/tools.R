@@ -172,6 +172,43 @@
   
   pss2date <- function(x) as.Date(x/86400, origin = "1582-10-14")
   
+# randomization ------
+  
+  freq_tester <- function(data, 
+                          variable, 
+                          part_variables) {
+    
+    ## computes fractions and tests for differences in distribution
+    ## between data partitions
+    
+    ## data splits
+    
+    splits <- part_variables %>% 
+      future_map(~split(data, data[[.x]]) %>% 
+                   map(~table(.x[[variable]])))
+    
+    ## fractions
+    
+    fractions <- splits %>% 
+      map(~map(.x, 
+               ~.x/sum(.x)) %>% 
+            reduce(rbind) %>% 
+            `row.names<-`(., c('training', 'test')))
+    
+    ## chi-squared tests
+    
+    tests <- splits %>% 
+      map(reduce, rbind) %>% 
+      map(`row.names<-`, c('training', 'test')) %>% 
+      map(chisq_test) %>% 
+      compress(names_to = 'partition')
+    
+    list(fractions = fractions, 
+         tests = tests)
+    
+  }
+  
+  
 # plot axis labels with n numbers ------
   
   label_n <- function(data, split_factor, sep = '\nn = ') {
@@ -226,6 +263,7 @@
                              x_lab = '% of cohort', 
                              bar_color = 'steelblue', 
                              fill_scale = scale_fill_brewer(), 
+                             color_scale = scale_color_brewer(), 
                              show_freqs = TRUE, ...) {
     
     ## plots a simple bar plot of frequencies
@@ -261,12 +299,154 @@
     
     if(show_freqs) {
       
-      freq_plot <- freq_plot + 
-        geom_text(aes(label = signif(.data[[freq_var]], 2)), ...)
+      if(!is.null(split_factor)) {
+        
+        freq_plot <- freq_plot + 
+          geom_text(aes(label = signif(.data[[freq_var]], 2), 
+                        color = .data[[split_factor]]), ...) + 
+          color_scale
+        
+      } else {
+        
+        freq_plot <- freq_plot + 
+          geom_text(aes(label = signif(.data[[freq_var]], 2)), ...)
+        
+      }
       
     }
     
     return(freq_plot)
+    
+  }
+  
+  plot_ptsd_freq <- function(data, 
+                             test_data, 
+                             split_factor = 'psych_comorbidity', 
+                             plot_title = 'PCL-5 DSM-5 clusters', 
+                             plot_subtitle = NULL, 
+                             x_lab =  '% of mental illness strata', 
+                             fill_scale = scale_fill_brewer(), 
+                             color_scale = scale_color_brewer()) {
+    
+    
+    ## plots frequency of participants screened positive for the PTSD
+    ## clusters split by a factor
+    
+    ## variables and frequencies
+    
+    variables <- 
+      c('dsm5_cluster_class', 
+        'dsm5_B_class', 
+        'dsm5_C_class', 
+        'dsm5_D_class', 
+        'dsm5_E_class')
+    
+    frequency <-  data %>% 
+      dlply(split_factor, 
+            select, 
+            all_of(variables)) %>% 
+      map(count_binary) %>% 
+      compress(names_to = split_factor) %>% 
+      mutate(!!split_factor := factor(.data[[split_factor]], 
+                                      levels(data[[split_factor]])))
+    
+    ## Y axis labels
+    
+    ax_labs <- test_data %>% 
+      filter(.data[['variable']] %in% variables) %>% 
+      mutate(ax_lab = variable %>% 
+               stri_extract(regex = 'B|C|D|E'), 
+             ax_lab = ifelse(is.na(ax_lab), 'PTSD+', ax_lab), 
+             ax_lab = paste(ax_lab, plot_cap, sep = '<br>'), 
+             ax_lab = ifelse(p_adjusted < 0.05, 
+                             paste0('<b>', ax_lab, '</b>'), 
+                             ax_lab))
+    
+    ax_labs <- set_names(ax_labs$ax_lab, 
+                         ax_labs$variable)
+    
+    ## plot
+    
+    plot_freq_bars(data = frequency, 
+                   freq_var = 'percent', 
+                   cat_var = 'variable', 
+                   split_factor = split_factor, 
+                   plot_title = plot_title, 
+                   plot_subtitle = plot_subtitle, 
+                   x_lab = x_lab, 
+                   fill_scale = fill_scale, 
+                   color_scale = color_scale, 
+                   show_freqs = TRUE, 
+                   position = position_dodge(0.9), 
+                   size = 2.5, 
+                   hjust = -0.4) + 
+      scale_y_discrete(limits = rev(variables), 
+                       labels = ax_labs) + 
+      theme(axis.text.y = element_markdown())
+    
+  }
+  
+  plot_body_freq <- function(data, 
+                             test_data, 
+                             split_factor, 
+                             plot_title = 'Injured body regions', 
+                             x_lab = '% of strata', 
+                             fill_scale = scale_fill_brewer(), 
+                             color_scale = scale_color_brewer()) {
+    
+    
+    ## variables and frequencies
+    
+    variables <- 
+      c('injury_head', 'injury_face', 'injury_neck', 'injury_chest', 
+        'injury_abdomen', 'injury_spine', 'injury_upper_limbs', 
+        'injury_lower_limbs', 'injury_external_other')
+    
+    frequency <- data %>% 
+      dlply(split_factor, 
+            select, 
+            all_of(variables)) %>% 
+      map(count_binary) %>% 
+      compress(names_to = split_factor) %>% 
+      mutate(!!split_factor := factor(.data[[split_factor]], 
+                                      levels(data[[split_factor]])))
+    
+    ## labels with effect sizes and significance
+    
+    ax_labs <- test_data %>% 
+      filter(.data[['variable']] %in% variables) %>% 
+      mutate(ax_lab = exchange(variable, 
+                               dict = ptsd$var_lexicon, 
+                               key = 'variable', 
+                               value = 'label'), 
+             ax_lab = stri_replace(ax_lab, 
+                                   regex = '\\s{1}injury$', 
+                                   replacement = ''), 
+             ax_lab = paste(ax_lab, plot_cap, sep = '<br>'), 
+             ax_lab = ifelse(p_adjusted < 0.05, 
+                             paste0('<b>', ax_lab, '</b>'), 
+                             ax_lab))
+    
+    ax_labs <- set_names(ax_labs$ax_lab, 
+                         ax_labs$variable)
+    
+    ## plot
+    
+    plot_freq_bars(data = frequency, 
+                   freq_var = 'percent', 
+                   cat_var = 'variable', 
+                   split_factor = split_factor, 
+                   plot_title = plot_title, 
+                   x_lab = x_lab, 
+                   fill_scale = fill_scale, 
+                   color_scale = color_scale, 
+                   show_freqs = TRUE, 
+                   position = position_dodge(0.9), 
+                   size = 2.5, 
+                   hjust = -0.4) + 
+      scale_y_discrete(limits = rev(variables), 
+                       labels = ax_labs) + 
+      theme(axis.text.y = element_markdown())
     
   }
   
@@ -308,7 +488,8 @@
            split_factor = factor, 
            scale = 'percent', 
            cust_theme = globals$common_theme, 
-           x_n_labs = TRUE) %>% 
+           x_n_labs = TRUE, 
+           txt_size = 2.25) %>% 
       map(~.x + 
             fill_scale + 
             theme(axis.title.x = element_blank())) %>% 
@@ -368,7 +549,12 @@
     
     ax_labs <- 
       map2(ax_labs, stats, 
-           paste, sep = '\n')
+           paste, sep = '<br>')
+
+    ax_labs <- ax_labs %>% 
+      map(~ifelse(stri_detect(.x, fixed = 'ns ('), 
+                  .x, 
+                  paste0('<b>', .x, '</b>')))
     
     ## plot panels
     
@@ -381,7 +567,7 @@
            data = data, 
            split_factor = factor, 
            distr_geom = 'violin', 
-           point_alpha = 0.25, 
+           point_alpha = 0.85, 
            point_hjitter = 0.1, 
            point_wjitter = 0.05, 
            point_size = 1, 
@@ -399,24 +585,274 @@
       pmap(function(x, y, z) x + 
              fill_scale + 
              scale_y_discrete(limits = rev(y), 
-                              labels = rev(z)))
+                              labels = rev(z)) + 
+             theme(axis.text.y = element_markdown()))
     
   }
   
-# Markdown and knitr -------
+# Classifiers ------
   
-  my_word <- function(...) {
+  model_one <- function(train_data, 
+                        test_data, 
+                        response = 'clust_id', 
+                        expl_variables = class_globals$variables, 
+                        summ_fun = multiClassSummary) {
     
-    form <- word_document2(number_sections = FALSE, 
-                           reference_docx = 'ms_template.docx')
+    ## trains and predicts with the OneR algorithm
     
-    form$pandoc$lua_filters <- c(form$pandoc$lua_filters, 
-                                 'scholarly-metadata.lua', 
-                                 'author-info-blocks.lua')
+    ## training ------
     
-    form
+    formula <- paste(response, '~', 
+                     paste(expl_variables, collapse = '+')) %>% 
+      as.formula
+    
+    model <- OneR(formula, data = train_data)
+    
+    ## predictions ------
+    
+    train_pred <- 
+      data.frame(obs = train_data[[response]], 
+                 pred = predict(model, newdata = train_data) %>% 
+                   factor(levels = levels(train_data[[response]])))
+    
+    test_pred <- 
+      data.frame(obs = test_data[[response]], 
+                 pred = predict(model, newdata = test_data) %>% 
+                   factor(levels = levels(train_data[[response]])))
+    
+    ## fit stats ------
+    
+    fit_stats <- 
+      list(training = train_pred, 
+           test = test_pred) %>% 
+      map(summ_fun, 
+          lev = levels(train_data[[response]])) %>% 
+      map(as.list) %>% 
+      map(as_tibble) %>% 
+      compress(names_to = 'partition')
+    
+    ## output -------
+    
+    list(train = train_pred, 
+         test = test_pred) %>% 
+      map2(., list(train_data, test_data), 
+           ~mutate(.x, ID = rownames(.y))) %>% 
+      map(as_tibble) %>% 
+      c(list(model = model, 
+             stats = fit_stats))
+    
     
   }
+  
+  model_crf <- function(train_data, 
+                        test_data, 
+                        response = 'clust_id', 
+                        expl_variables = class_globals$variables, 
+                        summ_fun = multiClassSummary, ...) {
+    
+    ## trains and predicts with the cForest algorithm
+    
+    ## training ------
+    
+    formula <- paste(response, '~', 
+                     paste(expl_variables, collapse = '+')) %>% 
+      as.formula
+    
+    model <- cforest(formula, 
+                     data = train_data, 
+                     ...)
+    
+    ## predictions ------
+    
+    train_pred <- 
+      data.frame(obs = train_data[[response]], 
+                 pred = predict(model, newdata = train_data) %>% 
+                   factor(levels = levels(train_data[[response]])))
+    
+    test_pred <- 
+      data.frame(obs = test_data[[response]], 
+                 pred = predict(model, newdata = test_data) %>% 
+                   factor(levels = levels(train_data[[response]])))
+    
+    ## fit stats ------
+    
+    fit_stats <- 
+      list(training = train_pred, 
+           test = test_pred) %>% 
+      map(summ_fun, 
+          lev = levels(train_data[[response]])) %>% 
+      map(as.list) %>% 
+      map(as_tibble) %>% 
+      compress(names_to = 'partition')
+    
+    ## output -------
+    
+    list(train = train_pred, 
+         test = test_pred) %>% 
+      map2(., list(train_data, test_data), 
+           ~mutate(.x, ID = rownames(.y))) %>% 
+      map(as_tibble) %>% 
+      c(list(model = model, 
+             stats = fit_stats))
+    
+    
+  }
+  
+  plot_one_factors <- function(fit_stats, 
+                               factors) {
+    
+    ## plots accuracy, kappa, sensitivity and specificity
+    ## of the OneR classifier for the training and test dataset
+    
+    plot_vars <- c('Kappa', 'Accuracy', 'Sensitivity', 'Specificity')
+    
+    fit_stats <- fit_stats %>% 
+      filter(variable %in% factors)
+    
+    map2(plot_vars, 
+         c('\u03BA', 'Accuracy', 'Sensitivity', 'Specificity'), 
+         ~ggplot(fit_stats, 
+                 aes(x = .data[[.x]], 
+                     y = reorder(variable, .data[[.x]]), 
+                     fill = partition)) + 
+           geom_bar(stat = 'identity', 
+                    color = 'gray20', 
+                    position = position_dodge(0.9)) + 
+           scale_fill_manual(values = globals$part_colors, 
+                             name = '') + 
+           scale_y_discrete(labels = factors %>% 
+                              exchange(dict = ptsd$var_lexicon, 
+                                       key = 'variable', 
+                                       value = 'label')) + 
+           globals$common_theme + 
+           theme(axis.title.y = element_blank()) + 
+           labs(title = .x, 
+                x = .y)) %>% 
+      set_names(plot_vars)
+    
+  }
+  
+  plot_crf_stats <- function(fit_stats) {
+    
+    ## plots accuracy, kappa, sensitivity and specificity
+    ## of the OneR classifier for the training and test dataset
+    
+    plot_vars <- c('Kappa', 'Accuracy', 'Sensitivity', 'Specificity')
+
+    map2(plot_vars, 
+         c('\u03BA', 'Accuracy', 'Sensitivity', 'Specificity'), 
+         ~ggplot(fit_stats, 
+                 aes(x = .data[[.x]], 
+                     y = partition, 
+                     fill = partition)) + 
+           geom_bar(stat = 'identity', 
+                    color = 'gray20', 
+                    position = position_dodge(0.9)) + 
+           scale_fill_manual(values = globals$part_colors, 
+                             name = '') + 
+           globals$common_theme + 
+           theme(axis.title.y = element_blank()) + 
+           labs(title = .x, 
+                x = .y)) %>% 
+      set_names(plot_vars)
+    
+  }
+  
+  plot_confusion <- function(model_list) {
+    
+    ## plots a heat map of a confusion matrix
+    
+    ## plotting data -------
+    
+    plot_tbl <- model_list[c('train', 'test')] %>% 
+      map(~confusionMatrix(.x$pred, .x$obs)) %>% 
+      map(~.x$table) %>% 
+      map(as.data.frame) %>% 
+      map(mutate, 
+          n = Freq, 
+          fraction = n/sum(n), 
+          percent = 100 * fraction)
+    
+    ## plot subtitle with the stats and x axis with % accuracy -------
+    
+    plot_subtitle <- 
+      paste0('Accuracy = ', signif(model_list$stats$Accuracy, 2), 
+             ', \u03BA = ', signif(model_list$stats$Kappa, 2), 
+             ', n = ', map_dbl(model_list[c('train', 'test')], nrow))
+    
+    x_txt <- model_list[c('train', 'test')] %>% 
+      map(mutate, corr_pred = obs == pred) %>% 
+      map(group_by, obs) %>% 
+      map(summarise, perc_pred = 100 * sum(corr_pred)/length(corr_pred))
+    
+    x_txt <- x_txt %>% 
+      map(~map2_chr(.x[[1]], paste0(signif(.x[[2]], 3), '%'), 
+                    paste, sep = '\n'))
+    
+    ## heat map ------
+    
+    list(x = plot_tbl, 
+         y = c('Training', 'Test'), 
+         z = plot_subtitle, 
+         w = x_txt) %>% 
+      pmap(function(x, y, z, w) x %>% 
+             ggplot(aes(x = Reference, 
+                        y = Prediction, 
+                        fill = n)) + 
+             geom_tile(color = 'gray20') + 
+             geom_text(aes(label = n), 
+                       size = 2.75, 
+                       vjust = -0.2) + 
+             geom_text(aes(label = paste0('(', signif(percent, 3),'%)')), 
+                       size = 2.5, 
+                       vjust = 1.2) + 
+             scale_fill_gradient(low = 'white', 
+                                 high = 'firebrick', 
+                                 name = 'n') + 
+             scale_x_discrete(labels = w) + 
+             globals$common_theme + 
+             labs(title = y, 
+                  subtitle = z, 
+                  x = 'Observed, % correct predictions', 
+                  y = 'Predicted'))
+    
+  }
+  
+  plot_importance_cloud <- function(importance_data, 
+                                    importance_var = 'importance') {
+    
+    ## plots a wordcloud: the word color and size corresponds
+    ## to the importance measure
+    
+    importance_data <- importance_data %>% 
+      mutate(!!importance_var := (.data[[importance_var]] - min(.data[[importance_var]]))/(max(.data[[importance_var]]) - min(.data[[importance_var]])), 
+             variable = exchange(variable, 
+                                 dict = ptsd$var_lexicon, 
+                                 key = 'variable', 
+                                 value = 'label'))
+    
+    importance_data %>% 
+      ggplot(aes(size = .data[[importance_var]], 
+                 color = .data[[importance_var]], 
+                 label = variable)) + 
+      geom_text_wordcloud(shape = 'square') + 
+      scale_color_gradient(low = 'gray70', 
+                           high = 'firebrick') + 
+      theme_void()
+    
+  }
+
+# Labellers --------
+  
+  psych_labeller <- 
+    c('pss4_total' = 'stress, PSS4', 
+      'gad7_total' = 'anxiety, GAD-7', 
+      'phq9_total' = 'depression, PHQ-9', 
+      'phq_events_total' = 'somatization, PHQ-15', 
+      'phqd_panic_total' = 'panic, PHQ-panic', 
+      'soc9l_total' = 'loss of SOC, SOC-9L', 
+      'rs13_total' = 'resilience, RS-13')
+  
   
 # varia -----
   

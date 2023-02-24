@@ -46,7 +46,6 @@
                       types = gender$test_type, 
                       exact = FALSE, 
                       ci = FALSE, 
-                      adj_method = 'BH', 
                       pub_styled = TRUE, 
                       .parallel = TRUE, 
                       .paropts = furrr_options(seed = TRUE, 
@@ -58,7 +57,7 @@
   insert_msg('Significant and near significant differences')
   
   gender$top_factors <- gender$test %>% 
-    filter(p_adjusted < 0.1) %>% 
+    filter(p_value < 0.05) %>% 
     .$variable
   
 # Single variable plots ------
@@ -94,7 +93,7 @@
     reduce(left_join, by = 'variable') %>% 
     format_summ_tbl %>% 
     set_names(c('Variable', 'Female', 'Male', 
-                'Significance (FDR)', 'Effect size'))
+                'Significance', 'Effect size'))
   
 # END -----
   

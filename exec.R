@@ -5,4 +5,6 @@
   print(source_all(c('import.R', 
                      'exploration.R', 
                      'factor.R', 
+                     'clustering.R', 
+                     'classification.R', 
                      'paper.R')))

@@ -51,13 +51,36 @@
   insert_msg('Table S1: variables used in the analysis pipeline')
   
   suppl_tables$analysis_vars <- ptsd$var_lexicon %>% 
-    filter(variable %in% eda_globals$variables$variable) %>% 
-    transmute(Section = section, 
+    filter(type %in% c('characteristic', 'response')) %>% 
+    transmute(`Variable name in R` = variable, 
               Variable = label, 
-              Description = description) %>% 
+              Description = description,
+              Format = format,  
+              Unit = unit)
+  
+  ## finding the possible factor levels
+  
+  fct_levs <- suppl_tables$analysis_vars %>% 
+    filter(Format == 'factor') %>% 
+    .$`Variable name in R`
+  
+  fct_levs <- ptsd$dataset[fct_levs] %>% 
+    map(levels) %>% 
+    compress(names_to = 'Variable name in R', 
+             values_to = 'Categories') %>% 
+    mutate(Categories = map_chr(Categories, paste, collapse = ', '))
+    
+  ## the entire table
+  
+  suppl_tables$analysis_vars <- 
+    left_join(suppl_tables$analysis_vars, 
+              fct_levs, 
+              by = 'Variable name in R') %>% 
     mdtable(label = 'table_s1_analysis_variables', 
             ref_name = 'analysis_vars', 
             caption = paste('Variables used in the analysis pipeline.'))
+  
+  rm(fct_levs)
   
 # Supplementary Table S2: mental health assessment battery -----
   
@@ -72,15 +95,42 @@
             ref_name = 'mental_battery', 
             caption = paste('Mental health assessment battery.'))
   
-# Supplementary Table S3: differences between included and excluded participants -------
+# Supplementary Table S3: mental scale consistency -------
   
-  insert_msg('Table S3: included versus excluded')
+  insert_msg('Table S3: mental scale consistency')
+  
+  suppl_tables$consistency <- 
+    left_join(compress(cons$pca_factor_n, 
+                       names_to = 'scale', 
+                       values_to = 'n'), 
+              cons$omega_tbl, 
+              by = 'scale') %>% 
+    filter(scale != 'cage_total') %>% 
+    arrange(-omega) %>% 
+    mutate(scale = ifelse(scale != 'brcs_total', 
+                          exchange(scale, 
+                                   dict = ptsd$var_lexicon, 
+                                   key = 'variable', 
+                                   value = 'label'), 
+                          'BRCS'), 
+           scale = stri_replace(scale, 
+                                fixed = ' score', 
+                                replacement = ''), 
+           omega = signif(omega, 2)) %>% 
+    set_names(c('Scale', 'Number of latent factors', 'Total omega')) %>% 
+    mdtable(label = 'table_s3_consistency', 
+            ref_name = 'consistency', 
+            caption = paste("Consistency of the psychometric tools used", 
+                            "in the study measured by McDonald's omega."))
+  
+# Supplementary Table S4: differences between included and excluded participants -------
+  
+  insert_msg('Table S4: included versus excluded')
   
   suppl_tables$incl_excl <- excl$result_tbl %>% 
-    mdtable(label = 'table_s3_included_excluded', 
+    mdtable(label = 'table_s4_included_excluded', 
             ref_name = 'incl_excl', 
-            caption = paste('Significant and near significant', 
-                            '(non-adjusted p < 0.05) differences between', 
+            caption = paste('Significant differences between', 
                             'individuals excluded from analysis', 
                             'and analyzed study participants.', 
                             'Numeric variables are presented as medians', 
@@ -89,80 +139,56 @@
                             'and counts within the complete', 
                             'observation set.'))
   
-# Supplementary Table S4: effects of age ------
+# Supplementary Table S5: differences between the data partitions -----
   
-  insert_msg('Table S4: effects of age')
+  insert_msg('Table S5: training/test differences')
   
-  suppl_tables$age <- age$result_tbl %>% 
-    mdtable(label = 'table_s4_age', 
-            ref_name = 'age', 
-            caption = paste('Significant and near significant', 
-                            '(false discovery rate-adjusted p < 0.1)', 
-                            'demographic, socioeconomic, accident-related', 
-                            'and mental health factors', 
-                            'associated with age.', 
+  suppl_tables$partition <- partition$result_tbl %>% 
+    mdtable(label = 'table_s5_training_test', 
+            ref_name = 'partition', 
+            caption = paste('Significant and near-significant (p < 0.1)', 
+                            'differences between the training and test', 
+                            'subsets of the study cohort.', 
                             'Numeric variables are presented as medians', 
                             'with interquartile ranges (IQR). Categorical', 
                             'variables are presented as percentages', 
                             'and counts within the complete', 
                             'observation set.'))
 
-# Supplementary Table S5: effects of gender ------
+# Supplementary Table S6: clustering factors in the mental clusters -------
   
-  insert_msg('Table S5: effects of gender')
+  insert_msg('Table S6: clustering factors in the mental clusters')
   
-  suppl_tables$gender <- gender$result_tbl %>% 
-    mdtable(label = 'table_s5_gender', 
-            ref_name = 'gender', 
-            caption = paste('Significant and near significant', 
-                            '(false discovery rate-adjusted p < 0.1)', 
-                            'demographic, socioeconomic, accident-related', 
-                            'and mental health factors', 
-                            'associated with gender.', 
+  suppl_tables$clust_fct <- feat_clust$result_tbl %>% 
+    compress(names_to = 'Cohort subset') %>% 
+    mdtable(label = 'table_s6_clustering_factors', 
+            ref_name = 'clust_fct', 
+            caption = paste('Differences in psychometric clustering factors', 
+                            'between the mental clusters.', 
+                            'Numeric variables are presented as medians', 
+                            'with interquartile ranges (IQR).', 
+                            'The table is available in a', 
+                            'supplementary Excel file.'))
+  
+# Supplementary Table S7: differences between the clusters -----
+  
+  insert_msg('Table S7: differences between the clusters')
+  
+  suppl_tables$clust_bcg <- clust_bcg$result_tbl %>% 
+    compress(names_to = 'Cohort subset') %>% 
+    mdtable(label = 'table_s7_clustering_factors', 
+            ref_name = 'clust_bcg', 
+            caption = paste('Significant and near-significant (p < 0.1)',
+                            'differences in demographic, socioeconomic,', 
+                            'clinical and accident-related factors', 
+                            'between the mental clusters.', 
                             'Numeric variables are presented as medians', 
                             'with interquartile ranges (IQR). Categorical', 
                             'variables are presented as percentages', 
                             'and counts within the complete', 
-                            'observation set.'))
-  
-# Supplementary Table S6: effects of mental illness -------
-  
-  insert_msg('Table S6: Effect of mental illness')
-  
-  ## filtering out variables presented already in the supplementary figure
-  
-  suppl_tables$mental <- mental$result_tbl %>% 
-    filter(!Variable %in% c('PCL-5 DSM-5 cluster D score', 
-                            'PTSD cluster D+', 
-                            'PCL-5 DSM-5 cluster E score', 
-                            'PTSD cluster E+', 
-                            'RS13 score', 
-                            'RS13 coping class', 
-                            'PSS4 score', 
-                            'PHQ-9 score', 
-                            'PHQ-15 score', 
-                            'PHQ-panic score', 
-                            'Depression+ (PHQ-9 ≥11)', 
-                            'SOC-9L score', 
-                            'GAD-7 score', 
-                            'Anxiety+ (GAD-7 ≥10)', 
-                            'EUROHIS-QOL 8 QoL score', 
-                            'EUROHIS-QOL 8 health score', 
-                            'EUROHIS-QOL 8 energy score', 
-                            'EUROHIS-QOL 8 activity score', 
-                            'EUROHIS-QOL 8 self-esteem score')) %>% 
-    mdtable(label = 'table_s6_metal_illness', 
-            ref_name = 'mental', 
-            caption = paste('Significant and near significant', 
-                            '(false discovery rate-adjusted p < 0.1)', 
-                            'demographic, socioeconomic, accident-related', 
-                            'and mental health factors', 
-                            'associated with mental illness.', 
-                            'Numeric variables are presented as medians', 
-                            'with interquartile ranges (IQR). Categorical', 
-                            'variables are presented as percentages', 
-                            'and counts within the complete', 
-                            'observation set.'))
+                            'observation set.',  
+                            'The table is available in a', 
+                            'supplementary Excel file.'))
   
 # Saving the tables in the disc -----
   

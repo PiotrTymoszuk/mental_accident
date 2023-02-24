@@ -14,6 +14,19 @@
 # paper -----
   
   insert_msg('Rendering the paper')
+  
+  my_word <- function(...) {
+    
+    form <- word_document2(number_sections = FALSE, 
+                           reference_docx = 'ms_template.docx')
+    
+    form$pandoc$lua_filters <- c(form$pandoc$lua_filters, 
+                                 'scholarly-metadata.lua', 
+                                 'author-info-blocks.lua')
+    
+    form
+    
+  }
 
   render('./paper/markdown/manuscript.Rmd', 
          output_format = my_word(), 

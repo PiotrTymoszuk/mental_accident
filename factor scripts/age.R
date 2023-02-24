@@ -55,19 +55,18 @@
                       types = age$test_type, 
                       exact = FALSE, 
                       ci = FALSE, 
-                      adj_method = 'BH', 
                       pub_styled = TRUE, 
                       .parallel = TRUE, 
                       .paropts = furrr_options(seed = TRUE, 
                                                globals = c('age'))) %>% 
     format_fct_test
   
-# Significant and near significant differences -------
+# Significant differences -------
   
-  insert_msg('Significant and near significant differences')
+  insert_msg('Significant differences')
   
   age$top_factors <- age$test %>% 
-    filter(p_adjusted < 0.1) %>% 
+    filter(p_value < 0.05) %>% 
     .$variable
 
 # Single variable plots ------
@@ -83,8 +82,6 @@
 # Specific plots: PTSD, PTG and QoL scores ------
   
   insert_msg('Plot panels')
-  
-  ## variables
   
   age$panels <- 
     plot_fct_panels(data = age$analysis_tbl, 
@@ -105,7 +102,7 @@
     reduce(left_join, by = 'variable') %>% 
     format_summ_tbl %>% 
     set_names(c('Variable', 'Young adult', 'Middle-aged', 
-                'Elderly', 'significance (FDR)', 'Effect size'))
+                'Elderly', 'significance', 'Effect size'))
   
 # END ------
   

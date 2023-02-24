@@ -1,5 +1,8 @@
-# Association of age, gender, mental illness, injury severity 
+# Association of age, gender, mental illness, rescue mode, injury severity 
 # and psychological support with accident circumstances and mental health
+#
+# This factors were described to be associated with e.g. PTSD in literature
+# Yet, none of them is a strong marker
 
 # tools -----
 
@@ -13,8 +16,16 @@
   library(rstatix)
   library(trafo)
   library(clustTools)
+  library(ggtext)
+  library(MASS)
+  library(lmqc)
+  library(doParallel)
+  library(caret)
+  library(caretExtra)
   
   insert_head()
+  
+  select <- dplyr::select
   
   source_all('./tools/tools.R', 
              message = TRUE, 
@@ -35,8 +46,13 @@
   
   c('./factor scripts/age.R', 
     './factor scripts/gender.R', 
-    './factor scripts/mental_illness.R') %>% 
-    source_all(message = TRUE, encoding = TRUE)
+    './factor scripts/mental_illness.R', 
+    './factor scripts/prior_trauma.R', 
+    './factor scripts/rescue.R',
+    './factor scripts/severity.R', 
+    './factor scripts/support.R', 
+    './factor scripts/modeling.R') %>% 
+    source_all(message = TRUE, crash = TRUE)
   
 # END ------
   
