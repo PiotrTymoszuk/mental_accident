@@ -35,10 +35,10 @@
   semi_clust$clust_obj$training$clust_assignment <- 
     semi_clust$clust_obj$training$clust_assignment %>% 
     mutate(clust_id = car::recode(as.character(clust_id), 
-                                  "'1' = 'PTSD'; 
+                                  "'1' = 'PTS'; 
                                   '2' = 'neutral'; 
                                   '3' = 'PTG'"), 
-           clust_id = factor(clust_id, c('neutral', 'PTG', 'PTSD'))) 
+           clust_id = factor(clust_id, c('neutral', 'PTG', 'PTS'))) 
   
   ## test
   

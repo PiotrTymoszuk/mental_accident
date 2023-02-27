@@ -62,7 +62,7 @@
   
   globals$clust_colors <- c('neutral' = 'cadetblue3',
                             'PTG' = 'darkolivegreen3', 
-                            'PTSD' = 'coral4')
+                            'PTS' = 'coral4')
   
   ## injury regions
   

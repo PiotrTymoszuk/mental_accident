@@ -15,7 +15,7 @@
   class_one$clust_tbl <- 
     list(neutral = class_globals$analysis_tbl, 
          PTG = class_globals$analysis_tbl, 
-         PTSD = class_globals$analysis_tbl) %>% 
+         PTS = class_globals$analysis_tbl) %>% 
     map2(., names(.), 
          function(data, clust) data %>% 
            map(mutate, 
@@ -53,12 +53,12 @@
         response = 'clust_id') %>% 
     set_names(class_globals$variables)
   
-  ## PTSD cluster
+  ## PTS cluster
   
-  class_one$PTSD_models <- class_globals$variables %>% 
+  class_one$PTS_models <- class_globals$variables %>% 
     map(model_one, 
-        train_data = class_one$clust_tbl$PTSD$training, 
-        test_data = class_one$clust_tbl$PTSD$test, 
+        train_data = class_one$clust_tbl$PTS$training, 
+        test_data = class_one$clust_tbl$PTS$test, 
         response = 'clust_id') %>% 
     set_names(class_globals$variables)
   
@@ -69,10 +69,10 @@
   class_one$fit_stats[c('global', 
                         'neutral', 
                         'PTG', 
-                        'PTSD')] <- class_one[c("global_models", 
+                        'PTS')] <- class_one[c("global_models", 
                                                 "neutral_models", 
                                                 "PTG_models", 
-                                                "PTSD_models")] %>% 
+                                                "PTS_models")] %>% 
     map(~map(.x, ~.x$stats)) %>% 
     map(compress, names_to = 'variable')
   

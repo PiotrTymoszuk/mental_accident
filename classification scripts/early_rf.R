@@ -1,19 +1,20 @@
-# Multi-parameter RF classifier with the top factors for cluster classification
-# identified by the OneR procedure
+# Development of a random forest classifier employing solely 'early' 
+# explanatory variables, i.e. features available during an accident 
+# and acute medical management
 
   insert_head()
   
 # container ------
   
-  class_rf <- list()
-
-# analysis globals -------
+  class_early <- list()
+  
+# analysis globals ------
   
   insert_msg('Analysis globals')
-
+  
   ## tables of assignments for single clusters
   
-  class_rf$clust_tbl <- 
+  class_early$clust_tbl <- 
     list(neutral = class_globals$analysis_tbl, 
          PTG = class_globals$analysis_tbl, 
          PTS = class_globals$analysis_tbl) %>% 
@@ -22,16 +23,16 @@
            map(mutate, 
                clust_id = ifelse(clust_id == clust, clust, 'rest'), 
                clust_id = factor(clust_id)))
-
-# tuning of the classifier -------
+  
+# tuning ------
   
   insert_msg('Tuning')
   
   ## finding the optimal mtry parameter based on OOB prediction accuracy
   
   set.seed(1234)
-
-  class_rf$tuning$controls <- 2:12 %>% 
+  
+  class_early$tuning$controls <- 2:12 %>% 
     map(~cforest_control(teststat = "max",
                          testtype = "Teststatistic", 
                          mtry = .x, 
@@ -39,19 +40,19 @@
                          ntree = 1000)) %>% 
     set_names(2:12)
   
-  class_rf$tuning$models <- class_rf$tuning$controls %>% 
-    map(~cforest(formula = class_globals$formula, 
+  class_early$tuning$models <- class_early$tuning$controls %>% 
+    map(~cforest(formula = class_globals$early_formula, 
                  data = class_globals$analysis_tbl$training, 
                  controls = .x))
   
   ## predictions and fit stats
   
-  class_rf$tuning$predictions <- class_rf$tuning$models %>% 
+  class_early$tuning$predictions <- class_early$tuning$models %>% 
     map(~data.frame(obs = class_globals$analysis_tbl$training$clust_id, 
                     pred = predict(.x, OOB = TRUE) %>% 
                       factor(levels = levels(class_globals$analysis_tbl$training$clust_id))))
   
-  class_rf$tuning$fit_stats <- class_rf$tuning$predictions %>% 
+  class_early$tuning$fit_stats <- class_early$tuning$predictions %>% 
     map(multiClassSummary, 
         lev = levels(class_globals$analysis_tbl$training$clust_id)) %>% 
     map(as.list) %>% 
@@ -65,13 +66,13 @@
   
   ## accuracy, kappa, sensitivity and specificity
   
-  class_rf$tune_plots <- 
+  class_early$tune_plots <- 
     list(x = c('Accuracy', 'Kappa', 'Mean_Sensitivity', 'Mean_Specificity'), 
          y = paste0(c('Accuracy', 'Kappa', 'Sensitivity', 'Specificity'), 
                     ', training'), 
          w = c('Accuracy', '\u03BA', 'Sensitivity', 'Specificity'), 
          z = c('steelblue3', 'coral3', 'darkolivegreen4', 'orangered3')) %>% 
-    pmap(function(x, y, w, z) class_rf$tuning$fit_stats %>% 
+    pmap(function(x, y, w, z) class_early$tuning$fit_stats %>% 
            ggplot(aes(x = mtry, 
                       y = .data[[x]], 
                       group = 'A'))  +
@@ -85,24 +86,24 @@
                 x = 'mtry', 
                 y = w)) %>% 
     set_names(c('Accuracy', 'Kappa', 'Mean_Sensitivity', 'Mean_Specificity'))
-
+  
 # training of the classifiers -------
   
   insert_msg('Training of the classifiers')
   
   set.seed(1234)
   
-  class_rf$models <- 
+  class_early$models <- 
     list(train_data = c(list(global = class_globals$analysis_tbl$training), 
-                        map(class_rf$clust_tbl, ~.x$training)), 
+                        map(class_early$clust_tbl, ~.x$training)), 
          test_data = c(list(global = class_globals$analysis_tbl$test), 
-                       map(class_rf$clust_tbl, ~.x$test))) %>% 
+                       map(class_early$clust_tbl, ~.x$test))) %>% 
     pmap(model_crf, 
          response = 'clust_id', 
-         expl_variables = class_globals$variables, 
+         expl_variables = class_globals$early_variables, 
          controls = cforest_control(teststat = "max",
                                     testtype = "Teststatistic", 
-                                    mtry = 5, 
+                                    mtry = 4, 
                                     mincriterion = qnorm(0.9), 
                                     ntree = 1000))
   
@@ -110,19 +111,19 @@
   
   insert_msg('Fit stats and variable importance')
   
-  class_rf$fit_stats <- class_rf$models %>% 
+  class_early$fit_stats <- class_early$models %>% 
     map(~.x$stats) %>% 
     map(mutate, 
         variable = 'cForest classifier')
   
-  class_rf$fit_stats$global <- 
-    class_rf$fit_stats$global %>% 
+  class_early$fit_stats$global <- 
+    class_early$fit_stats$global %>% 
     mutate(Sensitivity = Mean_Sensitivity, 
            Specificity = Mean_Specificity)
   
   ## variable importance
   
-  class_rf$importance <- class_rf$models %>% 
+  class_early$importance <- class_early$models %>% 
     map(~.x$model) %>% 
     map(varimp, 
         conditional = FALSE) %>% 
@@ -134,16 +135,16 @@
   
   insert_msg('Plotting the fit stats')
   
-  class_rf$fit_stat_plots <- 
-    list(fit_stats = class_rf$fit_stats) %>% 
+  class_early$fit_stat_plots <- 
+    list(fit_stats = class_early$fit_stats) %>% 
     pmap(plot_crf_stats)
-
+  
 # Plotting the importance ------
   
   insert_msg('Plotting the importance measures')
   
-  class_rf$importance_plots <- 
-    list(x = class_rf$importance, 
+  class_early$importance_plots <- 
+    list(x = class_early$importance, 
          y = paste0(c('Cluster classification', 
                       'Neutral cluster', 
                       'PTG cluster', 
@@ -171,16 +172,16 @@
   
   set.seed(1234)
   
-  class_rf$importance_clouds <- class_rf$importance %>% 
+  class_early$importance_clouds <- class_early$importance %>% 
     map(plot_importance_cloud)
-
+  
 # Plotting the confusion matrices --------
   
   insert_msg('Plotting the confusion matrices')
   
-  class_rf$confusion_plots <- class_rf$models %>% 
+  class_early$confusion_plots <- class_early$models %>% 
     map(plot_confusion)
-
+  
 # END -----
   
   insert_tail()

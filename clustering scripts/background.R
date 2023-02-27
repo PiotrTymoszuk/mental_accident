@@ -157,7 +157,7 @@
          right_join, by = 'variable') %>% 
     map(format_summ_tbl) %>% 
     map(set_names, 
-        c('Variable', 'Neutral cluster', 'PTG cluster', 'PTGI cluster', 
+        c('Variable', 'Neutral cluster', 'PTG cluster', 'PTS cluster', 
           'Significance', 'Effect size'))
   
 # END ------

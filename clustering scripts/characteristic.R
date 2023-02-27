@@ -282,7 +282,7 @@
                  regex = '\\nn\\s{1}=\\s{1}\\d+$', 
                  replacement = '')) %>% 
     map(set_names, 
-        c('Variable', 'Neutral cluster', 'PTG cluster', 'PTSD cluster', 
+        c('Variable', 'Neutral cluster', 'PTG cluster', 'PTS cluster', 
           'Significance', 
           'Effect size'))
   

@@ -203,7 +203,7 @@
               w = 180, 
               h = 140)
   
-# Figure S6: additinal accident details -------
+# Figure S6: additional accident details -------
   
   insert_msg('Figure S6: additional accident details')
 
@@ -260,6 +260,37 @@
               w = 180, 
               h = 120)
   
+  
+# Figure S8: mental cluster classification, early predictors -------
+  
+  insert_msg('Figure S8: Mental cluster classification, cRF, early preds')
+  
+  suppl_figures$early_crf <- class_early$confusion_plots$global %>% 
+    map2(., 
+         paste('Cluster classification,', 
+               c('training', 'test')), 
+         ~.x + 
+           theme(legend.position = 'none') + 
+           labs(title = .y)) %>% 
+    plot_grid(plotlist = ., 
+              nrow = 2, 
+              align = 'hv') %>% 
+    plot_grid(class_early$importance_plots$global + 
+                theme(plot.title.position = 'plot', 
+                      plot.title = element_text(hjust = 0.3)), 
+              ncol = 2, 
+              rel_widths = c(0.9, 1.1), 
+              labels = LETTERS, 
+              label_size = 10) %>% 
+    as_figure(label = 'figure_s8_rf_early_classifier', 
+              ref_name = 'early_crf', 
+              caption = paste('Assignment of accident victims to', 
+                              'the mental clusters based on', 
+                              'explanatory factors available', 
+                              'during acute medical management', 
+                              'of the accident.'), 
+              w = 180, 
+              h = 150)  
   
 # Saving the figures on the disc -------
   

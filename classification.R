@@ -47,9 +47,30 @@
   
   ## full model formula
   
-  class_globals$formula <-  as.formula(paste('clust_id ~ ', 
-                                          paste(class_globals$variables, 
-                                                collapse = '+')))
+  class_globals$formula <-  
+    as.formula(paste('clust_id ~ ', 
+                     paste(class_globals$variables, 
+                           collapse = '+')))
+  
+  
+  ## explanatory variables for early diagnosis
+  
+  class_globals$early_variables <- 
+    class_globals$variables[!class_globals$variables %in% c('psych_support_post_accident', 
+                                                            'psych_support_need', 
+                                                            'accident_aftermath', 
+                                                            'same_sport_type_post_accident', 
+                                                            'caution_post_accident', 
+                                                            'unwilling_flashback', 
+                                                            'flashback_frequency', 
+                                                            'confusion_during_sport')]
+  
+  ## early model formula
+  
+  class_globals$early_formula <- 
+    as.formula(paste('clust_id ~ ', 
+                     paste(class_globals$early_variables, 
+                           collapse = '+')))
   
   ## cluster assignment schemes
   

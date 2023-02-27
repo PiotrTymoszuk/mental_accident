@@ -266,29 +266,38 @@
               'somatic_comorbidity', 
               'psych_comorbidity')]) %>% 
     transpose %>% 
-    map(function(x) plot_grid(plotlist = map(x, 
-                                             ~.x + 
-                                               theme(legend.position = 'none', 
-                                                     plot.margin = ggplot2::margin(l = 2, 
-                                                                                   r = 2, 
-                                                                                   t = 3, 
-                                                                                   b = 3, 
-                                                                                   unit = 'mm'))), 
-                              ncol = 2, 
-                              align = 'hv') %>% 
-          plot_grid(get_legend(x[[1]] + 
-                                 theme(legend.position = 'bottom') + 
-                                 scale_fill_brewer(palette = 'Reds', 
-                                                   labels = function(x) x %>% 
-                                                     stri_replace_all(regex = '000\\s{1}', 
-                                                                      replacement = 'K') %>% 
-                                                     stri_replace(fixed = 'no income', 
-                                                                  replacement = 'none') %>% 
-                                                     stri_replace(fixed = 'EUR', 
-                                                                  replacement = '')) + 
-                                 theme(legend.position = 'bottom')), 
-                    nrow = 2, 
-                    rel_heights = c(0.85, 0.15))) %>% 
+    map2(., 
+         c('Sex', 
+           'Income/year', 
+           'Somatic illness', 
+           'Mental illness'), 
+         function(x, y) plot_grid(plotlist = map2(x, 
+                                                  paste(y, 
+                                                        c('training', 'test'), 
+                                                        sep = ', '),  
+                                                 ~.x + 
+                                                   labs(title = .y) + 
+                                                   theme(legend.position = 'none', 
+                                                         plot.margin = ggplot2::margin(l = 2, 
+                                                                                       r = 2, 
+                                                                                       t = 3, 
+                                                                                       b = 3, 
+                                                                                       unit = 'mm'))), 
+                                  ncol = 2, 
+                                  align = 'hv') %>% 
+           plot_grid(get_legend(x[[1]] + 
+                                  theme(legend.position = 'bottom') + 
+                                  scale_fill_brewer(palette = 'Reds', 
+                                                    labels = function(x) x %>% 
+                                                      stri_replace_all(regex = '000\\s{1}', 
+                                                                       replacement = 'K') %>% 
+                                                      stri_replace(fixed = 'no income', 
+                                                                   replacement = 'none') %>% 
+                                                      stri_replace(fixed = 'EUR', 
+                                                                   replacement = '')) + 
+                                  theme(legend.position = 'bottom')), 
+                     nrow = 2, 
+                     rel_heights = c(0.85, 0.15))) %>% 
     plot_grid(plotlist = ., 
               ncol = 2, 
               align = 'hv', 

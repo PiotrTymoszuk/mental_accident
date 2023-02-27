@@ -90,7 +90,7 @@ resilient coping (RS13: 13-item resilience scale) [@Leppert2008],
 loss of sense of coherence (SOC-9L: Leipzig 9-item sense of coherence questionnaire) [@Schumacher2000], 
 loss of quality of life (EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale) [@Schmidt2006], 
 post-traumatic growth (PTGI: post-traumatic growth inventory) [@Tedeschi1996] and 
-post-traumatic syndrome disorder (PCL-5 DSM-5: PTSD checklist for DSM-5) [@Bovin2016].
+post-traumatic stress disorder (PCL-5 DSM-5: PTSD checklist for DSM-5) [@Bovin2016].
 
 Symptoms of anxiety were defined as GAD-7 $geq$ 10, symptoms of depression were defined as PHQ-9 $\geq$ 11 [@Manea2012], significant somatization/persistent somatic symptoms were defined as PHQ-15 $\geq$ 11 [@Kroenke2002]. 
 Resilient coping classes were defined as follows: low: RS-13 0 - 65, moderate: 66 - 72, high: $\geq$ 73 [@Leppert2008]. 
@@ -140,7 +140,7 @@ For these reasons, 2/3 of the entire dataset or n = `r count(ptsd$dataset, parti
 
 The study participants were assigned to the training and test subsets with the 2:1 size ratio (__Figure 1__). 
 To this end, `r rand$part_obs %>% length` random splits of the datasets were generated. 
-The subset assignment scheme was chosen with possibly small differences in accident year, age, gender, somatic and mental illness rates, frequencies of prior traumatic events (DIA-X) [@Maercker2005] and distribution of injury severity grades (AIS: abbreviated injury scale) [@Gennarelli2006] as investigated by $\chi^2$ and Mann-Whitney test, as appropriate (functions `chisq_test()` and `wilcox_test()`, package _rstatix_).
+The subset assignment scheme was chosen with possibly small differences in accident year, age, gender, pre-existing somatic and pre-existing mental illness rates, frequencies of prior traumatic events (DIA-X) [@Maercker2005] and distribution of injury severity grades (AIS: abbreviated injury scale) [@Gennarelli2006] as investigated by $\chi^2$ and Mann-Whitney test, as appropriate (functions `chisq_test()` and `wilcox_test()`, package _rstatix_).
 
 ## Assessment of selection bias
 
@@ -157,7 +157,7 @@ For clustering, the PAM (partition around medoids) algorithm [@Schubert2019] wit
 The clustering object was constructed with the function `kcluster()` from the  [_clustTools_](https://github.com/PiotrTymoszuk/clustTools) package.
 The choice of the clustering algorithm was motivated by its good explanatory performance measured by the fraction of explained clustering variance (ratio of between-cluster sum of squares to total sum of squares, method `var()`, [_clustTools_](https://github.com/PiotrTymoszuk/clustTools)) and superior stability in 10-fold cross-validation [@Lange2004] (cluster assignment in the folds by an inverse distance weighted 7-nearest neighbors classifier, method `cv()`, [_clustTools_](https://github.com/PiotrTymoszuk/clustTools)) in a comparison with several other clustering algorithms presented in __Supplementary Figure S\@ref(fig:fig-clust-dev)A__. 
 The number of cluster was chosen based on the bend of the curve of within-cluster sum of squares and the peak of mean silhouette statistic (method `plot()`, package [_ExDA_](https://github.com/PiotrTymoszuk/ExDA)). 
-By this means, three mental clusters were defined: the neutral, PTG (post-traumatic growth) and PTSD (post-traumatic syndrome disorder) clusters (__Supplementary Figure S\@ref(fig:fig-clust-dev)B__). 
+By this means, three mental clusters were defined: the neutral, PTG (post-traumatic growth) and PTSD (post-traumatic stress disorder) clusters (__Supplementary Figure S\@ref(fig:fig-clust-dev)B__). 
 Assignment of the training subset observations to the mental clusters was accomplished with an inverse distance weighted 7-nearest neighbor classifier. 
 This semi-supervised procedure yielded clustering structures with similar fractions of explained variance in the training (V = `r signif(semi_clust$variance$variance[1], 2)`) and test subset (V = `r signif(semi_clust$variance$variance[2], 2)`). 
 In addition, comparable separation between the clusters could be discerned in the training and test subsets by a visual analysis of UMAP layouts, pairwise distance heat maps (__Supplementary Figure S\@ref(fig:fig-semi-clust)__) and heat maps of normalized levels of the clustering variables (__Supplementary Figure S\@ref(fig:fig-feat-hm)__).
@@ -229,7 +229,7 @@ suppl_tables$incl_excl %>%
   flextable::width(4, width = 2.7, unit = 'cm') %>% 
   flextable::width(5, width = 2.3, unit = 'cm') %>% 
   footnote(1, 4:5, 
-           value = as_paragraph('Numeric variables: Mann-Whitney test with r effect size statistic; categorical variables: \u03c\u00B2 test with Cramer V effec size statistic'), 
+           value = as_paragraph('Numeric variables: Mann-Whitney test with r effect size statistic; categorical variables: \u03C7\u00B2 test with Cramer V effect size statistic'), 
            part = 'header', 
            ref_symbols = 'a') %>% 
   footnote(8, 1, 
@@ -266,7 +266,7 @@ flextable::flextable(suppl_tables$partition) %>%
   flextable::width(4, width = 2.7, unit = 'cm') %>% 
   flextable::width(5, width = 2.3, unit = 'cm') %>% 
   footnote(1, 4:5, 
-           value = as_paragraph('\u03c\u00B2 test with Cramer V effec size statistic'), 
+           value = as_paragraph('\u03C7\u00B2 test with Cramer V effect size statistic'), 
            part = 'body', 
            ref_symbols = 'a') %>% 
   footnote(2, 1, 
@@ -303,16 +303,16 @@ suppl_tables$clust_bcg[1, 1] %>%
 
 # Supplementary Figures
 
-```{r fig-parts-mental-cohort, fig.width = mm_inch(suppl_figures$parts_mental_cohort$w), fig.height = mm_inch(suppl_figures$parts_mental_cohort$h), fig.cap = 'Injured body regions and detailed scoring of quality of life, post-traumatic syndrome disorder and post-traumatic growth in the study cohort.'}
+```{r fig-parts-mental-cohort, fig.width = mm_inch(suppl_figures$parts_mental_cohort$w), fig.height = mm_inch(suppl_figures$parts_mental_cohort$h), fig.cap = 'Injured body regions and detailed scoring of quality of life, post-traumatic stress disorder and post-traumatic growth in the study cohort.'}
 
 suppl_figures$parts_mental_cohort$plot
 
 ```
 
-__Supplementary Figure S\@ref(fig:fig-parts-mental-cohort). Injured body regions and detailed scoring of quality of life, post-traumatic syndrome disorder and post-traumatic growth in the study cohort.__ 
+__Supplementary Figure S\@ref(fig:fig-parts-mental-cohort). Injured body regions and detailed scoring of quality of life, post-traumatic stress disorder and post-traumatic growth in the study cohort.__ 
 
 _For categorical variables, percentages of complete observations are presented as bars. Numeric variables are presented in violin plots with red diamonds denoting medians, interquartile ranges presented as red whiskers and single observations depicted as points. The number of complete cases is displayed in the plot captions._ 
-_(A) Distribution of injured body regions. (B) Scoring of the domains of the EUROHIS project 8-item quality of life scale (EUROHIS-QOL 8). (C) Scoring of the post-traumatic syndrome disorder (PTSD) clusters with the PCL-5 DSM-5 tool and percentages of participants screened positive for the PTSD clusters. (E) Scoring of the factors of the post-traumatic growth with the post-traumatic growth inventory (PTGI) tool._
+_(A) Distribution of injured body regions. (B) Scoring of the domains of the EUROHIS project 8-item quality of life scale (EUROHIS-QOL 8). (C) Scoring of the post-traumatic stress disorder (PTSD) clusters with the PCL-5 DSM-5 tool and percentages of participants screened positive for the PTSD clusters. (E) Scoring of the factors of the post-traumatic growth with the post-traumatic growth inventory (PTGI) tool._
 
 \newpage
 
@@ -340,7 +340,7 @@ suppl_figures$semi_clust$plot
 
 __Supplementary Figure S\@ref(fig:fig-semi-clust). Semi-supervised clustering.__ 
 
-_The mental clusters were defined in respect to psychometric scoring in the training subset of the study cohort by PAM (partition around medoids) with cosine distance between the observations. Assignment of the test subset observations to the mental clusters was done with the inverse distance weighted 7-nearest neighbors classifier. By this procedure, three mental clusters were identified: neutral, PTG (post-traumatic growth) and PTSD (post-traumatic syndrome disorder). Numbers of observations in the mental clusters are shown in the plot legend in (A)._
+_The mental clusters were defined in respect to psychometric scoring in the training subset of the study cohort by PAM (partition around medoids) with cosine distance between the observations. Assignment of the test subset observations to the mental clusters was done with the inverse distance weighted 7-nearest neighbors classifier. By this procedure, three mental clusters were identified: neutral, PTG (post-traumatic growth) and PTSD (post-traumatic stress disorder). Numbers of observations in the mental clusters are shown in the plot legend in (A)._
 
 _(A) Observations in the training and test subsets of the study cohorts were subjected to two-dimensional UMAP (uniform manifold approximation and projection) in respect to the psychometric scores. UMAP layouts are shown in scatter plots. Points represent single samples. Point color codes for the cluster assignment._
 
@@ -356,7 +356,7 @@ suppl_figures$feat_hm$plot
 
 __Supplementary Figure S\@ref(fig:fig-feat-hm). Levels of psychometric clustering scores in the mental clusters.__
 
-_Levels of psychometric scores used in clustering in the mental clusters. Normalized, median-centered score values (Z scores) are presented as heat maps. Numbers of observations in the clusters are displayed in the plot captions. PSS4: 4-item perceived stress scale; GAD-7: 7-item general anxiety disorder scale; PHQ: patient health questionnaire; EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale; SOC-9L: Leipzig 9-item sense of coherence questionnaire; RS13: 13-item resilience scale; PCL-5 DSM-5: PTSD checklist for DSM-5; PTGI: post-traumatic growth inventory; PTSD: post-traumatic syndrome disorder._
+_Levels of psychometric scores used in clustering in the mental clusters. Normalized, median-centered score values (Z scores) are presented as heat maps. Numbers of observations in the clusters are displayed in the plot captions. PSS4: 4-item perceived stress scale; GAD-7: 7-item general anxiety disorder scale; PHQ: patient health questionnaire; EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale; SOC-9L: Leipzig 9-item sense of coherence questionnaire; RS13: 13-item resilience scale; PCL-5 DSM-5: PTSD checklist for DSM-5; PTGI: post-traumatic growth inventory; PTSD: post-traumatic stress disorder._
 
 \newpage
 
@@ -393,6 +393,22 @@ suppl_figures$oneR$plot
 __Supplementary Figure S\@ref(fig:fig-oneR). Prediction of the mental cluster assignment by single demographic, socioeconomic, clinical and accident-related factors.__ 
 
 _Univariable classifiers of the mental cluster assignment for demographic, socioeconomic, clinical and accident-related parameters were trained in the training subset of the study cohort by the one-rule (oneR) algorithm. The cluster assignment was subsequently predicted for the test subset observations. Accuracy and $\kappa$ of the classifiers with any predictive value ($\kappa$ > 0 in both subsets) are shown in bar plots._
+
+\newpage
+
+```{r fig-early-crf, fig.width = mm_inch(suppl_figures$early_crf$w), fig.height = mm_inch(suppl_figures$early_crf$h), fig.cap = 'Assignment of accident victims to the mental clusters based on explanatory factors available during acute medical management of the accident.'}
+
+suppl_figures$early_crf$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-early-crf). Assignment of accident victims to the mental clusters based on explanatory factors available during acute medical management of the accident.__ 
+
+_A conditional random forest classifier for the mental cluster assignment based on demographic, socioeconomic, clinical and accident-related factors available during early acute medical management of the accident was trained in the training subset of the study cohort._
+
+_(A) Prediction accuracy of the classifier in the training and test subset of the study cohort presented in a heat map plot of the confusion matrices. Color codes for number of cases. The overall prediction accuracy, $\kappa$ and observation numbers are displayed in the plot caption. Prediction accuracy for particular clusters is shown in the X axis._
+
+_(B) Conditional importance of the explanatory variables for prediction of the mental cluster assignment expressed as accuracy loss ($\Delta$ accuracy)._
 
 \newpage
 
