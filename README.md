@@ -10,13 +10,13 @@ The analysis techniques encompassed semi-supervised PAM clustering, canonical hy
 <img src = "https://user-images.githubusercontent.com/80723424/221284887-7971c65c-de72-4f15-b596-fdd3e37b4836.png" width = "50%">
 </p>
 
-By clustering in respect to measures of anxiety, depression, somatization, panic, resilience, sense of coherence, quality of life, post-traumatic growth and post-traumatic syndrom disorder signs, three subsets of accident victims were identified:
+By clustering in respect to measures of anxiety, depression, somatization, panic, resilience, sense of coherence, quality of life, post-traumatic growth and post-traumatic stress disorder signs, three subsets of accident victims were identified:
 
 - __neutral cluster__: individuals without symptoms of deteriorating mental health or post-traumatic symptom disorder but also without signs of post-traumatic growth
 
 - __PTG cluster__: named after post-traumatic growth which ist the key hallmark of the cluster. 
 
-- __PTSD cluster__: characterized by the highest intensity of post-traumatic syndrome disorder (PTSD) signs along with substantial anxiety, depression, somatic symptoms, loss of quality of life, reduced coherence and limited resilient coping
+- __PTS cluster__: characterized by the highest intensity of post-traumatic stress disorder (PTSD) signs along with substantial anxiety, depression, somatic symptoms, loss of quality of life, reduced coherence and limited resilient coping
 
 You may follow the analysis progress [here](https://github.com/PiotrTymoszuk/mental_accident/tree/main/paper).
 
