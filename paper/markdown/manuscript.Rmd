@@ -1,12 +1,12 @@
 ---
-title: "Three distinct patterns of mental response after a sport accident"
+title: "Three distinct patterns of mental response after mountain sport accidents"
 subtitle: "Manuscript"
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 
 author: 
   - Katharina Hüfner, MD:
       institute: [psych]
-      email: Katharina.Huefner@tirol-kliniken.at
+      email: katharina.huefner@tirol-kliniken.at
       correspondence: true
   - Hanna Salvotti, MD:
       institute: [psych]
@@ -67,26 +67,25 @@ set_flextable_defaults(font.family = 'Cambria',
 
 # Abstract
 
-__Background:__ Long-term psychological consequences of sport accidents and sport accident victims at risk of mental deterioration are poorly characterized. 
-We sought to identify patterns of mental response following leisure time sport accidents.
+__Background:__ Psychological consequences of mountain sport accidents are poorly characterized. 
+We investigated patterns of mental response to mountain sport accidents and their victims at risk of mental deterioration.
 
-__Methods:__ A cross-sectional survey study was conducted with `r nrow(ptsd$dataset)` individuals treated at the Innsbruck University Hospital (Austria) following a non-professional sport accident. 
-Measures of anxiety (GAD-7), depression, somatic symptoms and panic (PHQ), resilient comping (RS-13), sense of coherence (SOC-9L), quality of life (EUROHIS), post-traumatic growth (PTGI) and post-traumatic stress disorder (PTSD) were recorded along with demographic, socioeconomic, medical history, accident- and injury-related data. 
-Patterns of mental readouts were defined by semi-supervised clustering and factors affecting the cluster assignment were identified by conditional random forest machine learning.
+__Methods:__ A cross-sectional survey was conducted with `r nrow(ptsd$dataset)` adult victims of mountain sport accidents treated at the Innsbruck University Hospital (Austria). 
+Anxiety (GAD-7), depression, somatic symptoms and panic (PHQ), resilient comping (RS-13), sense of coherence (SOC-9L), quality of life (EUROHIS), post-traumatic growth (PTGI) and post-traumatic stress disorder (PTSD) were recorded along with demographic, socioeconomic, medical history, accident- and injury-related data. 
+Patterns of mental readouts were defined by semi-supervised medoid clustering and models of cluster assignment based on non-mental measures were developed by the random forest algorithm.
 
-__Results:__ Participants were assigned to three mental clusters characterized by a neutral mental response, post-traumatic growth and post-traumatic stress symptoms, respectively. 
-Overall differences in demographic, socioeconomic, injury- and accident-related variables between the clusters were weak-to-moderate. 
-The post-traumatic growth and post-traumatic stress clusters were characterized by relatively frequent hospitalization, surgery, pre-existing somatic illness and female gender. 
-The key characteristics the post-traumatic stress cluster were more caution and flashbacks during sport activity, low income, pre-existing mental disorders, somatic consequences of the accident and subjective need for psychological support.
+__Results:__ Three mental clusters of accident victims were hallmarked by a neutral mental response, post-traumatic growth and post-traumatic burden of mental disorders, respectively. 
+Despite relatively frequent hospitalization, surgery, pre-existing mental or somatic illness, low income, and female gender in the post-traumatic growth and post-traumatic burden clusters, overall differences in non-mental variables between the clusters were weak. 
+Consequently, no reliable model of the cluster assignment employing explanatory factors available during acute medical accident management could be established.  
 
-__Conclusion:__ A subset of non-professional sport accident victims develops signs of mental health problems including symptoms of post-traumatic stress disorder. 
-Patients with low socioeconomic status, pre-existing somatic and mental conditions, and hospitalization represent a vulnerable group which may benefit most from a psychological intervention.
+__Conclusion:__ A subset of mountain sport accident victims develops symptoms of anxiety, depression, post-traumatic stress disorder and other mental health problems. 
+Since identification of these vulnerable patients with demographic, socioeconomic, accident- and injury-related predictors remains challenging, early and low-threshold psychological support is key to prevention of mental disorders following mountain sport accidents.
 
 \newpage
 
 # Keywords
 
-sport accident, mental health, post-traumatic stress disorder, post-traumatic growth
+mountain sport accident, mental health, post-traumatic stress disorder, post-traumatic growth, clustering, random forest, machine learning
 
 \newpage
 
@@ -96,73 +95,70 @@ sport accident, mental health, post-traumatic stress disorder, post-traumatic gr
 
 # Methods
 
-## Study population
+## Ethics
 
-_Hanna and Katharina: could you please provide a description?_
+The study was conducted in accordance with the Declaration of Helsinki and European data policies. 
+All participants gave electronically signed written informed consent to participate. 
+Participants' data were processed in anonymized form. 
+The study protocol was approved by the ethics committee of the Medical University of Innsbruck (approval number: _please fill in!_).
+
+## Participants
+
+In- and outpatients treated at the orthopedics and trauma departments of the Medical University of Innsbruck (Austria) between 2018 and 2020 were screened for participation. 
+Patients fulfilling the inclusion criteria: age $\geq$ 16 years, proficiency in German and treatment due to a mountain sport accident (n = `r nrow(ptsd$cleared)`) were invited to participate in the online study survey. 
+Out of them, `r length(ptsd$interview_ID)` completed the survey and `r nrow(ptsd$dataset)` individuals with the complete psychometry data were analyzed (__Figure \@ref(fig:fig-consort)__, __Supplementary Tables S1__ - __S2__).
 
 ## Procedures
 
-The psychometric battery (__Supplementary Table S2__) consisted of German versions of assessment tools for 
+Details on study procedures and variables are provided in __Supplementary Methods__ and __Supplementary Table S1__.
+
+The psychometric battery consisted of German versions of assessment tools for 
 anxiety (GAD-7: 7-item general anxiety disorder scale) [@Spitzer2006], 
 depression (PHQ: patient health questionnaire, PHQ-9) [@Lowe2002; @Grafe2004], 
 panic (PHQ-panic module) [@Lowe2002; @Grafe2004], 
 persistent somatic symptoms (PHQ-15) [@Kroenke2002], 
 resilient coping (RS13: 13-item resilience scale) [@Leppert2008], 
 loss of sense of coherence (SOC-9L: Leipzig 9-item sense of coherence questionnaire) [@Schumacher2000], 
-loss of quality of life (EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale) [@Schmidt2006], 
+quality of life (EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale) [@Schmidt2006], 
 post-traumatic growth (PTGI: post-traumatic growth inventory) [@Tedeschi1996] and 
 post-traumatic stress disorder (PCL-5 DSM-5: PTSD checklist for DSM-5) [@Bovin2016]. 
-The tools displayed good-to-excellent consistency as measured by McDonald's $\omega$ > 0.8 [@McDonald1999] (__Supplementary Table S3__). 
+The tools displayed good-to-excellent consistency [@McDonald1999] (McDonald's $\omega$ > 0.8, __Supplementary Table S2__ and __S3__). 
+Signs of anxiety (GAD-7 $\geq$ 10), depression (PHQ-9 $\geq$ 11) [@Manea2012], persistent somatic symptoms (PHQ-15 $\geq$ 11) [@Kroenke2002] and resilient coping classes (low: RS-13 0 - 65, moderate: 66 - 72, high: $\geq$ 73)[@Leppert2008] were defined as described before. 
+The total PTGI and PCL-5 DSM-5 scores were calculated as the sum of all items of the respective tools [@Tedeschi1996; @Bovin2016]. 
+Significant PTSD symptoms were defined as positivity in at least one PCL-5 DSM-5 domain [@Bovin2016]. 
 
-Symptoms of anxiety were defined as GAD-7 $\geq$ 10, symptoms of depression were defined as PHQ-9 $\geq$ 11 [@Manea2012], significant somatization/persistent somatic symptoms were defined as PHQ-15 $\geq$ 11 [@Kroenke2002]. 
-Resilient coping classes were defined as follows: low: RS-13 0 - 65, moderate: 66 - 72, high: $\geq$ 73 [@Leppert2008]. 
-
-Separate scores were computed for each domain of the PTGI tool (I: relations, II: possibilities, III: personal strength, IV: spiritual strength, V: life appreciation) with each item scores as 0: none, 1: very little, 2: little, 3: moderate, 4: great, 5: extremely great. 
-In addition, the total PTGI score was calculated as the sum of all items [@Tedeschi1996]. 
-
-Separate scores were calculated for domains B, C, D and E of the PCL-5 DSM-5 tool along with the total score being the sum of all items. 
-Participants positive for the B domain or C domain were identified by at least one item scored with 'moderate', participants positive for the D or E domain were identified by at least two item scored with 'moderate'. 
-Significant PTSD symptoms where assumed in participants screened positive for at least one of the PCL-5 DSM-5 domains [@Bovin2016]. 
-
-Traumatic events prior to the sport accident were assessed with the DIA-X tool [@Maercker2005]. 
-Flashbacks during sport activity, 
-were surveyed as a single yes/no item. 
-Flashbacks frequency was assessed in the following categories: none, more than one per month and more than one per year. 
+Traumatic events before the accident were assessed with the DIA-X tool [@Maercker2005]. 
+Flashbacks frequency was surveyed as none, > 1/month and > 1/year. 
 Smoking was surveyed as a single yes/no question. 
-Substance abuse was investigated with the CAGE tool [@OBrien2008]. 
-Data on hospital treatment, hospitalization and surgery were extracted from electronic patient's records. 
-Injury severity was assessed with the abbreviated injury scale (AIS) [@Gennarelli2006]. 
+Alcohol abuse was investigated with the CAGE tool [@OBrien2008]. 
+Data on injury (AIS: abbreviated injury scale) [@Gennarelli2006] and medical treatment were extracted from electronic patient's records.
 
-Additional information on study variables and their stratification schemes are presented in __Supplementary Methods__ and __Supplementary Table S1__.
-
-The study participants were assigned to the training and test subsets with the 2:1 size ratio with a random procedure aiming at minimal differences in accident year, age, gender, somatic and mental illness rates, frequencies of prior traumatic events [@Maercker2005] and distribution of injury severity grades [@Gennarelli2006] (__Figure 1__). 
-The training subset size (n = `r nrow(clust_globals$analysis_tbl$training)`) was sufficient for clustering analysis as investigated by comparing Hopkins metrics of clustering tendencies [@Kassambara2020] in random subsamples of the entire dataset of varying size (__Supplementary Methods__). 
+The training and test participant subsets (2:1 size ratio) were obtained by random splitting which minimized differences in accident year, age, gender, pre-existing traumatic events, somatic and mental illness, and injury severity (__Figure \@ref(fig:fig-consort)__). 
+The training subset size (n = `r nrow(clust_globals$analysis_tbl$training)`) was sufficient for clustering analysis as assessed by Hopkins metrics = `r pow$hopkins %>% filter(size == 200) %>% .$hopkins_stat %>% median %>% signif(2)` [@Kassambara2020]. 
 
 ## Analysis endpoints
 
-The primary analysis endpoint was identification of patterns of mental response by clustering of leisure time sport accident victims in respect to measures of anxiety, depression, panic, somatization, quality of life, post-traumatic growth and post-traumatic symptom disorder by clustering analysis. 
-The secondary analysis endpoints were demographic, socioeconomic and clinical characteristic of the mental response clusters and development of a classification procedure to discern individuals at risk of deteriorated mental health following a sport accident.
+The primary analysis endpoint was identification of subsets of mountain sport accident victims by clustering in respect to scores of anxiety, depression, panic, persistent somatic symptoms, quality of life, post-traumatic growth and post-traumatic stress disorder. 
+The secondary analysis endpoints were demographic, socioeconomic and clinical characteristic of the mental clusters and development of a mental cluster assignment model to discern accident victims at risk of mental disorders.
 
 ## Statistical analysis
 
-Statistical analysis was done with R version 4.2.0. 
+Details on statistical analysis are provided in __Supplementary Methods__ 
+
+Statistical analysis was done with R version 4.2.3. 
 Numeric variables are displayed as medians with interquartile ranges. 
-Categorical variables are presented as percentages and counts within the complete observation set. 
-The majority of numeric variables were non-normally distributed (Shapiro-Wilk test). 
-Hence, differences in numeric variables between analysis groups were analyzed by Mann-Whitney test with r effect size statistic or Kruskal-Wallis test with $\eta^2$ effect size statistic [@Kassambara2021]. 
-Differences in distribution of categorical variables were assessed by $\chi^2$ test with Cramer V effect size statistic [@Kassambara2021]. 
+Categorical variables are presented as percentages and counts. 
+Differences in numeric variables were analyzed by Mann-Whitney or Kruskal-Wallis test with r or  $\eta^2$ effect size statistics. 
+Differences in categorical variable distribution were assessed by $\chi^2$ test with Cramer V effect size statistic [@Kassambara2021]. 
 
-The training subset was clustered in respect to normalized median-centered numeric psychometric scores by the partition around medoids algorithm with the cosine distance measure between observations [@Drost2018; @Schubert2019]. 
-The clustering procedure was characterized a good explanatory performance (explained clustering variance: ratio of between-cluster sum of squares to total sum of squares) and the superior stability in 10-fold cross-validation [@Lange2004] as compared with hierarchical and KMEANS algorithms. 
-The cluster number was chosen based on the bend of the curve of within-cluster sum of squares and the peak of mean silhouette statistic [@Kassambara2020]. 
-Three mental clusters were defined: the neutral, PTG (post-traumatic growth) and PTSD (post-traumatic stress disorder) cluster. 
-Assignment of the training subset observations to the mental clusters was accomplished with an inverse distance weighted 7-nearest neighbor classifier. 
-The quality of cluster predictions was assessed by comparing explained clustering variances in the training and test subset, visual inspection of UMAP (uniform manifold approximation and projection) layouts [@McInnes2018; @Konopka2022], of distance heat maps and heat maps of normalized clustering feature levels.
+The training subset was clustered in respect to normalized median-centered psychometric scores by partition around medoids with cosine distance [@Drost2018; @Schubert2019]. 
+This algorithm had a good explanatory performance (ratio of between-cluster sum of squares to total sum of squares) and the superior accuracy in 10-fold cross-validation [@Lange2004] as compared with the hierarchical and KMEANS algorithms. 
+The k = 3 cluster number choice was based on the bend of within-cluster sum of squares curve and maximal mean silhouette statistic [@Kassambara2020; @Rousseeuw1987]. 
+The training subset observations were assigned to the clusters with an inverse distance weighted 7-nearest neighbor classifier.
 
-Univariable classifiers of the mental cluster assignment for demographic, socioeconomic, clinical and accident-related parameters were trained in the training subset of the study cohort by the one-rule algorithm [@VonJouanne-Diedrich2017; @Holte1993]. 
-The multi-parameter classifier was developed in the training subset with the conditional random forest algorithm (1000 random trees, mtry = 5) [@Hothorn2006; @Strobl2007; @Hothorn2022]. 
-The cluster assignment was subsequently predicted for the test subset observations and accuracy and $\kappa$ statistic for the predictions were computed [@Kuhn2008]. 
-Conditional importance for explanatory variables in the random forest classifiers were expressed as accuracy loss [@Strobl2008].
+The uni- and multi-parameter classifiers were trained with the one-rule [@VonJouanne-Diedrich2017; @Holte1993] and conditional random forest algorithms [@Hothorn2006; @Strobl2007; @Hothorn2022], respectively. 
+The cluster assignment was predicted for the test subset and assessed by the accuracy and $\kappa$ statistics [@Kuhn2008]. 
+Conditional variable importance in the random forest classifiers was expressed as accuracy loss [@Strobl2008].
 
 \newpage
 
@@ -170,158 +166,133 @@ Conditional importance for explanatory variables in the random forest classifier
 
 # Characteristic of the study cohort
 
-A total of 
-`r nrow(ptsd$cleared)` patients aged $\geq$ 16 years treated at the emergency, surgery, orthopedics and trauma departments at the University Clinic of Innsbruck (Austria) following a non-professional sport accident between 2018 and 2020 were invited to participant in the study survey. 
+In- and outpatient adult victims of mountain sport accidents treated at the Medical University of Innsbruck (Austria) between 2018 and 2020 were invited to participate (n = `r nrow(ptsd$cleared)`). 
 Out of them, 
-`r length( ptsd$interview_ID)` completed the survey and 
-`r nrow(ptsd$dataset)` individuals with the complete psychometric parameter set were analyzed here amounting to an 
-`r ((nrow(ptsd$dataset)/length(ptsd$interview_ID)) * 100) %>% signif(2)`% overall response rate  (__Figure 1__, __Supplementary Tables S1__ - __S3__).
+`r length( ptsd$interview_ID)` completed the study survey and 
+`r nrow(ptsd$dataset)` individuals with the complete psychometric parameter set were analyzed (overall response rate: `r ((nrow(ptsd$dataset)/nrow(ptsd$cleared)) * 100) %>% signif(2)`%, __Figure \@ref(fig:fig-consort)__, __Supplementary Tables S1__ - __S3__).
 
-As compared with the study participants, the individuals excluded from the analysis had lower employment rates, household income and less chronic somatic conditions. 
-The excluded collective tended towards more biking and less ski/snowboard accidents and less professional rescue need. 
-Their injuries were on average less severe as measured by AIS [@Gennarelli2006] with more often upper limb injuries, and lower hospitalization and surgery rates. 
-The excluded individuals tended suffered less often from somatic health consequences of the accident and tended towards lower ratings of post-traumatic stress disorder but also diminished post-traumatic growth and less sense of coherence. 
-These differences were significant or near-significant with weak effects sizes (V $\leq$ 0.22 or r $\leq$ 0.15). 
-This analysis suffered also from high data missingness in the excluded collective (__Supplementary Table S4__). 
+As compared with the participants, the individuals excluded from the analysis had lower income, less frequent ski and more frequent biking accidents, less severe injuries, and lower hospitalization and surgery rates. 
+The excluded individuals had also lower ratings of post-traumatic growth ratings and lower sense of coherence. 
+Effects of these differences were weak (V $\leq$ 0.22 or r $\leq$ 0.15, __Supplementary Table S4__). 
 
-In the analyzed cohort, the accidents happened between 
-`r ptsd$dataset$accident_date %>% range(na.rm = TRUE) %>% paste(collapse = ' and ')` and were managed at the study site between `r ptsd$dataset$ward_date %>% range(na.rm = TRUE) %>% paste(collapse = ' and ')`. 
-The median time between the emergency unit or ward management and survey completion was 
-`r median(ptsd$dataset$obs_time)` days (interquartile range: 
-`r quantile(ptsd$dataset$obs_time, probs = c(0.25, 0.75)) %>% paste(collapse = ' - ')`). 
+In the analyzed cohort, the median time between the medical accident management and survey completion was 
+`r median(ptsd$dataset$obs_time)` days. 
 The participants were predominantly middle-aged (median `r median(ptsd$dataset$age)` years) and 
 `r signif(table(ptsd$dataset$sex)/sum(table(ptsd$dataset$sex)), 2)[1] * 100`% of them were females. 
-The vast majority had secondary or tertiary education grade and two-third were professionally active. 
-Sport and trauma-risk professions constituted only a minor fraction of the cohort (< 8%). 
-Over 40% of participants had high annual household incomes of $\geq$ 45000 Euro. 
-Less than 10% of participants were smokers or alcohol/drug consumers. 
-Frequencies of somatic and mental conditions were 
-`r signif(table(ptsd$dataset$somatic_comorbidity)/sum(table(ptsd$dataset$somatic_comorbidity)), 2)[2] * 100`% and 
-`r signif(table(ptsd$dataset$psych_comorbidity)/sum(table(ptsd$dataset$psych_comorbidity)), 2)[2] * 100`%, respectively. 
-The rates of smoking (Austria: 20.6%) and somatic (38.3%) illness were lower than in the general population [@StatistikAustria2022a; @StatistikAustria2022]. 
-Four of ten participants were directly affected by or witnessed a traumatic event prior to the accident as gauged by the DIA-X questionnaire [@Maercker2005]. 
+The vast majority had secondary or tertiary education grade and were professionally active. 
+Sport and trauma-risk professions constituted < 8% of the cohort. 
+High annual household incomes of $\geq$ 45000 Euro was reported by > 40% of participants. 
+Less than 10% of participants were smokers or at risk of alcohol addiction. 
+Chronic somatic conditions prior to the accident were reported by `r signif(table(ptsd$dataset$somatic_comorbidity)/sum(table(ptsd$dataset$somatic_comorbidity)), 2)[2] * 100`% of participants with cardiovascular, neurological and metabolic illness being the most frequent. 
+The rates of smoking (Austria: 20.6%) and somatic illness (38.3%) were lower than in the general Austrian population [@StatistikAustria2022a; @StatistikAustria2022].
+Psychiatric disorders before the accident affected `r signif(table(ptsd$dataset$psych_comorbidity)/sum(table(ptsd$dataset$psych_comorbidity)), 2)[2] * 100`% of the cohort. 
+Four of ten participants were affected by or witnessed a traumatic event prior to the accident (__Table \@ref(tab:tab-cohort-demo)__). 
 
 Nearly 40% of participants had sport accidents in the past. 
-Concerning the recent accident, the almost two-third of them were injured during skiing or snowboarding followed by biking and mountain sport. 
-One-third were alone during the accident and, in the vast majority of case, were the sole culprit and victim. 
-Roughly the half of participants could rescue themselves, professional rescue team was involved in 
-`r signif(table(ptsd$dataset$accident_rescue)/sum(table(ptsd$dataset$accident_rescue)), 2)[3] * 100`% of cases. 
-In 
-`r signif(table(ptsd$dataset$injury_sev_strata)/sum(table(ptsd$dataset$injury_sev_strata)), 2)[2] * 100`% of participants the injury grade was moderate (AIS 2) and in 
-`r signif(table(ptsd$dataset$injury_sev_strata)/sum(table(ptsd$dataset$injury_sev_strata)), 2)[3] * 100`% severe to life threatening (AIS $\geq$ 3). 
-Upper and lower limb injuries were the most frequent followed by head and face (__Supplementary Figure S1A__). 
+Almost two-thirds of the investigated accidents happened during skiing or snowboarding followed by biking and classical mountain sports such as climbing, hiking or mountaineering. 
+One-third participants were alone during the accident and, in most cases, were the sole culprit and victim. 
+Roughly half of participants could rescue themselves, `r signif(table(ptsd$dataset$accident_rescue)/sum(table(ptsd$dataset$accident_rescue)), 2)[3] * 100`% required a professional rescue. 
+In `r signif(table(ptsd$dataset$injury_sev_strata)/sum(table(ptsd$dataset$injury_sev_strata)), 2)[2] * 100`% of participants the injury was moderate (AIS 2) and in 
+`r signif(table(ptsd$dataset$injury_sev_strata)/sum(table(ptsd$dataset$injury_sev_strata)), 2)[3] * 100`% severe-to-critical (AIS $\geq$ 3). 
+Limb injuries were the most common followed by head and face (__Supplementary Figure S1A__). 
 Hospitalization and surgery rates were 
 `r signif(table(ptsd$dataset$hospitalization)/sum(table(ptsd$dataset$hospitalization)), 2)[2] * 100`% and 
 `r signif(table(ptsd$dataset$surgery_done)/sum(table(ptsd$dataset$surgery_done)), 2)[2] * 100`%, respectively. 
-Psychological or psychiatric support was applied to 
+Psychological or psychiatric support after the accident was applied to 
 `r signif(table(ptsd$dataset$psych_support_post_accident)/sum(table(ptsd$dataset$psych_support_post_accident)), 2)[2] * 100`% individuals. 
 Among those who had not received it, 
-`r signif(table(ptsd$dataset$psych_support_need)/sum(table(ptsd$dataset$psych_support_need)), 2)[2] * 100`% declared the need for psychological support concerning the accident. 
-Despite somatic health consequences of the accident were reported by 
-`r signif(table(ptsd$dataset$accident_aftermath)/sum(table(ptsd$dataset$accident_aftermath)), 2)[2] * 100`% and unwilling flashbacks during sport in 
-`r signif(table(ptsd$dataset$unwilling_flashback)/sum(table(ptsd$dataset$unwilling_flashback)), 2)[2] * 100`%, the majority of participants returned to the accident sport type (
+`r signif(table(ptsd$dataset$psych_support_need)/sum(table(ptsd$dataset$psych_support_need)), 2)[2] * 100`% declared psychological support need. 
+Despite fairly common somatic health consequences of the accident 
+(`r signif(table(ptsd$dataset$accident_aftermath)/sum(table(ptsd$dataset$accident_aftermath)), 2)[2] * 100`%) and flashbacks during sport (`r signif(table(ptsd$dataset$unwilling_flashback)/sum(table(ptsd$dataset$unwilling_flashback)), 2)[2] * 100`%), most participants returned to the accident sport type (
 `r signif(table(ptsd$dataset$same_sport_type_post_accident)/sum(table(ptsd$dataset$same_sport_type_post_accident)), 2)[2] * 100`%). 
-Yet, two-third described their behavior during sport activity as more cautious (__Table \@ref(tab:tab-cohort-accident)__).
+Yet, two-third described their behavior during sport as more cautious (__Table \@ref(tab:tab-cohort-accident)__).
 
-Clinically relevant signs of 
+Signs of 
 anxiety (`r signif(table(ptsd$dataset$gad7_total_class)/sum(table(ptsd$dataset$gad7_total_class)), 2)[2] * 100`%), 
 depression (`r signif(table(ptsd$dataset$phq9_total_class)/sum(table(ptsd$dataset$phq9_total_class)), 2)[2] * 100`%) and 
-somatization (`r signif(table(ptsd$dataset$phq_events_total_class)/sum(table(ptsd$dataset$phq_events_total_class)), 2)[2] * 100`%) were rare in the study cohort. 
-The median loss of quality of life was scored with `r median(ptsd$dataset$eurohis_total) %>% signif(2)` EUROHIS QOL points. 
-The overall quality of life was hence substantially worse than in a generalized Western European population [@Schmidt2006]. 
-The participants were most satisfied with their overall quality of life and housing (__Table \@ref(tab:tab-cohort-mental)__, __Supplementary Figure S1B__). 
-Roughly two-third of participants were assigned to the high resilient coping class [@Leppert2008]. 
-The scores of overall post-traumatic growth (median: `r median(ptsd$dataset$ptgi_total) %>% signif(2)`) and its specific domains were lower in the study cohort as compared with the figures originally reported for the PTGI tool [@Tedeschi1996] (__Table \@ref(tab:tab-cohort-mental)__, __Supplementary Figure S1C__). 
-In `r signif(table(ptsd$dataset$dsm5_cluster_class)/sum(table(ptsd$dataset$dsm5_cluster_class)), 2)[2] * 100`% of participants symptoms of post-traumatic stress disorder defined as positivity for at least one PCL-5 DSM-5 tool domain [@Bovin2016] could be observed. 
-Among them, domain B symptoms (`r signif(table(ptsd$dataset$dsm5_B_class)/sum(table(ptsd$dataset$dsm5_B_class)), 2)[2] * 100`%) were the most frequent and domain D symptoms were the rarest (`r signif(table(ptsd$dataset$dsm5_D_class)/sum(table(ptsd$dataset$dsm5_D_class)), 2)[2] * 100`%) (__Table \@ref(tab:tab-cohort-mental)__ and __Supplementary Figure S1D__).
+persistent somatic symptoms (`r signif(table(ptsd$dataset$phq_events_total_class)/sum(table(ptsd$dataset$phq_events_total_class)), 2)[2] * 100`%) were rare in the study cohort (__Table \@ref(tab:tab-cohort-mental)__). 
+Quality of life was rated with median `r median(ptsd$dataset$eurohis_total) %>% signif(2)` EUROHIS points, which was comparable to the generalized Western European population [@Schmidt2006]; overall quality of life and housing domains received the highest ratings. 
+Roughly two-thirds of participants were assigned to the high resilient coping class [@Leppert2008]. 
+Overall post-traumatic growth (median: `r median(ptsd$dataset$ptgi_total) %>% signif(2)`) and its specific domains were rated lower than originally reported for the PTGI tool [@Tedeschi1996]. 
+Symptoms of post-traumatic stress disorder were observed in `r signif(table(ptsd$dataset$dsm5_cluster_class)/sum(table(ptsd$dataset$dsm5_cluster_class)), 2)[2] * 100`% of participants with domain B symptoms (`r signif(table(ptsd$dataset$dsm5_B_class)/sum(table(ptsd$dataset$dsm5_B_class)), 2)[2] * 100`%) being most common (__Table \@ref(tab:tab-cohort-mental)__ and __Supplementary Figure S1__).
 
-For sake of semi-supervised clustering and classification procedure development, the study cohort was split into the training (n = `r nrow(clust_globals$analysis_tbl$training)`) and test subset (n = `r nrow(clust_globals$analysis_tbl$test)`). 
-There were no significant differences between the subsets in demographic, socioeconomic, clinical and accident-related parameters. 
-The training subset tended towards more frequent face injuries and low resilient coping class individuals. 
-Yet the effect size of those differences was weak (V < 0.14) (__Supplementary Table S5__).
+For clustering and modeling, the cohort was split into the training (n = `r nrow(clust_globals$analysis_tbl$training)`) and test subset (n = `r nrow(clust_globals$analysis_tbl$test)`). 
+There were no significant differences between the subsets in demographic, socioeconomic, clinical and accident-related parameters (not shown).
 
 # Three clusters of mental response in sport accident victims
 
-To comprehend types of mental response to the sport accident, we subjected the study participants to semi-supervised clustering in respect to measures of anxiety, depression, panic, persistent somatic symptoms, resilience, sense of coherence, quality of life, post-traumatic growth and post-traumatic stress disorder. 
-Among several clustering algorithms compared in the training subset, partition around medoids with cosine distance between observations [@Drost2018; @Schubert2019] demonstrated good explanatory power and superior reproducibility in cross-validation [@Lange2004] (__Supplementary Figure S2A__). 
-Three clusters of participants named neutral, PTG (post-traumatic growth) and PTSD (post-traumatic stress disorder) cluster after the patterns of their characteristic mental features were identified in the training subset. 
-Subsequently, the mental cluster assignment could be robustly validated in the test subset as evident from comparable fractions of explained clustering variance in both study cohort subsets (training: `r signif(semi_clust$variance$variance[1], 2)`, test: `r signif(semi_clust$variance$variance[2], 2)`) and comparable cluster sizes (__Supplementary Figures S1B__ - __S4__). 
+To explore mental responses to mountain sport accidents, we subjected the participants to clustering in respect to a broad range of numeric psychometry variables (__Supplementary Table S2__). 
+Among clustering algorithms compared in the training subset, partition around medoids with cosine distance [@Drost2018; @Schubert2019] demonstrated good explanatory power and superior reproducibility in cross-validation [@Lange2004] (__Supplementary Figure S2A__). 
+Three mental clusters: 'neutral', 'PTG' (post-traumatic growth) and 'PTB' (post-traumatic burden), named after their key mental characteristic were identified in the training subset. 
+Subsequently, the mental cluster assignment could be robustly validated in the test subset as evident from comparable fractions of explained clustering variance (training: `r signif(semi_clust$variance$variance[1], 2)`, test: `r signif(semi_clust$variance$variance[2], 2)`), comparable cluster sizes and good visual clusetr separation in both study cohort subsets (__Supplementary Figures S2B__ - __S4__). 
 
-Roughly one-third study participants assigned to the neutral clusters were characterized by low scores of anxiety, depression, panic and somatic symptoms along with high rating of coherence, resilient coping and quality of life. 
-Scores of post-traumatic growth and post-traumatic stresswere the lowest in the neutral cluster. 
-The PTG cluster demonstrated similarly low score of major mental health problems as neutral cluster individuals. 
-By contrast, the overall measures of post-traumatic growth and its domains were the highest in the PTG cluster. 
-In addition, ratings of post-traumatic stress disorder symptoms were slightly elevated in the PTG as compared with the neutral cluster. 
-The remaining participants subsumed in the PTSD cluster displayed the most intense signs of anxiety, depression, panic and somatic symptoms as well as poor sense of coherence, resilient coping and low quality of life as compared with the neutral and PTG cluster. 
-PTSD cluster was hallmarked by the highest scores of post-traumatic stress disorder symptoms in every PCL-5 DSM-5 domain. 
-Post-traumatic growth was also present in the PTSD cluster as evident from elevated PTGI scores (__Figure \@ref(fig:fig-clust-psych)__, __Supplementary Figure S4__, __Supplementary Table S6__).
+The neutral cluster encompassing roughly one-third participants was characterized by low levels of anxiety, depression, panic, somatic symptoms, post-traumatic stress and post-traumatic growth along with high rating of coherence, resilient coping and quality of life. 
+The PTG cluster demonstrated similarly low scores of major mental health disorders. 
+By contrast, levels of post-traumatic growth were the highest in the PTG cluster. 
+Furthermore, ratings of post-traumatic stress were slightly higher in the PTG than in the neutral cluster. 
+The remaining PTB cluster displayed the highest scores of anxiety, depression, panic, somatic symptoms and post-traumatic stress as well as poor sense of coherence, resilient coping and low quality of life. 
+Post-traumatic growth scores in the PTB cluster were higher than in neutral but lower than in PTB cluster participants (__Figure \@ref(fig:fig-clust-psych)__, __Supplementary Table S5__).
+Consequently, clinically relevant symptoms of anxiety, depression and persistent somatic symptoms were present virtually only in the PTB cluster. 
+Furthermore, frequencies of low and moderate resilient classes peaked in the PTB cluster. 
+Finally, symptoms of post-traumatic stress disorder were way more frequent in the PTB cluster (any symptoms: > 36%) than in the remaining clusters (__Figure \@ref(fig:fig-clust-symptoms)__).
 
-Along this line, clinically relevant symptoms of anxiety, depression and somatization were present virtually only in the PTSD clusters of the training and test subsets of the study cohort. 
-Furthermore, frequencies of low and moderate resilient coping classes were by far the highest in the PTSD cluster. 
-Finally, approximately 40% of PTSD cluster individuals were screened positive for at least one post-traumatic stress disorder symptom which was more than in the PTG 
-(training: `r signif(table(feat_clust$ident_tbl$training %>% filter(clust_id == 'PTG') %>% .$dsm5_cluster_class)/sum(table(feat_clust$ident_tbl$training %>% filter(clust_id == 'PTG') %>% .$dsm5_cluster_class)), 2)[2] * 100`%, 
-test: `r signif(table(feat_clust$ident_tbl$test %>% filter(clust_id == 'PTG') %>% .$dsm5_cluster_class)/sum(table(feat_clust$ident_tbl$test %>% filter(clust_id == 'PTG') %>% .$dsm5_cluster_class)), 2)[2] * 100`%) or neutral cluster 
-(training: `r signif(table(feat_clust$ident_tbl$training %>% filter(clust_id == 'neutral') %>% .$dsm5_cluster_class)/sum(table(feat_clust$ident_tbl$training %>% filter(clust_id == 'neutral') %>% .$dsm5_cluster_class)), 2)[2] * 100`%, 
-test: `r signif(table(feat_clust$ident_tbl$test %>% filter(clust_id == 'neutral') %>% .$dsm5_cluster_class)/sum(table(feat_clust$ident_tbl$test %>% filter(clust_id == 'neutral') %>% .$dsm5_cluster_class)), 2)[2] * 100`%). 
-An analogical trend was observed for the remaining post-traumatic stress disorder domains (__Figure \@ref(fig:fig-clust-symptoms)__).
-
-Collectively, the PTG cluster may represent individuals with salutary reaction to their sport accident, whereas the PTSD cluster individuals may pose a group of mental health deterioration.
+Collectively, the PTG cluster may represent individuals with salutary reaction to mountain sport accident, whereas the PTB cluster may pose a group at risk of mental health deterioration.
 
 # Demographic, socioeconomic and clinical background of the mental clusters
 
-Next, we sought to explore differences in demography, socioeconomic status, clinical background, accident details and consequences between the mental clusters. 
 Among 
-`r length(clust_bcg$variables)` investigated variables, only 
-`r length(clust_bcg$top_factors)` parameters were found significant or near-significant (p < 0.1) in both the training and test subsets of the study cohort (__Supplementary Table S6__). 
+`r length(clust_bcg$variables)` investigated demographic, socioeconomic, clinical, accident- and accident consequence-related variables, only 
+`r length(clust_bcg$top_factors)` parameters were found to differ significantly between the mental clusters in both the training and test subsets. 
+The effect size of such differences was weak (__Supplementary Table S6__). 
 
-A substantial enrichment of females, low-to-middle income and non-tertiary education participants could be observed in the PTSD cluster. 
+A substantial enrichment of females, low-to-middle income and non-tertiary education participants was observed in the PTB cluster. 
 The PTG cluster had the highest share of middle-aged individuals. 
-Frequency of somatic conditions were the highest in the PTG and PTSD clusters. 
-Mental illness participants were in turn represented virtually only in the PTSD cluster. 
-Although there were no differences in frequency of previous sport accidents between the clusters, PTG cluster individuals were found to be affected by traumatic events in the past at a higher percentage than neutral cluster individuals. 
+Frequency of somatic conditions before the accident were the highest in the PTG and PTB clusters. 
+Participants with pre-existing mental illness were in turn represented virtually only in the PTB cluster. 
+Although frequencies of previous sport accidents were comparable between the clusters, PTG cluster individuals were affected by prior traumatic events more often than neutral cluster individuals. 
 These differences were, however, non or borderline significant and of weak effect size (__Figure \@ref(fig:fig-clinic-factors)__, __Supplementary Figure S5__). 
-There were no consistent differences in accident sport type, rescue mode, injury severity or injured body parts between the mental clusters. 
-Yet, participants assigned to the PTG and PTSD clusters were tended towards higher hospitalization and surgery rates (__Figure \@ref(fig:fig-injury)__ and __Supplementary Figure S6__). 
+There were no consistent differences in accident sport type, rescue, injury severity and location between the mental clusters. 
+Yet, PTG and PTB cluster individuals tended towards higher hospitalization and surgery rates (__Figure \@ref(fig:fig-injury)__ and __Supplementary Figure S6__). 
 
-PTSD cluster participants reported somatic health consequences of the accident and flashbacks significantly more often than neutral cluster individuals. 
-Additionally, PTG and PTSD cluster individuals tended to describe their behavior during sport activity as more careful as compared with the neutral cluster. 
-Roughly one-sixth PTSD cluster participants declared need for psychological or psychiatric support as compared with none in the neutral clusters of the training or test subset. 
-Only a small fraction the study participants received psychological support following the accident. 
-Although such individuals tended to be enriched in the PTG cluster, their frequency (up to 16%) was low. 
-Hence it is unlikely, that psychological support affected the mental cluster assignment (__Figure \@ref(fig:fig-aftermath)__).
-
-In summary, differences in non-mental features between the clusters were weak. 
-Yet, the PTSD cluster could be characterized by elevated fractions of female, low-to-middle income class individuals, increased rates of somatic and mental conditions, hospitalization and surgery. 
-Furthermore, such individuals were disproportionately often affected by somatic health aftermath and flashbacks.
+Somatic health consequences of the accident and flashbacks were significantly more common in the PTB than the neutral cluster. 
+Additionally, PTG and PTB cluster individuals tended towards more caution during sport as compared with the neutral cluster. 
+Roughly one-sixth PTB cluster individuals reported need for psychological support following the accident as compared with none in the neutral cluster. 
+Rates psychological support after the accident tended to be higher in the PTG (12 - 16%) than in the remaining clusters, yet this effect was significant only in the training subset (__Figure \@ref(fig:fig-aftermath)__). 
+Given the low frequency of psychological support after the accident in the study cohort and particular clusters, it is unlikely, that psychological support affected the mental cluster assignment .
 
 # Prediction of the mental cluster assignment by demographic, socioeconomic and accident-related factors
 
-Finally, we intended to establish a mental cluster classification procedure based solely on demographic, socioeconomic, clinical and accident-related factors. 
-As investigated by a simple one rule classification algorithm [@VonJouanne-Diedrich2017; @Holte1993], predictive value of single explanatory parameters was low with cluster assignment accuracy $\leq$ `r class_one$fit_stats$global$Accuracy %>% max %>% signif(2)` and $\kappa \leq$ `r class_one$fit_stats$global$Kappa %>% max %>% signif(2)`. 
-In such univariable analysis, flashback presence and frequency, somatic health consequences of the accident, age class, annual income and traumatic events in the past were identified as the most predictive factors (__Supplementary Figure S7__). 
+Finally, we intended to model the mental cluster assignment with `r length(class_globals$early_variables)` demographic, socioeconomic, clinical and accident-related factors available during acute medical management of the accident (__Supplementary Table S7__). 
+Such models would enable early identification of mountain sport accident victims at risk of mental health problems. 
 
-To account for cumulative effects of multiple weak predictors of the mental cluster assignment, we employed multi-parameter conditional random forest modeling [@Strobl2007; @Hothorn2006; @Hothorn2022]. 
-The conditional random forest classifier employing the full set of demographic, socioeconomic, clinical and accident-related explanatory factors could correctly assign `r signif(class_rf$fit_stats$global$Accuracy[1], 2) * 100`% training subset observations to their mental clusters 
-($\kappa$ = `r signif(class_rf$fit_stats$global$Kappa[1], 2)`). 
-However, the predictive performance in the test subset of the study cohort was only fair with correct mental cluster predictions in `r signif(class_rf$fit_stats$global$Accuracy[2], 2) * 100`% of cases 
-($\kappa$ = `r signif(class_rf$fit_stats$global$Kappa[2], 2)`). 
-The predictive performance was the best for PTG cluster individuals of whom >80% and > 62% were classified correctly in the training and test subset, respectively (__Figure \@ref(fig:fig-crf)A__).
-The most important explanatory variables for the mental cluster prediction by conditional random forests were presence and frequency of flashbacks, cautious behavior during sport activity after the accident, annual income, sex and somatic health consequences of the accident.
+Predictive value [@VonJouanne-Diedrich2017; @Holte1993] of single early explanatory parameters was poor (maximum accuracy: `r class_one$fit_stats$global$Accuracy %>% max %>% signif(2)`, maximum $\kappa$: `r class_one$fit_stats$global$Kappa %>% max %>% signif(2)`) and inconsistent between the subsets of the study cohort. 
+In such univariable analysis, age class, annual income and traumatic events in the past were the most predictive factors (__Supplementary Figure S7__). 
+
+To account for cumulative effects and interactions of multiple weak predictors of the mental cluster assignment, we resorted to conditional random forest modeling [@Strobl2007; @Hothorn2006; @Hothorn2022]. 
+This multi-parameter model employing early candidate cluster predictors could correctly assign `r signif(class_early$fit_stats$global$Accuracy[1], 2) * 100`% training subset observations to their mental clusters 
+($\kappa$ = `r signif(class_early$fit_stats$global$Kappa[1], 2)`). 
+However, its predictive performance in the test subset was poor (accuracy: `r signif(class_early$fit_stats$global$Accuracy[2], 2) * 100`, $\kappa$ = `r signif(class_early$fit_stats$global$Kappa[2], 2)`). 
+The prediction quality was the best for the PTG cluster (accuracy, training: 89.5%, test: 59.4%, __Figure \@ref(fig:fig-early-crf)A__).
+The most important early explanatory variables for the cluster prediction by conditional random forests were annual income, sex, mode of rescue, leg injury and pre-existing mental illness (__Figure \@ref(fig:fig-early-crf)B__). 
+Inclusion of late accident consequences such as cautious behavior during sport, flashbacks or somatic health burden of the accident in the random forest model could only marginally improve its performance (training: accuracy = `r signif(class_rf$fit_stats$global$Accuracy[1], 2)`, $\kappa$ = `r signif(class_rf$fit_stats$global$Kappa[1], 2)`; test subset: accuracy = `r signif(class_rf$fit_stats$global$Accuracy[2], 2)`, $\kappa$ = `r signif(class_rf$fit_stats$global$Kappa[2], 2)`). 
+The most important late predictors of the cluster assignment were caution during sport and flashbacks (__Supplementary Figure S8__).
+
+Collectively, we could not establish a reliable model for identification of patients at risk of mental disorders represented by the PTB cluster with a broad ensemble of early non-mental predictors.
 
 \newpage
 
 # Discussion
 
 In individuals surveyed on average 3.5 years after the non-professional sport accident, some of its consequences like somatic health problems, unwilling flashbacks as well as phenomena of post-traumatic growth and symptoms of post-traumatic stress disorder were still tangible. 
-By semi-supervised clustering we could discern three distinct patterns of mental health in this collective with each present in approximately one-third of participants: (1) a neutral mental response reaction, (2) salutatory reaction to the accident characterized by post-traumatic growth and (3) mental health deterioration hallmarked by symptoms of anxiety, depression, somatization, resilience loss and signs of post-traumatic stress disorder. 
-Notably, separation of the PTG and PTSD clusters was in part blurry. 
-Symptoms of post-traumatic stresswere observed also in PTG cluster participants albeit less frequently than in the PTSD cluster. 
-Conversely, mental health problems in PTSD cluster participants were paralleled by some signs of post-traumatic growth. 
+By semi-supervised clustering we could discern three distinct patterns of mental health in this collective with each present in approximately one-third of participants: (1) a neutral mental response reaction, (2) salutatory reaction to the accident characterized by post-traumatic growth and (3) mental health deterioration hallmarked by mental accident burden such as symptoms of anxiety, depression, somatization, resilience loss and signs of post-traumatic stress disorder. 
+Notably, separation of the PTG and PTB clusters was in part blurry. 
+Symptoms of post-traumatic stress were observed also in PTG cluster participants albeit less frequently than in the PTB cluster. 
+Conversely, mental health problems in PTB cluster participants were paralleled by some signs of post-traumatic growth. 
 In a detailed comparison of `r length(clust_bcg$variables)` factors between the clusters, no distinct demographic, socioeconomic, clinical or accident-related background of the mental clusters could be identified. 
-We found a moderate enrichment of females, low-to-moderate income participants, non-academic graduates, chronic somatic and psychiatric conditions as well as individuals requiring hospitalization and surgery in the PTG and, in particular, in the PTSD cluster. 
+We found a moderate enrichment of females, low-to-moderate income participants, non-academic graduates, chronic somatic and psychiatric conditions as well as individuals requiring hospitalization and surgery in the PTG and, in particular, in the PTB cluster. 
 Injury severity and localization or professional rescue rates indicative of potentially more severe accident were comparable between the clusters. 
 Similarly, the cluster assignment was unlikely affected by psychological support after the accident. 
-In turn, the PTSD and, to a lesser extent, the PTG cluster were characterized by somatic health consequences of the accident, flashbacks, more caution during sport activity and subjective need for psychological support. 
+In turn, the PTB and, to a lesser extent, the PTG cluster were characterized by somatic health consequences of the accident, flashbacks, more caution during sport activity and subjective need for psychological support. 
 Finally, the lacking non-mental explanatory variables strongly associated with the cluster assignment likely resulted in sub-optimal performance of machine learning classifiers employed for prediction of the cluster assignment and identification of accident victims at risk of mental health problems.
 
 _Hanna and Katharina: your turn now:)_
@@ -360,14 +331,10 @@ tables$cohort_demo %>%
   flextable %>% 
   flextable::width(1, width = 5.5, unit = 'cm') %>% 
   flextable::width(2, width = 7.5, unit = 'cm') %>% 
-  footnote(4, 1, 
-           value = as_paragraph('young: 16 - 30, middle: 31 - 65, elderly: \u2265 66 years'), 
-           part = 'body', 
+  footnote(1, 1, 
+           value = as_paragraph('CAGE: Cut/Annoyed/Guilty/Eye substance abuse scale; DIA-X: Diagnostic Expert System, traumatic event score'), 
+           part = 'header', 
            ref_symbols = 'a') %>% 
-  footnote(13, 1, 
-           value = as_paragraph('CAGE: Cut/Annoyed/Guilty/Eye substance abuse scale'), 
-           part = 'body', 
-           ref_symbols = 'b') %>% 
   theme_vanilla
 
 ```
@@ -382,7 +349,7 @@ tables$cohort_accident %>%
   flextable::width(1, width = 5.5, unit = 'cm') %>% 
   flextable::width(2, width = 7.5, unit = 'cm') %>% 
   footnote(2, 1, 
-           value = as_paragraph('ski/snowdoard: alpine skiing, snowboarding and cross-country skiing\nsledding: sledding or bobsled\nmountain: hiking, climbing and skitouring\nbiking: mountainbike, tour and road cycling'), 
+           value = as_paragraph('ski/snowdoard: alpine skiing, snowboarding and cross-country skiing\nsledding: sledding or bobsled\nclimbing/hiking/mountaineering: hiking, rock and ice climbing, mountaineering, skitouring\nbiking: mountainbike, tour and road cycling'), 
            part = 'body', 
            ref_symbols = 'a') %>% 
   footnote(8, 1, 
@@ -433,7 +400,7 @@ figures$clust_psych$plot
 
 __Figure \@ref(fig:fig-clust-psych). Scores of psychometry readouts in the mental clusters.__ 
 
-_The mental clusters were defined in respect to psychometric scoring in the training subset of the study cohort by PAM (partition around medoids) with cosine distance between the observations. Assignment of the test subset observations to the mental clusters was done with the inverse distance weighted 7-nearest neighbors classifier. Three mental clusters were identified: neutral, PTG (post-traumatic growth) and PTSD (post-traumatic stress disorder), All clustering parameters differed significantly between the clusters as assessed by Kruskal-Wallis test with $\eta^2$ effect size statistic. Mean normalized scores of major mental health readouts (A), diminished quality of life (B), post-traumatic growth (C) and post-traumatic symptom disorder (D) in the mental clusters of the training and test subsets of the study cohort are depicted as solid lines. Tinted regions represent 2 $\times$ SEM (standard error of the mean). Numbers of observations in the clusters are displayed in the plot captions. GAD-7: 7-item general anxiety disorder scale; PHQ: patient health questionnaire; EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale; SOC-9L: Leipzig 9-item sense of coherence questionnaire; RS13: 13-item resilience scale; PCL-5 DSM-5: PTSD checklist for DSM-5; PTGI: post-traumatic growth inventory; PTSD: post-traumatic stress disorder._
+_The mental clusters were defined in respect to psychometric scoring in the training subset of the study cohort by PAM (partition around medoids) with cosine distance between the observations. Assignment of the test subset observations to the mental clusters was done with the inverse distance weighted 7-nearest neighbors classifier. Three mental clusters were identified: neutral, PTG (post-traumatic growth) and PTB (post-traumatic burden), All clustering parameters differed significantly between the clusters as assessed by Kruskal-Wallis test with $\eta^2$ effect size statistic. Mean normalized scores of major mental health readouts (A), diminished quality of life (B), post-traumatic growth (C) and post-traumatic symptom disorder (D) in the mental clusters of the training and test subsets of the study cohort are depicted as solid lines. Tinted regions represent 2 $\times$ SEM (standard error of the mean). Numbers of observations in the clusters are displayed in the plot captions. GAD-7: 7-item general anxiety disorder scale; PHQ: patient health questionnaire; EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale; SOC-9L: Leipzig 9-item sense of coherence questionnaire; RS13: 13-item resilience scale; PCL-5 DSM-5: PTSD checklist for DSM-5; PTGI: post-traumatic growth inventory; PTSD: post-traumatic stress disorder._
 
 \newpage
 
@@ -485,15 +452,15 @@ _Frequencies of self-reported somatic health consequences of the accident (A), f
 
 \newpage
 
-```{r fig-crf, fig.width = mm_inch(figures$crf$w), fig.height = mm_inch(figures$crf$h), fig.cap = 'Assignment of accident victims to the mental clusters based on demographic, socioeconomic, clinical and accident-related factors.'}
+```{r fig-early-crf, fig.width = mm_inch(figures$early_crf$w), fig.height = mm_inch(figures$early_crf$h), fig.cap = 'Assignment of accident victims to the mental clusters based on explanatory factors available during acute medical management of the accident.'}
 
-figures$crf$plot
+figures$early_crf$plot
 
 ```
 
-__Figure \@ref(fig:fig-crf). Assignment of accident victims to the mental clusters based on demographic, socioeconomic, clinical and accident-related factors.__ 
+__Figure \@ref(fig:fig-early-crf). Assignment of accident victims to the mental clusters based on explanatory factors available during acute medical management of the accident.__ 
 
-_A conditional random forest classifier for the mental cluster assignment based on demographic, socioeconomic, clinical and accident-related factors was trained in the training subset of the study cohort._
+_A conditional random forest classifier for the mental cluster assignment based on demographic, socioeconomic, clinical and accident-related factors available during acute medical management of the accident was trained in the training subset of the study cohort._
 
 _(A) Prediction accuracy of the classifier in the training and test subset of the study cohort presented in a heat map plot of the confusion matrices. Color codes for number of cases. The overall prediction accuracy, $\kappa$ and observation numbers are displayed in the plot caption. Prediction accuracy for particular clusters is shown in the X axis._
 
