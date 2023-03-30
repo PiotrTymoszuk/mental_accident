@@ -159,7 +159,7 @@
     as.data.frame %>% 
     kcluster(distance_method = 'cosine', 
              clust_fun = 'pam', 
-             k = 2)
+             k = 3)
   
   ## appending the test results and plotting order
   
@@ -282,7 +282,7 @@
                  regex = '\\nn\\s{1}=\\s{1}\\d+$', 
                  replacement = '')) %>% 
     map(set_names, 
-        c('Variable', 'Neutral cluster', 'PTG cluster', 'PTS cluster', 
+        c('Variable', 'Neutral cluster', 'PTG cluster', 'PTB cluster', 
           'Significance', 
           'Effect size'))
   

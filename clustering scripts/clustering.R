@@ -35,10 +35,10 @@
   semi_clust$clust_obj$training$clust_assignment <- 
     semi_clust$clust_obj$training$clust_assignment %>% 
     mutate(clust_id = car::recode(as.character(clust_id), 
-                                  "'1' = 'PTS'; 
+                                  "'1' = 'PTB'; 
                                   '2' = 'neutral'; 
                                   '3' = 'PTG'"), 
-           clust_id = factor(clust_id, c('neutral', 'PTG', 'PTS'))) 
+           clust_id = factor(clust_id, c('neutral', 'PTG', 'PTB'))) 
   
   ## test
   
@@ -49,6 +49,11 @@
             kNN = 7, 
             resolve_ties = TRUE, 
             simple_vote = FALSE)
+  
+  semi_clust$clust_obj$test$clust_assignment <- 
+    semi_clust$clust_obj$test$clust_assignment %>% 
+    mutate(clust_id = factor(clust_id, 
+                             levels(semi_clust$clust_obj$training$clust_assignment$clust_id)))
   
 # Clustering variances ------
   
@@ -115,7 +120,7 @@
         red_fun = 'umap',
         with = 'data', 
         kdim = 2, 
-        random_state = 1234, 
+        random_state = 12345, 
         cust_theme = globals$common_theme) %>% 
     map2(., semi_clust$clust_obj, 
          ~.x + 

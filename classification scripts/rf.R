@@ -7,6 +7,10 @@
   
   class_rf <- list()
 
+# parallel backend ------
+  
+  plan('multisession')
+  
 # analysis globals -------
   
   insert_msg('Analysis globals')
@@ -16,7 +20,7 @@
   class_rf$clust_tbl <- 
     list(neutral = class_globals$analysis_tbl, 
          PTG = class_globals$analysis_tbl, 
-         PTS = class_globals$analysis_tbl) %>% 
+         PTB = class_globals$analysis_tbl) %>% 
     map2(., names(.), 
          function(data, clust) data %>% 
            map(mutate, 
@@ -28,21 +32,26 @@
   insert_msg('Tuning')
   
   ## finding the optimal mtry parameter based on OOB prediction accuracy
-  
-  set.seed(1234)
 
-  class_rf$tuning$controls <- 2:12 %>% 
-    map(~cforest_control(teststat = "max",
-                         testtype = "Teststatistic", 
-                         mtry = .x, 
-                         mincriterion = qnorm(0.9), 
-                         ntree = 1000)) %>% 
-    set_names(2:12)
+  set.seed(1234)
   
+  class_rf$tune_grid <- 
+    expand.grid(mtry = 2:10, 
+                teststat = c('quad', 'max'), 
+                testtype = c('Teststatistic'), 
+                mincriterion = c(0, 0.95, qnorm(0.9)), 
+                minsplit = c(10, 20), 
+                stringsAsFactors = FALSE)
+
+  class_rf$tuning$controls <- class_rf$tune_grid %>% 
+    pmap(cforest_control, 
+         ntree = 1000)
+
   class_rf$tuning$models <- class_rf$tuning$controls %>% 
-    map(~cforest(formula = class_globals$formula, 
+    future_map(~cforest(formula = class_globals$formula, 
                  data = class_globals$analysis_tbl$training, 
-                 controls = .x))
+                 controls = .x), 
+               .options = furrr_options(seed = TRUE))
   
   ## predictions and fit stats
   
@@ -55,9 +64,20 @@
     map(multiClassSummary, 
         lev = levels(class_globals$analysis_tbl$training$clust_id)) %>% 
     map(as.list) %>% 
-    map(as_tibble) %>% 
-    compress(names_to = 'mtry') %>% 
-    mutate(mtry = as.numeric(mtry))
+    map_dfr(as_tibble)
+  
+  class_rf$tuning$fit_stats <- 
+    cbind(class_rf$tuning$fit_stats, 
+          class_rf$tune_grid) %>% 
+    as_tibble
+  
+  class_rf$tuning$models <- NULL
+  
+  class_rf <- compact(class_rf)
+  
+  plan('sequential')
+  
+  gc()
   
 # Plotting the tuning results ------
   
@@ -69,13 +89,13 @@
     list(x = c('Accuracy', 'Kappa', 'Mean_Sensitivity', 'Mean_Specificity'), 
          y = paste0(c('Accuracy', 'Kappa', 'Sensitivity', 'Specificity'), 
                     ', training'), 
-         w = c('Accuracy', '\u03BA', 'Sensitivity', 'Specificity'), 
-         z = c('steelblue3', 'coral3', 'darkolivegreen4', 'orangered3')) %>% 
-    pmap(function(x, y, w, z) class_rf$tuning$fit_stats %>% 
-           ggplot(aes(x = mtry, 
+         w = c('Accuracy', '\u03BA', 'Sensitivity', 'Specificity')) %>% 
+    pmap(function(x, y, w) class_rf$tuning$fit_stats %>% 
+           ggplot(aes(x = mtry, 1:10, 
                       y = .data[[x]], 
-                      group = 'A'))  +
-           geom_line(color = z) + 
+                      color = teststat))  +
+           facet_grid(minsplit ~ mincriterion)  +
+           geom_line() + 
            expand_limits(y = 0) +
            scale_x_continuous(breaks = 1:12) + 
            globals$common_theme + 
@@ -102,8 +122,9 @@
          expl_variables = class_globals$variables, 
          controls = cforest_control(teststat = "max",
                                     testtype = "Teststatistic", 
-                                    mtry = 5, 
-                                    mincriterion = qnorm(0.9), 
+                                    mtry = 6, 
+                                    mincriterion = 0, 
+                                    minsplit = 20, 
                                     ntree = 1000))
   
 # Fit stats and variable importance -------

@@ -1,5 +1,5 @@
 # Cohort characteristic in a tabular form
-# 
+# and plots for selected mental health measures
 
   insert_head()
   
@@ -35,7 +35,8 @@
                   'household_income_class', 
                   'smoking_status', 
                   'cage_total_class', 
-                  'somatic_comorbidity', 
+                  #'somatic_comorbidity', 
+                  'somatic_comorbidity_type', 
                   'psych_comorbidity', 
                   'traumatic_event', 
                   'prime_trauma_event', 
@@ -172,7 +173,7 @@
   cohort$mental_details$plots <- 
     list(variables = cohort$mental_details$variables, 
          plot_title = c('EUROHIS QOL domains', 
-                        'PCL-5 DSM-5 clusters', 
+                        'PCL-5 DSM-5 domains', 
                         'PTGI factors'), 
          fill = c('darkolivegreen3', 
                   'coral3', 
@@ -186,7 +187,8 @@
          point_size = 1, 
          cust_theme = globals$common_theme, 
          x_lab = 'Score', 
-         plot_subtitle = paste('n =', nrow(ptsd$dataset))) %>% 
+         plot_subtitle = paste('n =', nrow(ptsd$dataset)), 
+         scale = 'width') %>% 
     map2(., cohort$mental_details$variables, 
          ~.x + 
            scale_y_discrete(limits = rev(.y), 
@@ -198,9 +200,46 @@
                                            replacement = '') %>% 
                               stri_extract(regex = '\\w+$')))
   
-# Plotting percentages of positivity in the PTSD clusters ------
+# Plotting QoL, stack plot -------
   
-  insert_msg('Percentages positive in the PTSD clusters')
+  insert_msg('Plotting QoL, stack plot')
+  
+  cohort$qol_details$data <- 
+    cohort$mental_details$variables$eurohis %>% 
+    set_names(cohort$mental_details$variables$eurohis) %>% 
+    map(~count(ptsd$dataset, .data[[.x]])) %>% 
+    map(set_names, c('score', 'n')) %>% 
+    map(mutate, perc = n/sum(n) * 100) %>% 
+    compress(names_to = 'factor') %>% 
+    mutate(factor = factor(factor, 
+                           rev(cohort$mental_details$variables$eurohis)),
+           score = factor(score, 5:1))
+  
+  cohort$qol_details$plot <- 
+    cohort$qol_details$data %>% 
+    ggplot(aes(x = perc, 
+               y = factor, 
+               fill = factor(score))) + 
+    geom_bar(position = 'stack', 
+             stat = 'identity', 
+             color = 'black') + 
+    scale_fill_brewer(palette = 'Blues', 
+                      direction = -1, 
+                      name = 'QoL') + 
+    scale_y_discrete(labels = cohort$mental_details$variables$eurohis %>% 
+                       rev %>% 
+                       exchange(dict = ptsd$var_lexicon) %>% 
+                       stri_replace(regex = '\\s{1}score$', 
+                                    replacement = '') %>% 
+                       stri_extract(regex = '\\w+$')) + 
+    globals$common_theme + 
+    theme(axis.title.y = element_blank()) + 
+    labs(title = 'EUROHIS QOL domains', 
+         x = '% of participants')
+  
+# Plotting percentages of positivity in the PTSD domains ------
+  
+  insert_msg('Percentages positive in the PTSD domains')
   
   ## variables 
   
@@ -222,7 +261,7 @@
     plot_freq_bars(data = cohort$ptsd_cluster$frequency, 
                    freq_var = 'percent', 
                    cat_var = 'variable', 
-                   plot_title = 'PCL-5 DSM-5 clusters', 
+                   plot_title = 'PCL-5 DSM-5 domains', 
                    x_lab = '% of cohort', 
                    bar_color = 'coral3', 
                    show_freqs = TRUE, 

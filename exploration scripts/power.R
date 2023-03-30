@@ -21,7 +21,7 @@
   ## normalized, median-centered psychometric data
   
   pow$analysis_tbl <- ptsd$dataset %>% 
-    select(ID, all_of(clust_globals$variable)) %>% 
+    select(ID, all_of(ptsd$mental_variables)) %>% 
     column_to_rownames('ID') %>% 
     center_data(type = 'median')
 

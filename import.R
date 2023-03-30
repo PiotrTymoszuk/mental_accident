@@ -62,7 +62,7 @@
   
   globals$clust_colors <- c('neutral' = 'cadetblue3',
                             'PTG' = 'darkolivegreen3', 
-                            'PTS' = 'coral4')
+                            'PTB' = 'coral4')
   
   ## injury regions
   
@@ -157,7 +157,7 @@
   ptsd$cleared <- ptsd$cleared %>% 
     mutate(age_class = cut(age, 
                            c(-Inf, 30, 65, Inf), 
-                           c('young', 'middle', 'elderly')), 
+                           c('16-30', '31-65', '>65')), 
            ward_date = pss2date(ward_date), 
            hospitalization = ifelse(hospitalization == 'X', 'yes', 'no'), 
            hospitalization = factor(hospitalization, c('no', 'yes')), 
@@ -338,6 +338,59 @@
            smoking_length_years = ifelse(smoking_status == 'no', 
                                          0, smoking_length_years))
   
+# types of somatic comorbidities ------
+  
+  insert_msg('Types of somatic comorbidities')
+  
+  ptsd$cleared <- ptsd$cleared %>% 
+    mutate(somatic_comorbidity_type = ifelse(somatic_comorbidity == 'no', 
+                                             'none', 
+                                             ifelse(stri_detect(somatic_comorbidity_type, 
+                                                                fixed = 'Anderes'), 
+                                                    as.character(somatic_comorbidity_type_text), 
+                                                    as.character(somatic_comorbidity_type))), 
+           somatic_comorbidity_type = car::recode(somatic_comorbidity_type, 
+                                                  "'0' = 'other'; 
+                                                  'tinitus' = 'neurological'; 
+                                                  'Rückenschmerzen' = 'musculoskeletal'; 
+                                                  'Arthrose' = 'musculoskeletal'; 
+                                                  'Morbus Whipple' = 'gastrointestinal'; 
+                                                  'Probleme mit den Halswirbeln und Schulter' = 'musculoskeletal'; 
+                                                  '-verletzung des meniskus' = 'musculoskeletal'; 
+                                                  'Erkrankung des Bewegungsapparates' = 'musculoskeletal'; 
+                                                  'Darmerkrankung' = 'gastrointestinal'; 
+                                                  'Hüftverletzung mit Hüftkopfnekrose' = 'musculoskeletal'; 
+                                                  'Colitis ulcerosa' = 'gastrointestinal'; 
+                                                  'Kreuzschmerzen' = 'musculoskeletal'; 
+                                                  'Morbus Chron' = 'gastrointestinal'; 
+                                                  'Bewegungsapparat' = 'musculoskeletal'; 
+                                                  'HWS, BWS' = 'musculoskeletal'; 
+                                                  'ich leide immer noch an den folgen des Unfalles von 20.09.2020 (krankenstand)' = 'other'; 
+                                                  'Band schiben vorfal. Not related to the ski accident, ut happened two years after.' = 'musculoskeletal'; 
+                                                  'Niere Dialyse' = 'metabolic'; 
+                                                  'regelmäßige Schmerzen an der Wirbelsäule' = 'musculoskeletal'; 
+                                                  'Diverse Schleimbeutelentzündungen' = 'musculoskeletal'; 
+                                                  'Endometriose' = 'other'; 
+                                                  'Allergie / Heuschnupfen' = 'other'; 
+                                                  'angeborener Herzfehler (DILV)' = 'CVD'; 
+                                                  'Magen Darm Beschwerden, eventuell Reizdarm' = 'gastrointestinal'; 
+                                                  'immer noch wegen dem Sturz beim Eislaufen (Instabilität Ulnakopf, viele Revisionsoperationen, Chronische Schmerzen.)' = 'musculoskeletal'; 
+                                                  'Skoliose + Versteifung der Wirbelsäule' = 'musculoskeletal'; 
+                                                  'Konzentrations Störung' = 'other'; 
+                                                  '' = 'other'"), 
+           somatic_comorbidity_type = factor(somatic_comorbidity_type, 
+                                             c('none', 
+                                               'musculoskeletal', 
+                                               'CVD', 
+                                               'gastrointestinal', 
+                                               'neurological', 
+                                               'metabolic', 
+                                               'pulmonary', 
+                                               'cancer', 
+                                               'rheumatoid', 
+                                               'skin', 
+                                               'other'))) 
+  
 # profession text extraction -------
   
   insert_msg('Profession text extraction')
@@ -362,29 +415,29 @@
                                     "'alpine skiing' = 'ski/snowboard'; 
                                     'biking' = 'biking'; 
                                     'sledding' = 'sledding'; 
-                                    'rock climbing' = 'mountain'; 
-                                    'hiking' = 'mountain'; 
+                                    'rock climbing' = 'climbing/hiking/mountaineering'; 
+                                    'hiking' = 'climbing/hiking/mountaineering'; 
                                     'MTB' = 'biking'; 
                                     'sailing' = 'other'; 
                                     'crosssountry skiing' = 'ski/snowboard'; 
                                     'surfing' = 'other'; 
                                     'skating' = 'other'; 
-                                    'mountaineering' = 'mountain'; 
-                                    'skitouring' = 'mountain'; 
-                                    'paragliding' = 'mountain'; 
-                                    'sport climbing/bouldering' = 'mountain'; 
+                                    'mountaineering' = 'climbing/hiking/mountaineering'; 
+                                    'skitouring' = 'climbing/hiking/mountaineering'; 
+                                    'paragliding' = 'climbing/hiking/mountaineering'; 
+                                    'sport climbing/bouldering' = 'climbing/hiking/mountaineering'; 
                                     'snowboarding' = 'ski/snowboard'; 
                                     'other water' = 'other'; 
-                                    'ice climbing' = 'mountain'; 
-                                    'other mountain' = 'mountain'; 
+                                    'ice climbing' = 'climbing/hiking/mountaineering'; 
+                                    'other mountain' = 'climbing/hiking/mountaineering'; 
                                     'swimming' = 'other'; 
-                                    'figeln' = 'mountain'; 
+                                    'figeln' = 'climbing/hiking/mountaineering'; 
                                     'ski jumping' = 'ski/snowboard'; 
                                     'bobsledding' = 'sledding'; 
                                     'other winter' = 'sledding'"), 
            sport_type = factor(sport_type, 
                                c('ski/snowboard', 'sledding', 
-                                 'mountain', 'biking', 'other')))
+                                 'climbing/hiking/mountaineering', 'biking', 'other')))
   
 # Counts of injured body regions ------
   
@@ -839,21 +892,24 @@
   
   ## total score calculation (mean of the domains)
   ## subscores: each question separately
+  ##
+  ## the item score are inverted, i.e. very poor: 1 and excellent: 5
   
   ptsd$cleared$eurohis_total <- ptsd$cleared %>% 
     select(starts_with('eurohis')) %>% 
+    map(function(x) 6 - x) %>% 
     reduce(`+`)
   
   ptsd$cleared <- ptsd$cleared %>% 
     mutate(eurohis_total = eurohis_total/8, 
-           eurohis_qol = eurohis_q1, 
-           eurohis_health = eurohis_q2,
-           eurohis_energy = eurohis_q3, 
-           eurohis_finances = eurohis_q4, 
-           eurohis_activity = eurohis_q5, 
-           eurohis_selfesteem = eurohis_q6, 
-           eurohis_relationship = eurohis_q7, 
-           eurohis_housing = eurohis_q8)
+           eurohis_qol = 6 - eurohis_q1, 
+           eurohis_health = 6 - eurohis_q2,
+           eurohis_energy = 6 - eurohis_q3, 
+           eurohis_finances = 6 - eurohis_q4, 
+           eurohis_activity = 6 - eurohis_q5, 
+           eurohis_selfesteem = 6 - eurohis_q6, 
+           eurohis_relationship = 6 - eurohis_q7, 
+           eurohis_housing = 6 - eurohis_q8)
   
 # Coding interactions for modeling -------
   

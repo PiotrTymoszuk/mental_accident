@@ -18,7 +18,7 @@
               caption = paste('Flow diagram of the analysis', 
                               'inclusion process.'), 
               w = 120, 
-              h = 3846/2916 * 120)
+              h = 3966/2856 * 120)
   
 # Figure 2: psychometry scores in the clusters -------
   
@@ -70,7 +70,7 @@
   
   figures$clust_psych$qol <- figures$clust_psych$qol %>% 
     map2(., 
-         paste0('Dimished QoL, EUROHIS-QOL 8, ', 
+         paste0('Quality of life, EUROHIS-QOL 8, ', 
                 c('training', 'test')), 
          ~.x + 
            scale_y_discrete(limits = rev(c('eurohis_total', 
@@ -325,6 +325,9 @@
     transpose %>% 
     map(function(x) plot_grid(plotlist = map(x, 
                                              ~.x + 
+                                               labs(title = stri_replace(.x$labels$title, 
+                                                                         fixed = ' class', 
+                                                                         replacement = '')) + 
                                                theme(legend.position = 'none', 
                                                      plot.margin = ggplot2::margin(l = 2, 
                                                                                    r = 2, 
@@ -421,11 +424,11 @@
               w = 180, 
               h = 230)
   
-# Figure 7: mental cluster classification, cRF -------
+# Figure 7: mental cluster classification, early predictors -------
   
-  insert_msg('Figure 7: Mental cluster classification, cRF')
+  insert_msg('Figure 7: Mental cluster classification, cRF, early preds')
   
-  figures$crf <- class_rf$confusion_plots$global %>% 
+  figures$early_crf <- class_early$confusion_plots$global %>% 
     map2(., 
          paste('Cluster classification,', 
                c('training', 'test')), 
@@ -435,22 +438,23 @@
     plot_grid(plotlist = ., 
               nrow = 2, 
               align = 'hv') %>% 
-    plot_grid(class_rf$importance_plots$global + 
+    plot_grid(class_early$importance_plots$global + 
                 theme(plot.title.position = 'plot', 
                       plot.title = element_text(hjust = 0.3)), 
               ncol = 2, 
               rel_widths = c(0.9, 1.1), 
               labels = LETTERS, 
               label_size = 10) %>% 
-    as_figure(label = 'figure_7_rf_classifier', 
-              ref_name = 'crf', 
+    as_figure(label = 'figure_7_rf_early_classifier', 
+              ref_name = 'early_crf', 
               caption = paste('Assignment of accident victims to', 
-                              'the mental clusters based on demographic,', 
-                              'socioeconomic, clinical', 
-                              'and accident-related factors.'), 
+                              'the mental clusters based on', 
+                              'explanatory factors available', 
+                              'during acute medical management', 
+                              'of the accident.'), 
               w = 180, 
-              h = 150)
-  
+              h = 150)  
+
 # Saving the figures on the disc -------
   
   insert_msg('Saving the figures on the disc')

@@ -19,6 +19,8 @@
 
   insert_head()
   
+  explore <- exda::explore
+  
   source_all('./tools/tools.R', 
              message = TRUE, 
              crash = TRUE)

@@ -43,7 +43,8 @@
   class_globals$variables <- 
     class_globals$variables[!class_globals$variables %in% c('accident_injured_persons', 
                                                             'obs_time', 
-                                                            'accident_year')]
+                                                            'accident_year', 
+                                                            'somatic_comorbidity_type')]
   
   ## full model formula
   
@@ -97,6 +98,7 @@
   
   class_globals$analysis_tbl <- class_globals$analysis_tbl %>% 
     map(mutate, 
+        
         injury_severity_ais = as.character(injury_severity_ais), 
         injury_severity_ais = ifelse(is.na(injury_severity_ais), 
                                      'no information', injury_severity_ais), 
@@ -155,7 +157,8 @@
   insert_msg('Analysis scripts')
   
   c('./classification scripts/one_rule.R', 
-    './classification scripts/rf.R') %>% 
+    './classification scripts/rf.R', 
+    './classification scripts/early_rf.R') %>% 
     source_all(message = TRUE, crash = TRUE)
 
 # END ----

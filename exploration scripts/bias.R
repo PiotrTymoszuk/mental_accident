@@ -75,7 +75,7 @@
   insert_msg('Significant and near significant differences')
   
   excl$top_factors <- excl$test %>% 
-    filter(p_value < 0.1) %>% 
+    filter(p_value < 0.05) %>% 
     .$variable
   
 # A ready to use table with significant and near significant differences -------

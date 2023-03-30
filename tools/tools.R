@@ -616,10 +616,11 @@
                    factor(levels = levels(train_data[[response]])))
     
     test_pred <- 
-      data.frame(obs = test_data[[response]], 
+      data.frame(obs = test_data[[response]] %>% 
+                   factor(levels = levels(train_data[[response]])), 
                  pred = predict(model, newdata = test_data) %>% 
                    factor(levels = levels(train_data[[response]])))
-    
+
     ## fit stats ------
     
     fit_stats <- 
@@ -670,7 +671,8 @@
                    factor(levels = levels(train_data[[response]])))
     
     test_pred <- 
-      data.frame(obs = test_data[[response]], 
+      data.frame(obs = test_data[[response]] %>% 
+                   factor(levels = levels(train_data[[response]])), 
                  pred = predict(model, newdata = test_data) %>% 
                    factor(levels = levels(train_data[[response]])))
     

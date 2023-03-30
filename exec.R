@@ -7,4 +7,5 @@
                      'factor.R', 
                      'clustering.R', 
                      'classification.R', 
-                     'paper.R')))
+                     'paper.R'), 
+                   message = TRUE, crash = TRUE))

@@ -1,4 +1,5 @@
-# Analysis of classification capability of single factors
+# Analysis of classification capability of single factors available
+# during acute medical management
 
   insert_head()
   
@@ -15,7 +16,7 @@
   class_one$clust_tbl <- 
     list(neutral = class_globals$analysis_tbl, 
          PTG = class_globals$analysis_tbl, 
-         PTS = class_globals$analysis_tbl) %>% 
+         PTB = class_globals$analysis_tbl) %>% 
     map2(., names(.), 
          function(data, clust) data %>% 
            map(mutate, 
@@ -28,39 +29,39 @@
   
   ## global classification
   
-  class_one$global_models <- class_globals$variables %>% 
+  class_one$global_models <- class_globals$early_variables %>% 
     map(model_one, 
         train_data = class_globals$analysis_tbl$training, 
         test_data = class_globals$analysis_tbl$test, 
         response = 'clust_id') %>% 
-    set_names(class_globals$variables)
+    set_names(class_globals$early_variables)
   
   ## neutral cluster
   
-  class_one$neutral_models <- class_globals$variables %>% 
+  class_one$neutral_models <- class_globals$early_variables %>% 
     map(model_one, 
         train_data = class_one$clust_tbl$neutral$training, 
         test_data = class_one$clust_tbl$neutral$test, 
         response = 'clust_id') %>% 
-    set_names(class_globals$variables)
+    set_names(class_globals$early_variables)
   
   ## PTG cluster
   
-  class_one$PTG_models <- class_globals$variables %>% 
+  class_one$PTG_models <- class_globals$early_variables %>% 
     map(model_one, 
         train_data = class_one$clust_tbl$PTG$training, 
         test_data = class_one$clust_tbl$PTG$test, 
         response = 'clust_id') %>% 
-    set_names(class_globals$variables)
+    set_names(class_globals$early_variables)
   
-  ## PTS cluster
+  ## PTB cluster
   
-  class_one$PTS_models <- class_globals$variables %>% 
+  class_one$PTB_models <- class_globals$early_variables %>% 
     map(model_one, 
-        train_data = class_one$clust_tbl$PTS$training, 
-        test_data = class_one$clust_tbl$PTS$test, 
+        train_data = class_one$clust_tbl$PTB$training, 
+        test_data = class_one$clust_tbl$PTB$test, 
         response = 'clust_id') %>% 
-    set_names(class_globals$variables)
+    set_names(class_globals$early_variables)
   
 # model summaries -------
   
@@ -69,10 +70,10 @@
   class_one$fit_stats[c('global', 
                         'neutral', 
                         'PTG', 
-                        'PTS')] <- class_one[c("global_models", 
+                        'PTB')] <- class_one[c("global_models", 
                                                 "neutral_models", 
                                                 "PTG_models", 
-                                                "PTS_models")] %>% 
+                                                "PTB_models")] %>% 
     map(~map(.x, ~.x$stats)) %>% 
     map(compress, names_to = 'variable')
   

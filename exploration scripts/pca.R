@@ -91,10 +91,10 @@
   pca$top_eigen_plots <- 
     list(x = c('total_eigen', paste0('comp_', 1:10)), 
          y = c('Total varaible impact', 
-               'PC1: PTG and resilience', 
-               'PC2: PTG and QoL', 
+               'PC1: PTG, QoL, resilience', 
+               'PC2: PTG, sense of coherence', 
                'PC3: finances', 
-               'PC4: energy, finances', 
+               'PC4: energy', 
                'PC5: spirituality, health', 
                'PC6: energy, relations', 
                'PC7: somatization, PTSD', 

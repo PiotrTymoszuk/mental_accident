@@ -105,7 +105,7 @@
                        values_to = 'n'), 
               cons$omega_tbl, 
               by = 'scale') %>% 
-    filter(scale != 'cage_total') %>% 
+    filter(scale %in% ptsd$mental_variables) %>% 
     arrange(-omega) %>% 
     mutate(scale = ifelse(scale != 'brcs_total', 
                           exchange(scale, 
@@ -130,7 +130,7 @@
   suppl_tables$incl_excl <- excl$result_tbl %>% 
     mdtable(label = 'table_s4_included_excluded', 
             ref_name = 'incl_excl', 
-            caption = paste('Significant differences between', 
+            caption = paste('Significant differences (p < 0.05) between', 
                             'individuals excluded from analysis', 
                             'and analyzed study participants.', 
                             'Numeric variables are presented as medians', 
@@ -139,29 +139,13 @@
                             'and counts within the complete', 
                             'observation set.'))
   
-# Supplementary Table S5: differences between the data partitions -----
+# Supplementary Table S5: clustering factors in the mental clusters -------
   
-  insert_msg('Table S5: training/test differences')
-  
-  suppl_tables$partition <- partition$result_tbl %>% 
-    mdtable(label = 'table_s5_training_test', 
-            ref_name = 'partition', 
-            caption = paste('Significant and near-significant (p < 0.1)', 
-                            'differences between the training and test', 
-                            'subsets of the study cohort.', 
-                            'Numeric variables are presented as medians', 
-                            'with interquartile ranges (IQR). Categorical', 
-                            'variables are presented as percentages', 
-                            'and counts within the complete', 
-                            'observation set.'))
-
-# Supplementary Table S6: clustering factors in the mental clusters -------
-  
-  insert_msg('Table S6: clustering factors in the mental clusters')
+  insert_msg('Table S5: clustering factors in the mental clusters')
   
   suppl_tables$clust_fct <- feat_clust$result_tbl %>% 
     compress(names_to = 'Cohort subset') %>% 
-    mdtable(label = 'table_s6_clustering_factors', 
+    mdtable(label = 'table_s5_clustering_factors', 
             ref_name = 'clust_fct', 
             caption = paste('Differences in psychometric clustering factors', 
                             'between the mental clusters.', 
@@ -170,15 +154,16 @@
                             'The table is available in a', 
                             'supplementary Excel file.'))
   
-# Supplementary Table S7: differences between the clusters -----
+# Supplementary Table S6: differences between the clusters -----
   
-  insert_msg('Table S7: differences between the clusters')
+  insert_msg('Table S6: differences between the clusters')
   
   suppl_tables$clust_bcg <- clust_bcg$result_tbl %>% 
     compress(names_to = 'Cohort subset') %>% 
-    mdtable(label = 'table_s7_clustering_factors', 
+    relocate(`Cohort subset`) %>% 
+    mdtable(label = 'table_s6_clustering_factors', 
             ref_name = 'clust_bcg', 
-            caption = paste('Significant and near-significant (p < 0.1)',
+            caption = paste('Significant (p < 0.05)',
                             'differences in demographic, socioeconomic,', 
                             'clinical and accident-related factors', 
                             'between the mental clusters.', 
@@ -190,6 +175,25 @@
                             'The table is available in a', 
                             'supplementary Excel file.'))
   
+# Supplementary Table S7: early and late candidate predictors of mental clusters ------
+  
+  insert_msg('Table S7: explanatory factors for mental cluster modeling')
+
+  suppl_tables$mod_variables <- 
+    class_globals[c("early_variables", "variables")] %>% 
+    map(exchange, dict = ptsd$var_lexicon) %>% 
+    map(unname) %>% 
+    map_chr(paste, collapse = ', ') %>% 
+    set_names(c('early predictor model', 'full set predictor model')) %>% 
+    compress(names_to = 'Classifier type', 
+             values_to = 'Explanatory variables') %>% 
+    mdtable(label = 'table_s7_modeling_variables', 
+            ref_name = 'mod_variables', 
+            caption = paste('Sets of explanatory factors (early: available',  
+                            'during acute medical management of the accident)', 
+                            'used for modeling of the mental', 
+                            'cluster assignment.'))
+    
 # Saving the tables in the disc -----
   
   insert_msg('Saving the tables')

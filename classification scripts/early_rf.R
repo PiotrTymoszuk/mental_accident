@@ -8,6 +8,10 @@
   
   class_early <- list()
   
+# parallel backend ------
+  
+  plan('multisession')
+  
 # analysis globals ------
   
   insert_msg('Analysis globals')
@@ -17,14 +21,14 @@
   class_early$clust_tbl <- 
     list(neutral = class_globals$analysis_tbl, 
          PTG = class_globals$analysis_tbl, 
-         PTS = class_globals$analysis_tbl) %>% 
+         PTB = class_globals$analysis_tbl) %>% 
     map2(., names(.), 
          function(data, clust) data %>% 
            map(mutate, 
                clust_id = ifelse(clust_id == clust, clust, 'rest'), 
                clust_id = factor(clust_id)))
   
-# tuning ------
+# tuning of the classifier -------
   
   insert_msg('Tuning')
   
@@ -32,18 +36,23 @@
   
   set.seed(1234)
   
-  class_early$tuning$controls <- 2:12 %>% 
-    map(~cforest_control(teststat = "max",
-                         testtype = "Teststatistic", 
-                         mtry = .x, 
-                         mincriterion = qnorm(0.9), 
-                         ntree = 1000)) %>% 
-    set_names(2:12)
+  class_early$tune_grid <- 
+    expand.grid(mtry = 2:10, 
+                teststat = c('quad', 'max'), 
+                testtype = c('Teststatistic'), 
+                mincriterion = c(0, 0.95, qnorm(0.9)), 
+                minsplit = c(10, 20), 
+                stringsAsFactors = FALSE)
+  
+  class_early$tuning$controls <- class_early$tune_grid %>% 
+    pmap(cforest_control, 
+         ntree = 1000)
   
   class_early$tuning$models <- class_early$tuning$controls %>% 
-    map(~cforest(formula = class_globals$early_formula, 
-                 data = class_globals$analysis_tbl$training, 
-                 controls = .x))
+    future_map(~cforest(formula = class_globals$early_formula, 
+                        data = class_globals$analysis_tbl$training, 
+                        controls = .x), 
+               .options = furrr_options(seed = TRUE))
   
   ## predictions and fit stats
   
@@ -56,9 +65,20 @@
     map(multiClassSummary, 
         lev = levels(class_globals$analysis_tbl$training$clust_id)) %>% 
     map(as.list) %>% 
-    map(as_tibble) %>% 
-    compress(names_to = 'mtry') %>% 
-    mutate(mtry = as.numeric(mtry))
+    map_dfr(as_tibble)
+  
+  class_early$tuning$fit_stats <- 
+    cbind(class_early$tuning$fit_stats, 
+          class_early$tune_grid) %>% 
+    as_tibble
+  
+  class_early$tuning$models <- NULL
+  
+  class_early <- compact(class_early)
+  
+  plan('sequential')
+  
+  gc()
   
 # Plotting the tuning results ------
   
@@ -70,13 +90,13 @@
     list(x = c('Accuracy', 'Kappa', 'Mean_Sensitivity', 'Mean_Specificity'), 
          y = paste0(c('Accuracy', 'Kappa', 'Sensitivity', 'Specificity'), 
                     ', training'), 
-         w = c('Accuracy', '\u03BA', 'Sensitivity', 'Specificity'), 
-         z = c('steelblue3', 'coral3', 'darkolivegreen4', 'orangered3')) %>% 
-    pmap(function(x, y, w, z) class_early$tuning$fit_stats %>% 
-           ggplot(aes(x = mtry, 
+         w = c('Accuracy', '\u03BA', 'Sensitivity', 'Specificity')) %>% 
+    pmap(function(x, y, w) class_early$tuning$fit_stats %>% 
+           ggplot(aes(x = mtry, 1:10, 
                       y = .data[[x]], 
-                      group = 'A'))  +
-           geom_line(color = z) + 
+                      color = teststat))  +
+           facet_grid(minsplit ~ mincriterion)  +
+           geom_line() + 
            expand_limits(y = 0) +
            scale_x_continuous(breaks = 1:12) + 
            globals$common_theme + 
@@ -101,10 +121,11 @@
     pmap(model_crf, 
          response = 'clust_id', 
          expl_variables = class_globals$early_variables, 
-         controls = cforest_control(teststat = "max",
+         controls = cforest_control(teststat = "quad",
                                     testtype = "Teststatistic", 
-                                    mtry = 4, 
+                                    mtry = 7, 
                                     mincriterion = qnorm(0.9), 
+                                    minsplit = 10, 
                                     ntree = 1000))
   
 # Fit stats and variable importance -------
@@ -148,7 +169,7 @@
          y = paste0(c('Cluster classification', 
                       'Neutral cluster', 
                       'PTG cluster', 
-                      'PTGI cluster'), 
+                      'PTB cluster'), 
                     ', variable importance'), 
          z = c('cornsilk', globals$clust_colors)) %>% 
     pmap(function(x, y, z) x %>% 

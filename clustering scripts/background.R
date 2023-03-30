@@ -90,7 +90,7 @@
   ## significant and nearly-significant in both subsets
   
   clust_bcg$top_factors <- clust_bcg$test %>% 
-    map(filter, p_value < 0.1) %>% 
+    map(filter, p_value < 0.05) %>% 
     map(~.x$variable) %>% 
     reduce(intersect)
   
@@ -147,17 +147,29 @@
   
   insert_msg('Key differences between the clusters, table')
   
+  clust_bcg$n_numbers <- semi_clust$clust_obj %>% 
+    map(ngroups) %>% 
+    map(~tibble(variable = 'Participants, n', 
+                neutral = .x$n[1], 
+                PTG = .x$n[2], 
+                PTB = .x$n[3]))
+  
   clust_bcg$result_tbl <- 
     map2(clust_bcg$desc_stats %>% 
            map(reduce, left_join, by = 'variable') %>% 
            map(set_names, c('variable', names(clust_bcg$desc_stats[[1]]))), 
          clust_bcg$test %>% 
-           map(filter, p_value < 0.1) %>% 
+           map(filter, p_value < 0.05) %>% 
            map(select, variable, significance, eff_size), 
          right_join, by = 'variable') %>% 
     map(format_summ_tbl) %>% 
+    map2(., clust_bcg$n_numbers, 
+         ~full_rbind(.y, .x)) %>% 
+    map(~map_dfc(.x, function(x) stri_replace(x, 
+                                              regex = '\nn\\s{1}=\\s{1}\\d+', 
+                                              replacement = ''))) %>% 
     map(set_names, 
-        c('Variable', 'Neutral cluster', 'PTG cluster', 'PTS cluster', 
+        c('Variable', 'Neutral cluster', 'PTG cluster', 'PTB cluster', 
           'Significance', 'Effect size'))
   
 # END ------
