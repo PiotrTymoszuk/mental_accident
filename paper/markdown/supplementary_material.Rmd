@@ -210,6 +210,10 @@ suppl_tables$mental_battery[c(2, 3)] %>%
   flextable %>% 
   width(1, width = 6.5, unit = 'cm') %>% 
   width(2, width = 10.5, unit = 'cm') %>% 
+  footnote(1, 1:2, 
+           value = as_paragraph('GAD-7: 7-item general anxiety disorder scale; PHQ: patient health questionnaire; EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale; SOC-9L: Leipzig 9-item sense of coherence questionnaire; RS13: 13-item resilience scale; BRCS: brief resilent coping scale; PCL-5 DSM-5: PTSD checklist for DSM-5; PTGI: post-traumatic growth inventory'), 
+           part = 'header', 
+           ref_symbols = 'a') %>% 
   theme_vanilla
 
 ```
