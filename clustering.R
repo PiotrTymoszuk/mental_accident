@@ -21,8 +21,11 @@
   library(psych)
   library(clustTools)
   library(ggrepel)
-  
+  library(mixtools)
+
   insert_head()
+  
+  set_rownames <- trafo::set_rownames
   
   source_all('./tools/tools.R', 
              message = TRUE, 
@@ -38,14 +41,17 @@
   
   clust_globals$variables <- ptsd$mental_variables
   
-  ## normalized, median-centered psychometric data
+  ## date: no transformation, 
+  ## analysis table: normalized, median-centered psychometric data
 
-  clust_globals$analysis_tbl <- ptsd$dataset %>% 
-    dlply('partition', as_tibble) %>% 
+  clust_globals$data <- ptsd$dataset %>% 
+    blast(partition) %>% 
     map(select, ID, all_of(clust_globals$variable)) %>% 
-    map(column_to_rownames, 'ID') %>% 
-    map(center_data, type = 'median')
+    map(column_to_rownames, 'ID')
   
+  clust_globals$analysis_tbl <- clust_globals$data %>% 
+    map(center_data, type = 'median')
+
 # clustering analysis scripts -----
   
   insert_msg('Clustering analysis scripts')
@@ -53,7 +59,9 @@
   c('./clustering scripts/development.R', 
     './clustering scripts/clustering.R', 
     './clustering scripts/characteristic.R', 
-    './clustering scripts/background.R') %>% 
+    './clustering scripts/background.R', 
+    './clustering scripts/mix_development.R', 
+    './clustering scripts/mix_clustering.R') %>% 
     source_all(message = TRUE, crash = TRUE)
   
 # END ------

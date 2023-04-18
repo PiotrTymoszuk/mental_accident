@@ -1,5 +1,5 @@
 # Building a classifier (random forest) to identify the mental health cluster
-# with help of socioeconomic, demographic, clnical and accident-related factors
+# with help of socioeconomic, demographic, clinical and accident-related factors
 
 # tools ------
 
@@ -48,8 +48,13 @@
   
   ## full model formula
   
-  class_globals$formula <-  
-    as.formula(paste('clust_id ~ ', 
+  class_globals$formula$pam <-  
+    as.formula(paste('clust_pam ~ ', 
+                     paste(class_globals$variables, 
+                           collapse = '+')))
+  
+  class_globals$formula$mix <-  
+    as.formula(paste('clust_mix ~ ', 
                      paste(class_globals$variables, 
                            collapse = '+')))
   
@@ -66,32 +71,42 @@
                                                             'flashback_frequency', 
                                                             'confusion_during_sport')]
   
-  ## early model formula
+  ## early model formulas
   
-  class_globals$early_formula <- 
-    as.formula(paste('clust_id ~ ', 
+  class_globals$early_formula$pam <- 
+    as.formula(paste('clust_pam ~ ', 
+                     paste(class_globals$early_variables, 
+                           collapse = '+')))
+  
+  class_globals$early_formula$mix <- 
+    as.formula(paste('clust_mix ~ ', 
                      paste(class_globals$early_variables, 
                            collapse = '+')))
   
   ## cluster assignment schemes
   
-  class_globals$clust_assignment <- semi_clust$clust_obj %>% 
+  class_globals$pam_assignment <- semi_clust$clust_obj %>% 
     map(~.x$clust_assignment) %>% 
-    map(set_names, c('ID', 'clust_id'))
+    map(set_names, c('ID', 'clust_pam'))
+  
+  class_globals$mix_assignment <- semi_mix$clust_obj %>% 
+    map(~.x$clust_assignment) %>% 
+    map(set_names, c('ID', 'clust_mix'))
   
   ## analysis table, splitting into the training and test subset
   ## appending with the cluster assignment scheme
   
   class_globals$analysis_tbl <- ptsd$dataset %>% 
-    dlply('partition', 
-          select, 
-          ID, 
-          any_of(class_globals$variables)) %>% 
-    map(as_tibble)
-  
+    blast(partition) %>% 
+    map(select, 
+        ID, 
+        any_of(class_globals$variables))
+
   class_globals$analysis_tbl <- 
     map2(class_globals$analysis_tbl, 
-         class_globals$clust_assignment, 
+         class_globals$pam_assignment, 
+         left_join, by = 'ID') %>% 
+    map2(class_globals$mix_assignment, 
          left_join, by = 'ID')
   
   ## analysis table: recoding the missing injury information
@@ -140,7 +155,7 @@
   set.seed(1234)
   
   class_globals$folds <- 
-    createFolds(class_globals$analysis_tbl$training$clust_id, 
+    createFolds(class_globals$analysis_tbl$training$clust_pam, 
                 k = 10, 
                 returnTrain = TRUE)
   
@@ -156,9 +171,10 @@
   
   insert_msg('Analysis scripts')
   
-  c('./classification scripts/one_rule.R', 
-    './classification scripts/rf.R', 
-    './classification scripts/early_rf.R') %>% 
+  c('./classification scripts/early_pam.R', 
+    './classification scripts/full_pam.R', 
+    './classification scripts/early_mix.R', 
+    './classification scripts/full_mix.R') %>% 
     source_all(message = TRUE, crash = TRUE)
 
 # END ----

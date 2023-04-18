@@ -2,6 +2,12 @@
 
   insert_head()
   
+# reading the bibliography -------
+  
+  insert_msg('Reading the bibliography')
+  
+  alpine_bib <- read_bib('./paper/markdown/ptsd_biblio.bib')
+  
 # supplementary material ------
   
   insert_msg('Rendering the supplements')

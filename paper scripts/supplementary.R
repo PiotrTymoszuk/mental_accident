@@ -236,43 +236,12 @@
                               'in the mental clusters.'), 
               w = 180, 
               h = 220)
+
+# Figure S7: mental cluster classification, cRF -------
   
-# Figure S7: OneR, accuracy and kappa -------
-  
-  insert_msg('Figure S7: oneR')
-  
-  suppl_figures$oneR <- 
-    class_one$plots$global[c("Accuracy", "Kappa")] %>% 
-    map2(., 
-         c('Cluster classification, single factors, accuracy', 
-           'Cluster classification, single factors, kappa'), 
-         ~.x + 
-           labs(title = .y) +
-           theme(legend.position = 'none', 
-                 plot.title.position = 'plot', 
-                 plot.title = element_text(hjust = 0.3))) %>% 
-    plot_grid(plotlist = ., 
-              ncol = 2, 
-              align = 'hv', 
-              axis = 'tblr') %>% 
-    plot_grid(get_legend(class_one$plots$global[[1]] + 
-                           theme(legend.position = 'bottom')), 
-              nrow = 2, 
-              rel_heights = c(0.9, 0.1)) %>% 
-    as_figure(label = 'figure_s7_cluster_classification_single_factors', 
-              ref_name = 'oneR', 
-              caption = paste('Prediction of the mental cluster assignment', 
-                              'by single demographic, socioeconomic,', 
-                              'clinical and accident-related factors.'), 
-              w = 180, 
-              h = 120)
-  
-  
-# Figure S8: mental cluster classification, cRF -------
-  
-  insert_msg('Figure S8: Mental cluster classification, cRF')
-  
-  suppl_figures$crf <- class_rf$confusion_plots$global %>% 
+  insert_msg('Figure S7: Mental cluster classification, cRF')
+
+  suppl_figures$crf <- pam_full$confusion_plots %>% 
     map2(., 
          paste('Cluster classification,', 
                c('training', 'test')), 
@@ -282,19 +251,20 @@
     plot_grid(plotlist = ., 
               nrow = 2, 
               align = 'hv') %>% 
-    plot_grid(class_rf$importance_plots$global + 
+    plot_grid(pam_full$importance_plot + 
                 theme(plot.title.position = 'plot', 
                       plot.title = element_text(hjust = 0.3)), 
               ncol = 2, 
               rel_widths = c(0.9, 1.1), 
               labels = LETTERS, 
               label_size = 10) %>% 
-    as_figure(label = 'figure_s8_rf_classifier', 
+    as_figure(label = 'figure_s7_rf_classifier', 
               ref_name = 'crf', 
               caption = paste('Assignment of accident victims to', 
-                              'the mental clusters based on demographic,', 
-                              'socioeconomic, clinical', 
-                              'and accident-related factors.'), 
+                              'the mental clusters based on', 
+                              'explanatory factors available', 
+                              'during acute medical management', 
+                              'of the accident and recovery.'), 
               w = 180, 
               h = 150)
   

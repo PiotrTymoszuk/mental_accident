@@ -428,7 +428,7 @@
   
   insert_msg('Figure 7: Mental cluster classification, cRF, early preds')
   
-  figures$early_crf <- class_early$confusion_plots$global %>% 
+  figures$early_crf <- pam_early$confusion_plots %>% 
     map2(., 
          paste('Cluster classification,', 
                c('training', 'test')), 
@@ -438,7 +438,7 @@
     plot_grid(plotlist = ., 
               nrow = 2, 
               align = 'hv') %>% 
-    plot_grid(class_early$importance_plots$global + 
+    plot_grid(pam_early$importance_plot + 
                 theme(plot.title.position = 'plot', 
                       plot.title = element_text(hjust = 0.3)), 
               ncol = 2, 

@@ -843,6 +843,34 @@
       theme_void()
     
   }
+  
+# Variable importance ------
+  
+  plot_crf_importance <- function(data, 
+                                  plot_title = NULL, 
+                                  plot_subtitle = NULL, 
+                                  x_lab = '\u0394 accuracy', 
+                                  fill_color = 'cornsilk'){
+    
+    ## plots conditional random forest importance measures
+    
+    data %>% 
+      ggplot(aes(x = importance, 
+                 y = reorder(variable, importance))) + 
+      geom_bar(stat = 'identity', 
+               color = 'gray20', 
+               fill = fill_color) + 
+      scale_y_discrete(labels = exchange(class_globals$variables, 
+                                         dict = ptsd$var_lexicon, 
+                                         key = 'variable', 
+                                         value = 'label')) +
+      globals$common_theme + 
+      theme(axis.title.y = element_blank()) + 
+      labs(title = plot_title,
+           subtitle = plot_subtitle, 
+           x = x_lab)
+    
+  }
 
 # Labellers --------
   
