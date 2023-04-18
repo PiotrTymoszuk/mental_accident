@@ -91,6 +91,31 @@ mountain sport accident, mental health, post-traumatic stress disorder, post-tra
 
 # Introduction
 
+Stress-related manifestations following an experience or witnessing of a traumatic event such as actual or threatened death, injury, physical or sexual violence amount to post-traumatic stress disorder (PTSD). 
+PTSD symptoms include hyperarousal, panic, somatic symptoms, sleep disorders and unwilling recalls of the trauma (flashbacks) [@AmericanPsychiatricAssociation2013; @Bryant2019; @Howie2019] and are classified as chronic when lasting over three months [@Seedat2005]. 
+Of note, PTSD may overlap with signs of depression, anxiety and substance abuse [@Brady2000; @Gagnon-Sanschagrin2022]. 
+Although most individuals have experienced at least one traumatic event during the lifetime [@Benjet2016; @Breslau2004], the prevalence of PTSD in the general population was estimated for 6 - 9% [@VanAmeringen2008; @Kessler2005]. 
+Factors pre-disposing for PTSD include repeated trauma exposition e.g. in a family [@Cloitre2009] or professional setting [@Berger2012], female gender [@Christiansen2020] or young age [@Kongshoej2022]. 
+Yet, effects of early demographic or clinical predictors available during acute medical or psychiatric management of traumatic events on PTSD risk are weak [@Papini2018]. 
+Hence identification of PTSD-vulnerable population is challenging and hampers effective prevention measures [@Papini2018; @Galatzer-Levy2014]. 
+Post-traumatic growth describes a salutary adjustment psychological reaction to a traumatic experience including boosted attitude to life, self and relationship [@Tedeschi1996]. 
+It is disputable, if resilience, i.e. ability to adapt to stress or trauma [@AmericanPsychiatricAssociation2013], represents a pre-existing personality trait or a feature that can be modified by a potentially traumatic event [@Agaibi2005]. 
+The interplay between PTSD, post-traumatic growth and resilience is still unclear. 
+While resilience is considered to protect from PTSD development, symptoms of both PTSD and post-traumatic growth may co-occur in a subset of trauma affected individuals [@Levine2009; @Bensimon2012].
+
+While outdoor physical activity has been shown to foster mental health [@Niedermeier2017a; @Niedermeier2017], mountain sports are also associated with an elevated risk of injury [@Faulhaber2020].
+Physical injury frequently perceived as a life-threatening induces a response of fear [@Segal2010], and up to 26% of acute trauma injury patients were reported to develop PTSD [@Joseph2020]. 
+PTSD frequency in accident victims was found to be associated with head injuries, hospitalization length and pain [@Galatzer-Levy2014]. 
+Literature on mental distress following traumatic events related to mountain sports is scarce and discrepant. 
+In studies with mountain guides  and mountain rescue personnel, 71 - 78% of participants had experiences traumatic events [@Sommer2004; @Mikutta2022]. 
+Intriguingly, the frequency of PTSD symptoms ranged between 1 - 2.7% which was less than in the general population and, particularly, much lower than in other vulnerable groups such as emergency workers [@Sommer2004; @Mikutta2022; @Berger2012]. 
+Moreover, significantly higher resilience levels than in the general population were reported [@Mikutta2022]. 
+By contrast, PTSD symptom prevalence reported by Traber et al. in a similar collective of mountain professionals was 22% [@Traber2020]. 
+Concerning alpine accidents, survivors of avalanches were affected by acute and long-term PTSD symptoms such as hyperarousal or sleep disorders at rates between 11 - 16% [@Thordardottir2015; @Leonard2021].
+Still, a more general psychological reaction to a mountain accident, which may trigger PTSD-like distress, post-traumatic growth or resilience boost, has not been yet characterized.
+
+Herein, we sought to explore patterns of mental health in a collective of `r nrow(ptsd$dataset)` mountain accident victims in Tyrol, Austria, screened for signs of PTSG, post-traumatic growth, deteriorating quality of life and major psychiatric problems. Additionally, we searched for early demographic, socioeconomic and clinical predictors of mental health disorders following a mountain accidents which may help to tailor early preventive psychiatric interventions.
+
 \newpage
 
 # Methods
@@ -156,9 +181,9 @@ This algorithm had a good explanatory performance (ratio of between-cluster sum 
 The k = 3 cluster number choice was based on the bend of within-cluster sum of squares curve and maximal mean silhouette statistic [@Kassambara2020; @Rousseeuw1987]. 
 The training subset observations were assigned to the clusters with an inverse distance weighted 7-nearest neighbor classifier.
 
-The uni- and multi-parameter classifiers were trained with the one-rule [@VonJouanne-Diedrich2017; @Holte1993] and conditional random forest algorithms [@Hothorn2006; @Strobl2007; @Hothorn2022], respectively. 
+Multi-parameter classifiers were trained with the conditional random forest algorithms [@Hothorn2006; @Strobl2007; @Hothorn2022]. 
 The cluster assignment was predicted for the test subset and assessed by the accuracy and $\kappa$ statistics [@Kuhn2008]. 
-Conditional variable importance in the random forest classifiers was expressed as accuracy loss [@Strobl2008].
+Permutation variable importance in the random forest classifiers was expressed as accuracy loss [@Strobl2008].
 
 \newpage
 
@@ -224,7 +249,7 @@ There were no significant differences between the subsets in demographic, socioe
 To explore mental responses to mountain sport accidents, we subjected the participants to clustering in respect to a broad range of numeric psychometry variables (__Supplementary Table S2__). 
 Among clustering algorithms compared in the training subset, partition around medoids with cosine distance [@Drost2018; @Schubert2019] demonstrated good explanatory power and superior reproducibility in cross-validation [@Lange2004] (__Supplementary Figure S2A__). 
 Three mental clusters: 'neutral', 'PTG' (post-traumatic growth) and 'PTB' (post-traumatic burden), named after their key mental characteristic were identified in the training subset. 
-Subsequently, the mental cluster assignment could be robustly validated in the test subset as evident from comparable fractions of explained clustering variance (training: `r signif(semi_clust$variance$variance[1], 2)`, test: `r signif(semi_clust$variance$variance[2], 2)`), comparable cluster sizes and good visual clusetr separation in both study cohort subsets (__Supplementary Figures S2B__ - __S4__). 
+Subsequently, the mental cluster assignment could be robustly validated in the test subset as evident from comparable fractions of explained clustering variance (training: `r signif(semi_clust$variance$variance[1], 2)`, test: `r signif(semi_clust$variance$variance[2], 2)`), comparable cluster sizes and good visual cluster separation in both study cohort subsets (__Supplementary Figures S2B__ - __S4__). 
 
 The neutral cluster encompassing roughly one-third participants was characterized by low levels of anxiety, depression, panic, somatic symptoms, post-traumatic stress and post-traumatic growth along with high rating of coherence, resilient coping and quality of life. 
 The PTG cluster demonstrated similarly low scores of major mental health disorders. 
@@ -265,17 +290,18 @@ Given the low frequency of psychological support after the accident in the study
 Finally, we intended to model the mental cluster assignment with `r length(class_globals$early_variables)` demographic, socioeconomic, clinical and accident-related factors available during acute medical management of the accident (__Supplementary Table S7__). 
 Such models would enable early identification of mountain sport accident victims at risk of mental health problems. 
 
-Predictive value [@VonJouanne-Diedrich2017; @Holte1993] of single early explanatory parameters was poor (maximum accuracy: `r class_one$fit_stats$global$Accuracy %>% max %>% signif(2)`, maximum $\kappa$: `r class_one$fit_stats$global$Kappa %>% max %>% signif(2)`) and inconsistent between the subsets of the study cohort. 
-In such univariable analysis, age class, annual income and traumatic events in the past were the most predictive factors (__Supplementary Figure S7__). 
-
-To account for cumulative effects and interactions of multiple weak predictors of the mental cluster assignment, we resorted to conditional random forest modeling [@Strobl2007; @Hothorn2006; @Hothorn2022]. 
-This multi-parameter model employing early candidate cluster predictors could correctly assign `r signif(class_early$fit_stats$global$Accuracy[1], 2) * 100`% training subset observations to their mental clusters 
-($\kappa$ = `r signif(class_early$fit_stats$global$Kappa[1], 2)`). 
-However, its predictive performance in the test subset was poor (accuracy: `r signif(class_early$fit_stats$global$Accuracy[2], 2) * 100`, $\kappa$ = `r signif(class_early$fit_stats$global$Kappa[2], 2)`). 
+This multi-parameter conditional random forest model [@Strobl2007; @Hothorn2006; @Hothorn2022; @Gagnon-Sanschagrin2022] employing early candidate cluster predictors could correctly assign `r signif(pam_early$fit_stats$Accuracy[1], 2) * 100`% training subset observations to their mental clusters 
+($\kappa$ = `r signif(pam_early$fit_stats$Kappa[1], 2)`). 
+However, its predictive performance in the test subset was poor (accuracy: 
+`r signif(pam_early$fit_stats$Accuracy[2], 2) * 100`, 
+$\kappa$ = `r signif(pam_early$fit_stats$Kappa[2], 2)`). 
 The prediction quality was the best for the PTG cluster (accuracy, training: 89.5%, test: 59.4%, __Figure \@ref(fig:fig-early-crf)A__).
 The most important early explanatory variables for the cluster prediction by conditional random forests were annual income, sex, mode of rescue, leg injury and pre-existing mental illness (__Figure \@ref(fig:fig-early-crf)B__). 
-Inclusion of late accident consequences such as cautious behavior during sport, flashbacks or somatic health burden of the accident in the random forest model could only marginally improve its performance (training: accuracy = `r signif(class_rf$fit_stats$global$Accuracy[1], 2)`, $\kappa$ = `r signif(class_rf$fit_stats$global$Kappa[1], 2)`; test subset: accuracy = `r signif(class_rf$fit_stats$global$Accuracy[2], 2)`, $\kappa$ = `r signif(class_rf$fit_stats$global$Kappa[2], 2)`). 
-The most important late predictors of the cluster assignment were caution during sport and flashbacks (__Supplementary Figure S8__).
+Inclusion of late accident consequences such as cautious behavior during sport, flashbacks or somatic health burden of the accident in the random forest model could only marginally improve its performance (training: accuracy = 
+`r signif(pam_full$fit_stats$Accuracy[1], 2)`, 
+$\kappa$ = `r signif(pam_full$fit_stats$Kappa[1], 2)`; test subset: accuracy = `r signif(pam_full$fit_stats$Accuracy[2], 2)`, 
+$\kappa$ = `r signif(pam_full$fit_stats$Kappa[2], 2)`). 
+The most important late predictors of the cluster assignment were caution during sport and flashbacks (__Supplementary Figure S7__).
 
 Collectively, we could not establish a reliable model for identification of patients at risk of mental disorders represented by the PTB cluster with a broad ensemble of early non-mental predictors.
 

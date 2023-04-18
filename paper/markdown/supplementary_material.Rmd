@@ -164,10 +164,7 @@ In addition, comparable separation between the clusters could be discerned in th
 
 Differences in clustering variables, frequencies of mental disorder symptoms as well as demographic, socioeconomic, clinical and accident-related factors between the mental clusters were assessed separately in the training and test subset by $\chi^2$ test with Cramer V effect size statistic and Kruskal-Wallis test with $\eta^2$ effect size statistic for categorical and numeric variables, respectively (__Supplementary Tables S\@ref(tab:tab-clust-fct)__ and __S\@ref(tab:tab-clust-bcg)__).
 
-## Uni- and multi-variable cluster assignment classifiers
-
-Univariable classifiers of the mental cluster assignment for demographic, socioeconomic, clinical and accident-related parameters (__Supplementary Table S\@ref(tab:tab-mod-variables)__) were trained in the training subset of the study cohort by the one-rule (oneR) algorithm (function `OneR()`, package _OneR__) [@VonJouanne-Diedrich2017; @Holte1993]. 
-The cluster assignment was subsequently predicted for the test subset observations (method `predict()`, package _OneR_). 
+## Cluster assignment classifiers
 
 Two multi-parameter classifiers of the mental cluster assignment were developed in the training subset:
 
@@ -182,7 +179,7 @@ The optimal parameter sets were obtained by optimization (tuning) employing the 
 The cluster assignment was subsequently predicted for the test subset observations (method `predict()`, package _party_). 
 
 Accuracy and $\kappa$ statistic for the classifiers' mental cluster assignment predictions in the training and test subsets were computed with the function `multiClassSummary()` from the package _caret_ [@Kuhn2008]. 
-Conditional importance for explanatory variables expressed as accuracy loss [@Strobl2008] was obtained for the conditional random forest algorithm with the function 'varimp()` from the _party_ package.
+Permutation importance for explanatory variables expressed as accuracy loss [@Strobl2008] was obtained for the conditional random forest algorithm with the function 'varimp()` from the _party_ package.
 
 ## Data and code availability
 
@@ -384,18 +381,6 @@ suppl_figures$accident$plot
 __Supplementary Figure S\@ref(fig:fig-accident). Accident sport type and accident rescue in the mental clusters.__ 
 
 _Distribution of sport types (A) and rescue modes (B, C) in the mental clusters. Statistical significance was determined by $\chi^2$ test with Cramer V effect size statistic. Percentages in the mental clusters in the training and test subset of the study cohort are presented in stack plots. Effect sizes and p-values are displayed in the plot captions. Numbers of observations in the clusters are presented in the X axes._
-
-\newpage
-
-```{r fig-oneR, fig.width = mm_inch(suppl_figures$oneR$w), fig.height = mm_inch(suppl_figures$oneR$h), fig.cap = 'Prediction of the mental cluster assignment by single demographic, socioeconomic, clinical and accident-related factors available during acute medical management of the accident.'}
-
-suppl_figures$oneR$plot
-
-```
-
-__Supplementary Figure S\@ref(fig:fig-oneR). Prediction of the mental cluster assignment by single demographic, socioeconomic, clinical and accident-related factors available during acute medical management of the accident.__ 
-
-_Univariable classifiers of the mental cluster assignment for demographic, socioeconomic, clinical and accident-related parameters available during acute medical management of the mountain sport accident were trained in the training subset of the study cohort by the one-rule (oneR) algorithm. The cluster assignment was subsequently predicted for the test subset observations. Accuracy and $\kappa$ of the classifiers with any predictive value ($\kappa$ > 0 in both subsets) are shown in bar plots._
 
 \newpage
 
