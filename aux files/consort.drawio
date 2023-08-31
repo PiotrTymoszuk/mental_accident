@@ -1,1 +1,80 @@
-<mxfile host="Electron" modified="2023-03-29T17:52:40.717Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/20.8.10 Chrome/106.0.5249.199 Electron/21.3.5 Safari/537.36" etag="d6yfIChGsF93EgSSx8xU" version="20.8.10" type="device"><diagram id="Nn_4Ib7fIXEamJemjsYj" name="Page-1">7Vpbk5s2FP41nmkfNsPFYPy4691s22Rn0tm0zeZlRwiBlQrESvKtv74SSAYCwXazvtDJgz3o6ILQd75zg5E7S9f3DOTzBxohMnKsaD1yb0eOE9iW/FeCTSkYT9xSkDAclSK7Ejzif5AW6nnJAkeINwYKSonAeVMIaZYhKBoywBhdNYfFlDTvmoMEtQSPEJC29C8ciXkp9adWJf8F4WSu7zwNdEcKzFi9Ap+DiK5KUTHGvRu5M0apKK/S9QwRdXTmWMqF3n6jd7svhjKxzwT6fJMTCO/cd7//8SF4vv5zNfvtytN7ExvzvCiSj6+blIk5TWgGyF0lvWF0kUVIrWrJVjXmPaW5FNpS+AUJsdFYgoWgUjQXKdG9aI3FJzX9jadbT7We27VeuWhsTCMTbPOp3niqVlDNalrRMvPap2TgoAsGUc/RGGUDLEGiZ9y4HKfOrXYDjcE9oimS+5EDGCJA4GVTrYDWzmQ7Tk+9ZgxsagNyijPBayt/UAI5QPNsy5eNoU9DG+RFuaJp1bZWiQqNOUB7/OFpT6UwTw19OZf2OK+tPTXEDwdUr7sEZKHv9Gu2xELCpaxueRQCQ5wDIfuvR45P5MPdhExeJepKGVNph7zZT/KXoBf5/7MU2L7STAQY75hCcpypWQBCaeqVUn89JGc0lndFGVRHgTP5d49YCuSFD1KpNjdZyPMCr6+nqrHFk1hjz5u29LXSRqVAq7l81sccFMiupDtral6MCZlRQlkx143j2IFQyrlg9G9U64n80Pf8Pv1ZIibQuhdx0+tqG72qvI/tabLPa57HOJ7vUYo1f3j7MOH4/aP/9DKLo8/vcmqU4gfLv8nenSy3z0bzTkTd4SF6Kq+/N6L2RRlup2W4ZzTNCdKme67sK1+wJdr0mUh3Yg3ZQprQRwfCOy2m/woWsy8krKFxizLc7UUdS55Jkb4IAFVARyjvcIE1P2YH4x6UrMNRCiDqRikMvLHXy6f9UXKdJkqTc4NkdwU7ULNGJXDyWQEpdgOI3KLaAkecp0WIYoVACMR66eS37ezwcLJPCVSnt3KG561OlmXs7a4mF+WuzL47/NWrMM+1JoN0ZEGDek6XIxt7x6EeS0P6DBb3LyGm6Mvd5xcvfD5voGjXiFfRcDf1DuJe0fqAGJYHhtj3E3LSJmTnyZ4tIejcTTugOKWJ/Y84n8jE7ovoZSUEZtvN6IYsFGItw1lUVMokAUgENxx31GmOZ10jgIK407r6MEBhrGbI8NioY0fl+3BTO26WS91OU3ukKKdTfQZYSz1CTt7HrJ0M9C7KprbTi48M4AxnSZGLhxz1pnky0RssycyrPmtPUo2PRargLKQyBLFPRZCOLGAABGnnAB+RKn3sQQ7b6kutL5sc5oVd0PRA5yeLKYgMyQUdIQrsY85Ohk0vimFei2GPKMVXfJEjtsS8KEjKmJDLzKd0S6HaW843cL7d6TbblsswDEKCeA/1Dq9qRR4KonEX9QIndP3XSq1t702zrjX2O/g2PSnffhS2dvFod9JlXRThpi3CzUp6lTUsnGS6hgWJasZY9fwPyOS5ZyeT1Tr6W5TSRH2ThuHImRVaB+UMSDOaGhEkMiKHRbERZMocmo8QrgqFKSxkDKCg6ssFBaFcQotXuChNbouVDPGcZlwl0cVLHp1Pbz9qGBzMQRNjvyNAcV7pRYBsVh/ClV8nVR8Tunf/Ag==</diagram></mxfile>
+<mxfile host="Electron" modified="2023-08-30T21:05:09.662Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.6.5 Chrome/114.0.5735.243 Electron/25.3.1 Safari/537.36" etag="MxyW7kwjRmlh2rzfJiPG" version="21.6.5" type="device">
+  <diagram id="Nn_4Ib7fIXEamJemjsYj" name="Page-1">
+    <mxGraphModel dx="1418" dy="1808" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="690" pageHeight="980" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="o_BplccE3KQUP8_AVwCJ-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="o_BplccE3KQUP8_AVwCJ-1" target="o_BplccE3KQUP8_AVwCJ-4" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="100" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="o_BplccE3KQUP8_AVwCJ-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="o_BplccE3KQUP8_AVwCJ-1" target="o_BplccE3KQUP8_AVwCJ-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o_BplccE3KQUP8_AVwCJ-1" value="Invited to participate:&lt;br&gt;age \(\geq\) 18 years&lt;br&gt;mountain sport accident&lt;br&gt;residence in a German-speaking country&lt;br&gt;proficiency in German&amp;nbsp;&lt;br&gt;n = 4559" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="118.75" y="-30" width="182.5" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="xsMFM7siLS6YqCfdZKpo-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="o_BplccE3KQUP8_AVwCJ-2" target="o_BplccE3KQUP8_AVwCJ-12" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xsMFM7siLS6YqCfdZKpo-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="o_BplccE3KQUP8_AVwCJ-2" target="o_BplccE3KQUP8_AVwCJ-11" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o_BplccE3KQUP8_AVwCJ-2" value="Completed the survey&lt;br&gt;n = 387" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="135" y="120" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="o_BplccE3KQUP8_AVwCJ-4" value="Denied to participate or contact lost&lt;br&gt;n =&amp;nbsp;4172" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+          <mxGeometry x="325" y="70" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="o_BplccE3KQUP8_AVwCJ-11" value="Incomplete mental health assessment battery&lt;br&gt;n = 80" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+          <mxGeometry x="325" y="170" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="xsMFM7siLS6YqCfdZKpo-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="o_BplccE3KQUP8_AVwCJ-12" target="o_BplccE3KQUP8_AVwCJ-17" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o_BplccE3KQUP8_AVwCJ-12" value="Complete mental health assessment battery&lt;br&gt;n = 307" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="138" y="220" width="145" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rmbo_auGqbioejEZq5b_-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.55;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="o_BplccE3KQUP8_AVwCJ-17" target="rmbo_auGqbioejEZq5b_-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rmbo_auGqbioejEZq5b_-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="o_BplccE3KQUP8_AVwCJ-17" target="rmbo_auGqbioejEZq5b_-1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o_BplccE3KQUP8_AVwCJ-17" value="Included&lt;br&gt;in the analysis&lt;br&gt;n = 307" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="140" y="320" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rmbo_auGqbioejEZq5b_-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="rmbo_auGqbioejEZq5b_-1" target="rmbo_auGqbioejEZq5b_-5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rmbo_auGqbioejEZq5b_-1" value="Training subset&lt;br&gt;n = 226" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry y="400" width="140" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rmbo_auGqbioejEZq5b_-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="rmbo_auGqbioejEZq5b_-2" target="rmbo_auGqbioejEZq5b_-5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rmbo_auGqbioejEZq5b_-2" value="Test subset&lt;br&gt;n = 74" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="280" y="400" width="140" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rmbo_auGqbioejEZq5b_-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="rmbo_auGqbioejEZq5b_-5" target="rmbo_auGqbioejEZq5b_-9" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rmbo_auGqbioejEZq5b_-5" value="Semi-supervised clustering by psychometry battery variables" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="115.5" y="460" width="190" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rmbo_auGqbioejEZq5b_-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="rmbo_auGqbioejEZq5b_-9" target="rmbo_auGqbioejEZq5b_-10" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rmbo_auGqbioejEZq5b_-9" value="Cluster assignment classifiers" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="115.5" y="530" width="190" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rmbo_auGqbioejEZq5b_-10" value="Demographic, socioeconomic, clinical and accident-related factors associated with mental response to the accident" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="85" y="600" width="250" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

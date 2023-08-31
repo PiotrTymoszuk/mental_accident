@@ -13,6 +13,7 @@
   library(caret)
   library(rstatix)
   library(furrr)
+  library(clustTools)
 
   source_all('./tools/tools.R', 
              message = TRUE, crash = TRUE)
@@ -62,7 +63,7 @@
   
   globals$clust_colors <- c('neutral' = 'cadetblue3',
                             'PTG' = 'darkolivegreen3', 
-                            'PTB' = 'coral4')
+                            'PTS' = 'coral4')
   
   ## injury regions
   
@@ -90,9 +91,18 @@
   ## data partition colors
   
   globals$part_colors <- c(training = 'steelblue', 
-                           test = 'coral3')
+                           train = 'steelblue', 
+                           test = 'coral3', 
+                           cv = 'gray60')
+  
+  globals$part_labels <- c(training = 'training', 
+                           train = 'training', 
+                           test = 'test', 
+                           cv = '10-fold CV')
 
 # reading the recoding scheme -----
+  
+  insert_msg('Reading the recoding scheme')
   
   ptsd$var_coding <- read_excel('./data/var_recoding.xlsx') %>% 
     mutate(args1 = stri_replace_all(args1, regex = '“|”', replacement = ''), 
@@ -148,7 +158,7 @@
   insert_msg('Removal of the zero-age and child age records')
   
   ptsd$cleared <- ptsd$cleared %>% 
-    filter(is.na(age) | age >= 16)
+    filter(is.na(age) | age >= 18)
   
 # manual polishing -----
   
@@ -297,7 +307,7 @@
                                           '1 – 2 per month' = '> 1/month'; 
                                           '1 – 2 per year' = '> 1/year'"), 
            flashback_frequency = factor(flashback_frequency, 
-                                        c('none', '> 1/month', '> 1/year')), 
+                                        c('none', '> 1/year', '> 1/month')), 
            psych_support_post_accident = ifelse(psych_therapy_post_accident == 'yes', 
                                                 'yes', 
                                                 as.character(psych_support_post_accident)), 
@@ -412,32 +422,32 @@
   
   ptsd$cleared <- ptsd$cleared %>% 
     mutate(sport_type = car::recode(as.character(sport_type), 
-                                    "'alpine skiing' = 'ski/snowboard'; 
+                                    "'alpine skiing' = 'ski/snowboard/cross-country'; 
                                     'biking' = 'biking'; 
                                     'sledding' = 'sledding'; 
-                                    'rock climbing' = 'climbing/hiking/mountaineering'; 
-                                    'hiking' = 'climbing/hiking/mountaineering'; 
+                                    'rock climbing' = 'climbing/hiking/mountaineering/skitour'; 
+                                    'hiking' = 'climbing/hiking/mountaineering/skitour'; 
                                     'MTB' = 'biking'; 
                                     'sailing' = 'other'; 
-                                    'crosssountry skiing' = 'ski/snowboard'; 
+                                    'crosssountry skiing' = 'ski/snowboard/cross-country'; 
                                     'surfing' = 'other'; 
                                     'skating' = 'other'; 
-                                    'mountaineering' = 'climbing/hiking/mountaineering'; 
-                                    'skitouring' = 'climbing/hiking/mountaineering'; 
-                                    'paragliding' = 'climbing/hiking/mountaineering'; 
-                                    'sport climbing/bouldering' = 'climbing/hiking/mountaineering'; 
-                                    'snowboarding' = 'ski/snowboard'; 
+                                    'mountaineering' = 'climbing/hiking/mountaineering/skitour'; 
+                                    'skitouring' = 'climbing/hiking/mountaineering/skitour'; 
+                                    'paragliding' = 'climbing/hiking/mountaineering/skitour'; 
+                                    'sport climbing/bouldering' = 'climbing/hiking/mountaineering/skitour'; 
+                                    'snowboarding' = 'ski/snowboard/cross-country'; 
                                     'other water' = 'other'; 
-                                    'ice climbing' = 'climbing/hiking/mountaineering'; 
-                                    'other mountain' = 'climbing/hiking/mountaineering'; 
+                                    'ice climbing' = 'climbing/hiking/mountaineering/skitour'; 
+                                    'other mountain' = 'climbing/hiking/mountaineering/skitour'; 
                                     'swimming' = 'other'; 
-                                    'figeln' = 'climbing/hiking/mountaineering'; 
-                                    'ski jumping' = 'ski/snowboard'; 
+                                    'figeln' = 'climbing/hiking/mountaineering/skitour'; 
+                                    'ski jumping' = 'ski/snowboard/cross-country'; 
                                     'bobsledding' = 'sledding'; 
                                     'other winter' = 'sledding'"), 
            sport_type = factor(sport_type, 
-                               c('ski/snowboard', 'sledding', 
-                                 'climbing/hiking/mountaineering', 'biking', 'other')))
+                               c('ski/snowboard/cross-country', 'sledding', 
+                                 'climbing/hiking/mountaineering/skitour', 'biking', 'other')))
   
 # Counts of injured body regions ------
   
@@ -470,8 +480,10 @@
            surgery_complexity = stri_split(surgery_complexity, fixed = '/'), 
            surgery_complexity = map_dbl(surgery_complexity, length), 
            surgery_complexity = ifelse(surgery_done == 'no', 
-                                       0, surgery_complexity))
-  
+                                       0, surgery_complexity), 
+           surgery_complexity = cut(surgery_complexity, 
+                                    c(-Inf, 0, 1, Inf), 
+                                    c('none', '1', '2+')))
   
 # PCL5-DSM5 item factor level setup -------
   
@@ -659,9 +671,9 @@
   
   ptsd$ptgi_numeric <- NULL
   
-# CIDI item factor setup -----
+# DIAX/CIDI item factor setup -----
   
-  insert_msg('CIDI items')
+  insert_msg('DIAX/CIDI items')
   
   for(i in paste0('cidi_q', 1:8)) {
     
@@ -690,7 +702,10 @@
            cidi_class = factor(cidi_class), 
            traumatic_event = car::recode(cidi_class, 
                                          "'negative' = 'no'; 
-                                         'positive' = 'yes'"))
+                                         'positive' = 'yes'"), 
+           traumatic_number = cut(cidi_total, 
+                                  c(-Inf, 0, 1, 2, Inf), 
+                                  c('none', '1', '2', '3+')))
   
   ptsd$cidi_numeric <- NULL
   
@@ -1006,9 +1021,9 @@
   
   ## IDs of participants who completed the interview
   
-  ptsd$interview_ID <- 
-    read.spss('./data/PTSD Datei mit Unfallcodes ohne Namen NUR BEANTWORTER 23.08 Kopie.sav', 
-              to.data.frame = TRUE)$Passwort
+  ptsd$interview_ID <- ptsd$cleared %>% 
+    filter(!is.na(survey_date)) %>% 
+    .$ID
   
   ## mental health variables used for clustering
   ## PSS4 (stress) with poor consistency is removed from further analysis
@@ -1080,6 +1095,8 @@
   
   insert_msg('Training and test datasets')
   
+  ## randomization be numeric psychometric outcomes
+  
   if(file.exists('./cache/randomization.RData')) {
     
     insert_msg('Loading cached randomization results')
@@ -1088,16 +1105,25 @@
     
   } else {
     
-    source_all('./import scripts/randomization.R')
+    source_all('./import scripts/partition.R')
     
   }
   
-  ptsd$rand_scheme <- rand$analysis_tbl[c('ID', rand$best_partitions[1])] %>% 
-    set_names(c('ID', 'partition'))
+  ptsd$rand_scheme <- part$best_scheme
   
   ptsd$dataset <- left_join(ptsd$dataset, 
                             ptsd$rand_scheme, 
                             by = 'ID')
+  
+# diagnosed mental comordidities -------
+  
+  insert_msg('Diagnosed mental comorbidity')
+  
+  ptsd$mental_types <- read_excel('./data/psych_patch.xlsx') %>% 
+    mutate(ID = stri_replace(ID, regex = '\n$', replacement = ''))
+  
+  ptsd$mental_types[, -1] <- ptsd$mental_types[, -1] %>% 
+    map_dfc(factor, c('no', 'yes'))
   
 # END -----
   

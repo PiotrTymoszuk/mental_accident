@@ -40,6 +40,7 @@
                       ci = FALSE, 
                       exact = FALSE, 
                       pub_styled = TRUE, 
+                      adj_method = 'BH', 
                       .parallel = TRUE, 
                       .paropts = furrr_options(seed = TRUE, 
                                                globals = c('ptsd', 'eda_globals'))) %>% 
@@ -50,7 +51,7 @@
   insert_msg('Significant and near significant differences')
   
   partition$top_factors <- partition$test %>% 
-    filter(p_value < 0.1) %>% 
+    filter(p_adjusted < 0.05) %>% 
     .$variable
   
 # A ready to use table with significant and near significant differences -------

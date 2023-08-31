@@ -10,6 +10,9 @@
   library(rmarkdown)
   library(bookdown)
   library(knitr)
+  library(clustTools)
+  library(proxy)
+  library(flextable)
   
 # data import and transformation -----
   
@@ -173,41 +176,51 @@
   pss2date <- function(x) as.Date(x/86400, origin = "1582-10-14")
   
 # randomization ------
-  
-  freq_tester <- function(data, 
-                          variable, 
-                          part_variables) {
+
+  partition_similarity <- function(data, test_id, 
+                                   method = 'cosine', 
+                                   to_matrix = TRUE, 
+                                   cross_only = TRUE) {
     
-    ## computes fractions and tests for differences in distribution
-    ## between data partitions
+    ## computes similarity between the training and test subset
     
-    ## data splits
+    data_lst <- list(train = data[!rownames(data) %in% test_id, ], 
+                     test = data[test_id, ]) 
     
-    splits <- part_variables %>% 
-      future_map(~split(data, data[[.x]]) %>% 
-                   map(~table(.x[[variable]])))
+    if(to_matrix) {
+      
+      data_lst <- data_lst %>% 
+        map(as.matrix)
+      
+    }
     
-    ## fractions
+    ## distances
     
-    fractions <- splits %>% 
-      map(~map(.x, 
-               ~.x/sum(.x)) %>% 
-            reduce(rbind) %>% 
-            `row.names<-`(., c('training', 'test')))
-    
-    ## chi-squared tests
-    
-    tests <- splits %>% 
-      map(reduce, rbind) %>% 
-      map(`row.names<-`, c('training', 'test')) %>% 
-      map(chisq_test) %>% 
-      compress(names_to = 'partition')
-    
-    list(fractions = fractions, 
-         tests = tests)
+    if(!cross_only) {
+      
+      return(tibble(within_train = mean(proxy::dist(data_lst[[1]], 
+                                                    method = method), 
+                                        na.rm = TRUE), 
+                    within_test = mean(proxy::dist(data_lst[[1]], 
+                                                   method = method), 
+                                       na.rm = TRUE), 
+                    cross = mean(proxy::dist(data_lst[[1]], 
+                                             data_lst[[2]], 
+                                             method = method), 
+                                 na.rm = TRUE)))
+      
+    } else {
+      
+      return(tibble(within_train = NA, 
+                    within_test = NA, 
+                    cross = mean(proxy::dist(data_lst[[1]], 
+                                             data_lst[[2]], 
+                                             method = method), 
+                                 na.rm = TRUE)))
+      
+    }
     
   }
-  
   
 # plot axis labels with n numbers ------
   
@@ -231,6 +244,29 @@
     
     return(colors()[grep('gr(a|e)y', grDevices::colors(), invert = T)] %>% 
              sample(size = color_no))
+    
+  }
+  
+  symptom_ax_labs <- function(test_data, variables) {
+    
+    ax_labs <- test_data %>% 
+      filter(.data[['variable']] %in% variables) %>% 
+      mutate(var_lab = exchange(variable, ptsd$var_lexicon), 
+             var_lab = stri_replace(var_lab, 
+                                    fixed = ' (', 
+                                    replacement = '<br>('), 
+             var_lab = stri_replace(var_lab, 
+                                    fixed = ' symptoms', 
+                                    replacement = ''), 
+             var_lab = stri_replace(var_lab, 
+                                    fixed = ' during', 
+                                    replacement = '<br>during'), 
+             var_lab = paste(var_lab, plot_cap, sep = '<br>'), 
+             var_lab = ifelse(p_adjusted < 0.05, 
+                              paste0('<b>', var_lab, '</b>'), 
+                              var_lab))
+    
+    set_names(ax_labs$var_lab, ax_labs$variable)
     
   }
   
@@ -321,6 +357,12 @@
   
   plot_ptsd_freq <- function(data, 
                              test_data, 
+                             variables = c('dsm5_cluster_class', 
+                                           'dsm5_B_class', 
+                                           'dsm5_C_class', 
+                                           'dsm5_D_class', 
+                                           'dsm5_E_class'), 
+                             ptsd_labs = TRUE, 
                              split_factor = 'psych_comorbidity', 
                              plot_title = 'PCL-5 DSM-5 clusters', 
                              plot_subtitle = NULL, 
@@ -333,14 +375,7 @@
     ## clusters split by a factor
     
     ## variables and frequencies
-    
-    variables <- 
-      c('dsm5_cluster_class', 
-        'dsm5_B_class', 
-        'dsm5_C_class', 
-        'dsm5_D_class', 
-        'dsm5_E_class')
-    
+
     frequency <-  data %>% 
       dlply(split_factor, 
             select, 
@@ -349,6 +384,29 @@
       compress(names_to = split_factor) %>% 
       mutate(!!split_factor := factor(.data[[split_factor]], 
                                       levels(data[[split_factor]])))
+    
+    ## plot
+    
+    bar_plot <- 
+      plot_freq_bars(data = frequency, 
+                     freq_var = 'percent', 
+                     cat_var = 'variable', 
+                     split_factor = split_factor, 
+                     plot_title = plot_title, 
+                     plot_subtitle = plot_subtitle, 
+                     x_lab = x_lab, 
+                     fill_scale = fill_scale, 
+                     color_scale = color_scale, 
+                     show_freqs = TRUE, 
+                     position = position_dodge(0.9), 
+                     size = 2.5, 
+                     hjust = -0.4)
+    
+    if(!ptsd_labs) {
+      
+      return(bar_plot)
+      
+    }
     
     ## Y axis labels
     
@@ -365,21 +423,7 @@
     ax_labs <- set_names(ax_labs$ax_lab, 
                          ax_labs$variable)
     
-    ## plot
-    
-    plot_freq_bars(data = frequency, 
-                   freq_var = 'percent', 
-                   cat_var = 'variable', 
-                   split_factor = split_factor, 
-                   plot_title = plot_title, 
-                   plot_subtitle = plot_subtitle, 
-                   x_lab = x_lab, 
-                   fill_scale = fill_scale, 
-                   color_scale = color_scale, 
-                   show_freqs = TRUE, 
-                   position = position_dodge(0.9), 
-                   size = 2.5, 
-                   hjust = -0.4) + 
+    bar_plot + 
       scale_y_discrete(limits = rev(variables), 
                        labels = ax_labs) + 
       theme(axis.text.y = element_markdown())
@@ -590,317 +634,747 @@
     
   }
   
+# Ribbon plots ------
+  
+  split_ribbon <- function(plot_lst, 
+                           lex_lst, 
+                           variables, 
+                           title_prefix) {
+    
+    ## splits ribbon plots of the psychometric scores
+    
+    for(i in names(plot_lst)) {
+      
+      plot_lst[[i]]$data <- 
+        plot_lst[[i]]$data %>% 
+        filter(variable %in% variables)
+      
+    }
+    
+    list(x = plot_lst, 
+         y = paste(title_prefix, 
+                   c('training', 'test'), 
+                   sep = ', '), 
+         z = lex_lst) %>% 
+      pmap(function(x, y, z) x + 
+             scale_y_discrete(limits = rev(variables), 
+                              labels = function(x) exchange(x, dict = z)) + 
+             labs(title = y))
+    
+  }
+  
 # Classifiers ------
   
-  model_one <- function(train_data, 
-                        test_data, 
-                        response = 'clust_id', 
-                        expl_variables = class_globals$variables, 
-                        summ_fun = multiClassSummary) {
+  ptb_tuner <- function(data, lev = NULL, model = NULL) {
     
-    ## trains and predicts with the OneR algorithm
+    ## a function for tuning the caret's train
+    ## to detect the PTS cluster with the biggest reliability
     
-    ## training ------
+    new_dat <- 
+      dplyr::transmute(data, 
+                       obs = ifelse(obs == 'PTS', 'yes', 'no'), 
+                       pred = ifelse(pred == 'PTS', 'yes', 'no'), 
+                       accuracy = obs == pred, 
+                       true_pos = (obs == 'yes' & pred == 'yes'), 
+                       false_pos = (obs == 'no' & pred == 'yes'), 
+                       true_neg = (obs == 'no' & pred == 'no'), 
+                       false_neg = (obs == 'yes' & pred == 'no'))
     
-    formula <- paste(response, '~', 
-                     paste(expl_variables, collapse = '+')) %>% 
-      as.formula
+    stats <- purrr::map_dfc(new_dat[c('accuracy', 
+                                      'true_pos', 'false_pos', 
+                                      'true_neg', 'false_neg')], 
+                            sum)
     
-    model <- OneR(formula, data = train_data)
+    stats <- dplyr::mutate(stats, 
+                           accuracy = accuracy/nrow(new_dat), 
+                           sens = true_pos/(true_pos + false_neg), 
+                           spec = true_neg/(true_neg + false_pos))
     
-    ## predictions ------
+    unlist(as.vector(stats))
     
-    train_pred <- 
-      data.frame(obs = train_data[[response]], 
-                 pred = predict(model, newdata = train_data) %>% 
-                   factor(levels = levels(train_data[[response]])))
+  }
+  
+  clust_pred_stats <- function(pred_lst) {
     
-    test_pred <- 
-      data.frame(obs = test_data[[response]] %>% 
-                   factor(levels = levels(train_data[[response]])), 
-                 pred = predict(model, newdata = test_data) %>% 
-                   factor(levels = levels(train_data[[response]])))
+    ## calculates prediction accuracy, specificity and sensitivity
+    ## for predictions of particular clusters
+    
+    pred_data <- pred_lst %>% 
+      map(~.x$data) %>% 
+      map(select, .outcome, .fitted) %>% 
+      map(set_names, c('obs', 'pred'))
+    
+    levs <- levels(pred_data[[1]]$obs)
+    
+    clust_lst <- list()
+    clust_stats <- list()
+    corr_detection <- list()
+    
+    for(i in levs) {
+      
+      clust_lst[[i]] <- pred_data %>% 
+        map(mutate, 
+            obs = ifelse(obs == i, 'yes', 'no'), 
+            pred = ifelse(pred == i, 'yes', 'no'),
+            correct = obs == pred, 
+            true_pos = (obs == 'yes' & pred == 'yes'), 
+            false_pos = (obs == 'no' & pred == 'yes'), 
+            true_neg = (obs == 'no' & pred == 'no'), 
+            false_neg = (obs == 'yes' & pred == 'no'))
+      
+      corr_detection[[i]] <- clust_lst[[i]] %>% 
+        map(filter, obs == 'yes') %>% 
+        map(~sum(.x$correct)/nrow(.x))
+      
+      clust_stats[[i]] <- 
+        map2(clust_lst[[i]], 
+             corr_detection[[i]], 
+             ~tibble(accuracy = sum(.x$correct)/nrow(.x), 
+                     correct_assignment = .y, 
+                     sens = sum(.x$true_pos)/(sum(.x$false_neg) + sum(.x$true_pos)), 
+                     spec = sum(.x$true_neg)/(sum(.x$true_neg) + sum(.x$false_pos)))) %>% 
+        compress(names_to = 'dataset')
+      
+    }
+    
+    return(clust_stats)
+    
+  }
 
-    ## fit stats ------
+  plot_overall_stats <- function(data, 
+                                 y_var, 
+                                 title_prefix = 'Mental cluster prediction,', 
+                                 plot_subtitle = NULL) {
     
-    fit_stats <- 
-      list(training = train_pred, 
-           test = test_pred) %>% 
-      map(summ_fun, 
-          lev = levels(train_data[[response]])) %>% 
-      map(as.list) %>% 
-      map(as_tibble) %>% 
-      compress(names_to = 'partition')
+    list(x = c('kappa', 'correct_rate', 'bs', 'bss'), 
+         y = paste(title_prefix, 
+                   c("\u03BA", 'accuracy', 'Brier score', 'Brier skill score')), 
+         z = c("Cohen's \u03BA", 'Accuracy', 'Brier score', 'Brier skill score')) %>% 
+      pmap(function(x, y, z) data %>% 
+             ggplot(aes(x = .data[[x]], 
+                        y = reorder(.data[[y_var]], .data[[x]]), 
+                        fill = dataset)) + 
+             geom_bar(stat = 'identity', 
+                      color = 'black', 
+                      position = position_dodge(0.9)) + 
+             scale_fill_manual(values = globals$part_colors, 
+                               labels = globals$part_labels,
+                               name = 'Data subset') + 
+             scale_y_discrete(labels = class_globals$predictor_labs) + 
+             globals$common_theme + 
+             theme(axis.title.y = element_blank()) + 
+             labs(title = y, 
+                  x = z)) %>% 
+      set_names(c('kappa', 'correct_rate', 'bs', 'bss'))
     
-    ## output -------
+  }
+  
+  plot_cluster_stats <- function(data, 
+                                 y_var, 
+                                 title_prefix = 'Cluster detection', 
+                                 y_lab = 'Algorithm') {
     
-    list(train = train_pred, 
-         test = test_pred) %>% 
-      map2(., list(train_data, test_data), 
-           ~mutate(.x, ID = rownames(.y))) %>% 
-      map(as_tibble) %>% 
-      c(list(model = model, 
-             stats = fit_stats))
+    list(x = c('sens', 'spec', 'accuracy'), 
+         y = paste('Cluster detection, ensemble,', 
+                   c('sensitivity', 'specificity', 'accuracy')), 
+         z = c('Sensitivity', 'Specificity', 'Accuracy')) %>% 
+      pmap(function(x, y, z) data %>% 
+             ggplot(aes(x = clust_id, 
+                        y = reorder(.data[[y_var]], .data[[x]]), 
+                        fill = .data[[x]], 
+                        size = .data[[x]])) + 
+             geom_point(shape = 21) + 
+             geom_text(aes(label = signif(.data[[x]], 2), 
+                           color = .data[[x]]), 
+                       size = 2.75,
+                       hjust = 0.5, 
+                       vjust = -1.8, 
+                       show.legend = FALSE) + 
+             scale_size_area(max_size = 4.5, 
+                             limits = c(0, 1), 
+                             name = z) + 
+             scale_color_gradient2(low = 'steelblue', 
+                                   mid = 'black', 
+                                   high = 'firebrick', 
+                                   midpoint = 0.5, 
+                                   limits = c(0, 1)) + 
+             scale_fill_gradient2(low = 'steelblue', 
+                                  mid = 'black', 
+                                  high = 'firebrick', 
+                                  midpoint = 0.5, 
+                                  limits = c(0, 1), 
+                                  name = z) + 
+             scale_y_discrete(labels = class_globals$predictor_labs) + 
+             guides(fill = 'legend', 
+                    size = 'legend') + 
+             globals$common_theme + 
+             facet_grid(. ~ dataset, 
+                        labeller = as_labeller(globals$part_labels)) + 
+             labs(title = y, 
+                  x = 'Mental cluster', 
+                  y = y_lab)) %>% 
+      set_names(c('sensitivity', 'specificity', 'accuaracy'))
     
     
   }
   
-  model_crf <- function(train_data, 
-                        test_data, 
-                        response = 'clust_id', 
-                        expl_variables = class_globals$variables, 
-                        summ_fun = multiClassSummary, ...) {
+  make_confusion_caps <- function(stats, models, 
+                                  split_factor = 'method', 
+                                  label_vector = class_globals$algo_labs) {
     
-    ## trains and predicts with the cForest algorithm
+    ## makes ready-to-use captions for confusion heat maps
     
-    ## training ------
+    caps <- stats %>% 
+      mutate(!!split_factor := factor(.data[[split_factor]], names(models)), 
+             dataset = factor(dataset, c('train', 'cv', 'test')), 
+             plot_cap = paste0('Accuracy = ', signif(correct_rate, 2), 
+                               ', \u03BA = ', signif(kappa, 2), 
+                               ', BS = ', signif(bs, 2))) %>% 
+      blast(all_of(split_factor)) %>% 
+      map(blast, dataset) %>% 
+      map(map, ~.x$plot_cap)
     
-    formula <- paste(response, '~', 
-                     paste(expl_variables, collapse = '+')) %>% 
-      as.formula
+    for(i in names(caps)) {
+      
+      caps[[i]] <- 
+        map2(caps[[i]], 
+             c(nrow(class_globals$analysis_tbl$training), 
+               nrow(class_globals$analysis_tbl$training), 
+               nrow(class_globals$analysis_tbl$test)), 
+             paste, sep = ', n = ')
+      
+    }
     
-    model <- cforest(formula, 
-                     data = train_data, 
-                     ...)
+    titles <- 
+      label_vector[names(caps)] %>% 
+      map(function(x) globals$part_labels[names(caps[[1]])] %>% 
+            map(~paste(x, .x, sep = ', ')))
     
-    ## predictions ------
-    
-    train_pred <- 
-      data.frame(obs = train_data[[response]], 
-                 pred = predict(model, newdata = train_data) %>% 
-                   factor(levels = levels(train_data[[response]])))
-    
-    test_pred <- 
-      data.frame(obs = test_data[[response]] %>% 
-                   factor(levels = levels(train_data[[response]])), 
-                 pred = predict(model, newdata = test_data) %>% 
-                   factor(levels = levels(train_data[[response]])))
-    
-    ## fit stats ------
-    
-    fit_stats <- 
-      list(training = train_pred, 
-           test = test_pred) %>% 
-      map(summ_fun, 
-          lev = levels(train_data[[response]])) %>% 
-      map(as.list) %>% 
-      map(as_tibble) %>% 
-      compress(names_to = 'partition')
-    
-    ## output -------
-    
-    list(train = train_pred, 
-         test = test_pred) %>% 
-      map2(., list(train_data, test_data), 
-           ~mutate(.x, ID = rownames(.y))) %>% 
-      map(as_tibble) %>% 
-      c(list(model = model, 
-             stats = fit_stats))
-    
+    list(caps = caps, 
+         titles = titles)
     
   }
   
-  plot_one_factors <- function(fit_stats, 
-                               factors) {
+  get_importance <- function(models) {
     
-    ## plots accuracy, kappa, sensitivity and specificity
-    ## of the OneR classifier for the training and test dataset
+    ## retrieves and formats importance measures
     
-    plot_vars <- c('Kappa', 'Accuracy', 'Sensitivity', 'Specificity')
+    var_regex <- paste(sort(class_globals$variables$full, 
+                            decreasing = TRUE), 
+                       collapse = '|')
     
-    fit_stats <- fit_stats %>% 
-      filter(variable %in% factors)
-    
-    map2(plot_vars, 
-         c('\u03BA', 'Accuracy', 'Sensitivity', 'Specificity'), 
-         ~ggplot(fit_stats, 
-                 aes(x = .data[[.x]], 
-                     y = reorder(variable, .data[[.x]]), 
-                     fill = partition)) + 
-           geom_bar(stat = 'identity', 
-                    color = 'gray20', 
-                    position = position_dodge(0.9)) + 
-           scale_fill_manual(values = globals$part_colors, 
-                             name = '') + 
-           scale_y_discrete(labels = factors %>% 
-                              exchange(dict = ptsd$var_lexicon, 
-                                       key = 'variable', 
-                                       value = 'label')) + 
-           globals$common_theme + 
-           theme(axis.title.y = element_blank()) + 
-           labs(title = .x, 
-                x = .y)) %>% 
-      set_names(plot_vars)
-    
-  }
-  
-  plot_crf_stats <- function(fit_stats) {
-    
-    ## plots accuracy, kappa, sensitivity and specificity
-    ## of the OneR classifier for the training and test dataset
-    
-    plot_vars <- c('Kappa', 'Accuracy', 'Sensitivity', 'Specificity')
-
-    map2(plot_vars, 
-         c('\u03BA', 'Accuracy', 'Sensitivity', 'Specificity'), 
-         ~ggplot(fit_stats, 
-                 aes(x = .data[[.x]], 
-                     y = partition, 
-                     fill = partition)) + 
-           geom_bar(stat = 'identity', 
-                    color = 'gray20', 
-                    position = position_dodge(0.9)) + 
-           scale_fill_manual(values = globals$part_colors, 
-                             name = '') + 
-           globals$common_theme + 
-           theme(axis.title.y = element_blank()) + 
-           labs(title = .x, 
-                x = .y)) %>% 
-      set_names(plot_vars)
-    
-  }
-  
-  plot_confusion <- function(model_list) {
-    
-    ## plots a heat map of a confusion matrix
-    
-    ## plotting data -------
-    
-    plot_tbl <- model_list[c('train', 'test')] %>% 
-      map(~confusionMatrix(.x$pred, .x$obs)) %>% 
-      map(~.x$table) %>% 
+    imp_stats <- models %>% 
+      map(varImp) %>% 
+      map(~.x$importance) %>% 
       map(as.data.frame) %>% 
+      map(rownames_to_column, 'parameter') %>% 
       map(mutate, 
-          n = Freq, 
-          fraction = n/sum(n), 
-          percent = 100 * fraction)
+          variable = stri_extract(parameter, 
+                                  regex = var_regex), 
+          level = stri_replace(parameter, 
+                               regex = var_regex, 
+                               replacement = ''), 
+          var_label = exchange(variable, 
+                               ptsd$var_lexicon), 
+          plot_lab = ifelse(level == '', 
+                            var_label, 
+                            paste(var_label, level, sep = ': '))) %>% 
+      map(as_tibble)
     
-    ## plot subtitle with the stats and x axis with % accuracy -------
+    ## for the svmRadial and DA algorithms: I'm calculating the overall 
+    ## importance as a mean of importance for particular clusters
     
-    plot_subtitle <- 
-      paste0('Accuracy = ', signif(model_list$stats$Accuracy, 2), 
-             ', \u03BA = ', signif(model_list$stats$Kappa, 2), 
-             ', n = ', map_dbl(model_list[c('train', 'test')], nrow))
+    ovr_sets <- imp_stats %>% 
+      map(names) %>% 
+      map_lgl(function(x) !'Overall' %in% x)
     
-    x_txt <- model_list[c('train', 'test')] %>% 
-      map(mutate, corr_pred = obs == pred) %>% 
-      map(group_by, obs) %>% 
-      map(summarise, perc_pred = 100 * sum(corr_pred)/length(corr_pred))
+    imp_stats[c(ovr_sets)] <- imp_stats[c(ovr_sets)] %>% 
+      map(~mutate(.x, 
+                  Overall = reduce(.x[c('neutral', 'PTG', 'PTS')], 
+                                   `+`), 
+                  Overall = Overall/3))
+
+    return(imp_stats)
     
-    x_txt <- x_txt %>% 
-      map(~map2_chr(.x[[1]], paste0(signif(.x[[2]], 3), '%'), 
-                    paste, sep = '\n'))
+  }
+  
+  plot_importance <- function(imp_stats, top = 20) {
     
-    ## heat map ------
+    list(x = imp_stats %>% 
+           map(top_n, top, Overall), 
+         y = paste('Variable importance,', 
+                   class_globals$algo_labs[names(full_class$importance$stats)]), 
+         z = class_globals$algo_colors[names(full_class$importance$stats)]) %>% 
+      pmap(function(x, y, z) x %>% 
+             ggplot(aes(x = Overall, 
+                        y = reorder(plot_lab, Overall))) + 
+             geom_bar(stat = 'identity', 
+                      fill = z, 
+                      color = 'black') + 
+             globals$common_theme + 
+             theme(axis.title.y = element_blank()) + 
+             labs(title = y, 
+                  x = 'Overall variable importance'))
     
-    list(x = plot_tbl, 
-         y = c('Training', 'Test'), 
-         z = plot_subtitle, 
-         w = x_txt) %>% 
-      pmap(function(x, y, z, w) x %>% 
-             ggplot(aes(x = Reference, 
-                        y = Prediction, 
-                        fill = n)) + 
-             geom_tile(color = 'gray20') + 
-             geom_text(aes(label = n), 
-                       size = 2.75, 
-                       vjust = -0.2) + 
-             geom_text(aes(label = paste0('(', signif(percent, 3),'%)')), 
-                       size = 2.5, 
-                       vjust = 1.2) + 
-             scale_fill_gradient(low = 'white', 
-                                 high = 'firebrick', 
-                                 name = 'n') + 
-             scale_x_discrete(labels = w) + 
+  }
+  
+  class_brier <- function(pred_lst, return_ref = FALSE) {
+    
+    ## Calculates multi-class Brier score
+    ## The reference is a purely random classifier, which assigns 
+    ## observations to classes by their proportion
+    
+    if(all(map_lgl(pred_lst, is_predx))) {
+      
+      pred_lst <- pred_lst %>% 
+        map(~.x$data)
+      
+    }
+    
+    pred_data <- pred_lst %>% 
+      compress(names_to = 'dataset') %>% 
+      mutate(neutral_observed = 0, 
+             PTG_observed = 0, 
+             PTS_observed = 0) %>% 
+      blast(.outcome)
+
+    squares <- pred_data %>% 
+      map2_dfr(., names(.), 
+               ~mutate(.x, !!paste0(.y, '_observed') := 1)) %>% 
+      mutate(sq_error = (neutral - neutral_observed)^2 + 
+               (PTG - PTG_observed)^2 + 
+               (PTS - PTS_observed)^2) %>% 
+      select(dataset, .observation, .outcome, .fitted, sq_error)
+
+    total_bs <- squares %>% 
+      summarise(.by = dataset, bs = mean(sq_error))
+    
+    if(!return_ref) {
+      
+      return(list(squares = squares, 
+                  total_bs = total_bs))
+      
+    }
+    
+    ## obtaining the reference: assignment probabilities are re-shuffled
+    ## randomly
+    
+    pred_data <- pred_data %>% 
+      reduce(rbind) %>% 
+      blast(dataset) %>% 
+      map(~.x[sample(1:nrow(.x), nrow(.x), replace = FALSE), ]) %>% 
+      map(~mutate(.x, .fitted = sample(.fitted, nrow(.x), replace = FALSE))) %>% 
+      map(~mutate(.x, 
+                  neutral = ifelse(.fitted == 'neutral', 1, 0), 
+                  PTG = ifelse(.fitted == 'PTG', 1, 0), 
+                  PTS = ifelse(.fitted == 'PTS', 1, 0)))
+    
+    ref_brier <- pred_data %>% 
+      class_brier(return_ref = FALSE)
+    
+    squares <- 
+      left_join(squares, 
+                set_names(ref_brier$squares[c('dataset', '.observation', 'sq_error')], 
+                          c('dataset', '.observation', 'ref_error')), 
+                by = c('dataset', '.observation'))
+    
+    total_bs <- 
+      left_join(total_bs, 
+                set_names(ref_brier$total_bs, 
+                          c('dataset', 'ref_bs')), 
+                by = 'dataset') %>% 
+      mutate(bss = 1 - bs/ref_bs)
+    
+    list(squares = squares,
+         total_bs = total_bs)
+    
+    
+  }
+  
+  plot_clust_squares <- function(sq_table, 
+                                 palette = globals$part_colors, 
+                                 labels = globals$part_labels, 
+                                 facet = TRUE, 
+                                 trend = TRUE, 
+                                 point_alpha = 0.75, 
+                                 plot_title = NULL, ...) {
+    
+    # plotting data and accessories
+    
+    sq_table <- sq_table %>% 
+      mutate(dataset = factor(dataset, 
+                              c('train', 'cv', 'test')))
+    
+    ref_squares <- sq_table$ref_error %>% 
+      mean
+    
+    n_numbers <- sq_table %>% 
+      count(dataset) %>% 
+      mutate(dataset = labels[dataset])
+    
+    n_cap <- 
+      map2_chr(n_numbers[[1]], n_numbers[[2]], 
+               paste, sep = ': n = ')
+    
+    n_cap <- 
+      set_names(n_cap, levels(sq_table$dataset))
+    
+    ## plot
+    
+    sq_plot <- sq_table %>% 
+      ggplot(aes(x = reorder(.observation, sq_error), 
+                 y = sq_error, 
+                 color = dataset)) + 
+      geom_point(shape = 16, 
+                 size = 2, 
+                 alpha = point_alpha) + 
+      geom_hline(yintercept = ref_squares, 
+                 linetype = 'dashed') + 
+      scale_color_manual(values = palette, 
+                         labels = labels, 
+                         name = 'Data subset') + 
+      globals$common_theme + 
+      theme(panel.grid.major.x = element_blank(), 
+            axis.text.x = element_blank(), 
+            axis.ticks.x = element_blank()) + 
+      labs(title = plot_title, 
+           subtitle = paste(n_cap, collapse = ', '), 
+           y = "Brier's square error", 
+           x = 'Observation')
+    
+    if(trend) {
+      
+      sq_plot <- sq_plot + 
+        geom_smooth(se = FALSE, 
+                    method = 'gam')
+      
+    }
+    
+    if(facet) {
+      
+      sq_plot <- sq_plot + 
+        facet_grid(. ~ dataset, 
+                   labeller = as_labeller(labels), ...)
+      
+      
+    }
+    
+    sq_plot
+    
+  }
+  
+  
+  plot_kappa_bs <- function(data, 
+                            plot_title = NULL, 
+                            plot_subtitle = NULL, 
+                            palette = class_globals$algo_colors, 
+                            labels = class_globals$algo_labs) {
+    
+    ## plotting data frames and metadata
+    
+    n_numbers <- 
+      class_globals$analysis_tbl[c("training", "training", "test")] %>% 
+      map_dbl(nrow)
+    
+    data <- data %>% 
+      blast(dataset)
+    
+    ## plots
+    
+    list(x = data, 
+         y = globals$part_labels[names(data)], 
+         z = n_numbers, 
+         v = map(data, ~mean(.x$ref_bs))) %>% 
+      pmap(function(x, y, z, v) x %>% 
+             ggplot(aes(x = kappa, 
+                        y = 2 - bs, 
+                        fill = method, 
+                        size = correct_rate)) + 
+             geom_vline(xintercept = 0, 
+                        linetype = 'dashed') + 
+             geom_hline(yintercept = 2 - v, 
+                        linetype = 'dashed') + 
+             geom_point(shape = 21, 
+                        color = 'black') + 
+             geom_text_repel(aes(label = labels[method], 
+                                 color = method), 
+                             size = 2.75, 
+                             show.legend = FALSE, 
+                             box.padding = 0.4) + 
+             scale_fill_manual(values = palette, 
+                               labels = labels, 
+                               name = 'Algorithm') + 
+             scale_color_manual(values = palette, 
+                                labels = labels, 
+                                name = 'Algorithm') + 
+             scale_size_area(max_size = 4.5) + 
              globals$common_theme + 
              labs(title = y, 
-                  subtitle = z, 
-                  x = 'Observed, % correct predictions', 
-                  y = 'Predicted'))
+                  subtitle = paste('n =', z), 
+                  x = "Cohen's \u03BA", 
+                  y = '2 - Brier score'))
+    
     
   }
   
-  plot_importance_cloud <- function(importance_data, 
-                                    importance_var = 'importance') {
+  plot_ptb_roc <- function(predictions, 
+                           stats, 
+                           cluster = 'PTS', 
+                           rev_levels = FALSE, 
+                           title_prefix = 'PTS cluster', 
+                           palette = class_globals$algo_colors, 
+                           labels = class_globals$algo_labs, 
+                           numeric = FALSE, 
+                           x_pos = 0.42, 
+                           y_offset = 0.057, 
+                           txt_size = 2.75, ...) {
     
-    ## plots a wordcloud: the word color and size corresponds
-    ## to the importance measure
+    ## plots ROC curves for detection of the PTS cluster in the 
+    ## training, CV and test subsets
     
-    importance_data <- importance_data %>% 
-      mutate(!!importance_var := (.data[[importance_var]] - min(.data[[importance_var]]))/(max(.data[[importance_var]]) - min(.data[[importance_var]])), 
-             variable = exchange(variable, 
-                                 dict = ptsd$var_lexicon, 
-                                 key = 'variable', 
-                                 value = 'label'))
+    ## stats: total observations and observations in the PTS cluster
     
-    importance_data %>% 
-      ggplot(aes(size = .data[[importance_var]], 
-                 color = .data[[importance_var]], 
-                 label = variable)) + 
-      geom_text_wordcloud(shape = 'square') + 
-      scale_color_gradient(low = 'gray70', 
-                           high = 'firebrick') + 
-      theme_void()
+    total_n <- predictions[[1]] %>% 
+      map(~.x$data) %>% 
+      map_dbl(nrow)
     
-  }
-  
-# Variable importance ------
-  
-  plot_crf_importance <- function(data, 
-                                  plot_title = NULL, 
-                                  plot_subtitle = NULL, 
-                                  x_lab = '\u0394 accuracy', 
-                                  fill_color = 'cornsilk'){
+    pts_n <- predictions[[1]] %>% 
+      map(~.x$data) %>% 
+      map(filter,.outcome == cluster) %>% 
+      map_dbl(nrow)
     
-    ## plots conditional random forest importance measures
+    if(rev_levels) {
+      
+      n_caps <- 
+        map2(total_n, pts_n, 
+             ~paste0('total: n = ', .x, 
+                     ', cluster: n = ', .x - .y))
+      
+    } else {
+      
+      n_caps <- 
+        map2(total_n, pts_n, 
+             ~paste0('total: n = ', .x, 
+                     ', ', title_prefix, ': n = ', .y))
+      
+    }
     
-    data %>% 
-      ggplot(aes(x = importance, 
-                 y = reorder(variable, importance))) + 
-      geom_bar(stat = 'identity', 
-               color = 'gray20', 
-               fill = fill_color) + 
-      scale_y_discrete(labels = exchange(class_globals$variables, 
-                                         dict = ptsd$var_lexicon, 
-                                         key = 'variable', 
-                                         value = 'label')) +
-      globals$common_theme + 
-      theme(axis.title.y = element_blank()) + 
-      labs(title = plot_title,
-           subtitle = plot_subtitle, 
-           x = x_lab)
+    
+    
+    ## stats: sensitivity and specificity
+    
+    roc_stats <- stats %>% 
+      filter(clust_id == cluster)
+    
+    if(rev_levels) {
+      
+      roc_stats <- roc_stats %>% 
+        mutate(plot_lab = paste0('Se = ', signif(spec, 2), 
+                                 ', Sp = ', signif(sens, 2)))
+      
+    } else {
+      
+      roc_stats <- roc_stats %>% 
+        mutate(plot_lab = paste0('Se = ', signif(sens, 2), 
+                                 ', Sp = ', signif(spec, 2)))
+      
+    }
+    
+    roc_stats <- roc_stats %>% 
+      mutate(color = palette[method], 
+             method = labels[method], 
+             plot_lab = paste(method, plot_lab, sep = ': ')) %>% 
+      blast(dataset) %>% 
+      map(~mutate(.x, 
+                  y_pos = (0:(nrow(.x) - 1)) * y_offset))
+    
+    ## plotting data
+    
+    if(rev_levels) levs <- c(cluster, 'rest') else levs <- c('rest', cluster)
+    
+    data <- predictions %>% 
+      map(map, ~.x$data) %>% 
+      transpose %>% 
+      map(compress, names_to = 'method') %>% 
+      map(mutate,
+          .outcome = ifelse(.outcome == cluster, cluster, 'rest'), 
+          .outcome = factor(.outcome, levs), 
+          .fitted = ifelse(.fitted == cluster, cluster, 'rest'), 
+          .fitted = factor(.fitted, levs))
+    
+    ## ROC plots
+    
+    if(numeric) plot_var <- cluster else plot_var <- '.fitted'
+    
+    roc_lst <- 
+      list(x = data, 
+           y = paste(title_prefix, 
+                     globals$part_labels[names(data)], 
+                     sep = ', '), 
+           v = n_caps) %>% 
+      pmap(function(x, y, v) x %>% 
+             ggplot(aes(m = as.numeric(.data[[plot_var]]) - 1, 
+                        d = as.numeric(.outcome) - 1, 
+                        color = method)) + 
+             geom_roc(...) + 
+             scale_color_manual(values = palette, 
+                                labels = labels, 
+                                name = 'Algorithm') + 
+             style_roc() + 
+             geom_abline(slope = 1, 
+                         intercept = 0, 
+                         linetype = 'dashed')  +
+             globals$common_theme + 
+             labs(title = y, 
+                  subtitle = v, 
+                  x = '1 - Sp', 
+                  y = 'Se'))
+    
+    for(i in 1:nrow(roc_stats[[1]])) {
+      
+      roc_lst <- 
+        map2(roc_lst, 
+             roc_stats, 
+             ~.x + 
+               annotate('text', 
+                        label = .y[['plot_lab']][[i]], 
+                        x = x_pos, 
+                        y = .y[['y_pos']][[i]], 
+                        color = .y[['color']][[i]], 
+                        size = txt_size, 
+                        hjust = 0, 
+                        vjust = 0))
+      
+    }
+    
+    roc_lst
     
   }
 
+# Cluster diagnostic ------
+  
+  clust_distance <- function(clust_obj, method = 'cosine') {
+    
+    ## computes mean distance within clusters and between the clusters
+    
+    ## clustering factor levels in the clusters
+    
+    assignment <- clust_obj$clust_assignment %>% 
+      set_names(c('ID','clust_id'))
+    
+    clust_data <- model.frame(clust_obj) %>% 
+      rownames_to_column('ID')
+    
+    clust_data <- left_join(clust_data, 
+                            assignment, 
+                            by = 'ID') %>% 
+      column_to_rownames('ID') %>% 
+      blast(clust_id) %>% 
+      map(select, -clust_id) %>% 
+      map(as.matrix)
+    
+    ## within-cluster distances
+    
+    within_dist <- clust_data %>% 
+      map(~proxy::dist(.x, method = method)) %>% 
+      map_dbl(mean) %>% 
+      compress(names_to = 'clust_1', 
+               values_to = 'dist')
+    
+    ## between cluster distances
+    
+    pairs <- names(clust_data) %>% 
+      combn(m = 2, simplify = FALSE)
+    
+    pair_tbl <- pairs %>% 
+      map_dfr(~tibble(clust_1 = .x[1], 
+                      clust_2 = .x[2]))
+    
+    between_dist <- pairs %>% 
+      map(~proxy::dist(x = clust_data[[.x[1]]],
+                       y = clust_data[[.x[2]]], 
+                       method = method)) %>% 
+      map_dbl(mean)
+    
+    between_dist <- pair_tbl %>% 
+      mutate(dist = between_dist)
+    
+    ## a single output table
+    
+    within_dist <- within_dist %>% 
+      mutate(clust_2 = clust_1) %>% 
+      select(clust_1, clust_2, dist)
+    
+    rbind(within_dist, between_dist) %>% 
+      mutate(clust_1 = factor(clust_1, levels(assignment$clust_id)), 
+             clust_2 = factor(clust_2, levels(assignment$clust_id)))
+    
+  }
+  
+  semi_distance <- function(clust_train, clust_test, method = 'cosine') {
+    
+    ## calculates cross distances between the clusters of two objects
+    
+    clust_lst <- list(train = clust_train, 
+                      test = clust_test)
+    
+    assignment <- clust_lst %>% 
+      map(~.x$clust_assignment) %>% 
+      map(set_names, c('ID', 'clust_id'))
+    
+    clust_data <- clust_lst %>% 
+      map(model.frame) %>% 
+      map(rownames_to_column, 'ID') %>% 
+      map2(., assignment, 
+           left_join, by = 'ID') %>% 
+      map(column_to_rownames, 'ID') %>% 
+      map(blast, clust_id) %>% 
+      map(map, select, -clust_id) %>% 
+      map(map, as.matrix)
+    
+    ## cross-distances
+    
+    pairs <- levels(assignment[[1]]$clust_id) %>% 
+      map_dfr(~tibble(clust_train = .x, 
+                      clust_test = levels(assignment[[1]]$clust_id)))
+    
+    cross_dist <- pairs %>% 
+      pmap(function(clust_train, clust_test) proxy::dist(x = clust_data[[1]][[clust_train]], 
+                                                         y = clust_data[[2]][[clust_test]], 
+                                                         method = method)) %>% 
+      map_dbl(mean)
+    
+    pairs %>% 
+      mutate(dist = cross_dist, 
+             clust_train = factor(clust_train, 
+                                  levels(assignment[[1]]$clust_id)), 
+             clust_test = factor(clust_test, 
+                                 levels(assignment[[1]]$clust_id)))
+    
+  }
+  
 # Labellers --------
   
   psych_labeller <- 
     c('pss4_total' = 'stress, PSS4', 
       'gad7_total' = 'anxiety, GAD-7', 
       'phq9_total' = 'depression, PHQ-9', 
-      'phq_events_total' = 'somatization, PHQ-15', 
+      'phq_events_total' = 'somatic symptoms, PHQ-15', 
       'phqd_panic_total' = 'panic, PHQ-panic', 
-      'soc9l_total' = 'loss of SOC, SOC-9L', 
-      'rs13_total' = 'resilience, RS-13')
+      'soc9l_total' = 'lack of SOC, SOC-9L', 
+      'rs13_total' = 'resilience, RS-13', 
+      'eurohis_total' = 'sum score', 
+      'dsm5_total' = 'sum score', 
+      'ptgi_total' = 'sum score')
   
   
 # varia -----
   
-  vec_sum <- function(vec_list, na.rm = T) {
+  vec_sum <- function(vec_list, na.rm = TRUE) {
     
     transpose(as.list(vec_list)) %>% 
       map(reduce, c) %>% 
       map_dbl(sum, na.rm = na.rm)
-    
-  }
-  
-  complete_cases <- function(data, id_var = 'ID') {
-    
-    ### selects the individuals with the complete variable record
-    
-    dlply(data, id_var) %>% 
-      map_dfr(function(x) if(any(!complete.cases(x))) NULL else x)
-    
     
   }
   
@@ -973,34 +1447,6 @@
     
   }
   
-  mm_inch <- function(x) 0.0393700787 * x
-  
-  embolden_scale <- function(x, 
-                             highlight,  
-                             color = 'black', 
-                             family = '', 
-                             translate = FALSE, 
-                             dict = globals$var_lexicon, ...) {
-    
-    if(!translate) {
-      
-      return(ifelse(x %in% highlight, 
-                    glue("<b style='color:{color}'>{x}</b>"), 
-                    x))
-      
-    } else {
-      
-      labels <- translate_var(x, dict = dict, ...)
-      
-      return(ifelse(x %in% highlight, 
-                    glue("<b style='color:{color}'>{labels[x]}</b>"), 
-                    labels[x]))
-      
-      
-    }
-    
-  }
-  
   stri_capitalize <- function(str) {
     
     ## capitalizes the first letter of a string
@@ -1009,6 +1455,68 @@
     
     stri_replace(str, regex = '^\\w{1}', replacement = toupper(first_letter))
     
+  }
+  
+  set_widths <- function(x, widths) {
+    
+    ## sets widths of the table columns
+    
+    stopifnot(is.numeric(widths))
+    
+    for(i in seq_along(widths)) {
+      
+      x <- x %>% 
+        flextable::width(i, width = widths[i], unit = 'cm')
+      
+    }
+    
+    return(x)
+    
+  }
+  
+  my_word <- function(...) {
+    
+    form <- word_document2(number_sections = FALSE, 
+                           reference_docx = 'ms_template.docx')
+    
+    form$pandoc$lua_filters <- c(form$pandoc$lua_filters, 
+                                 'scholarly-metadata.lua', 
+                                 'author-info-blocks.lua')
+    
+    form
+    
+  }
+  
+  get_num_stats <- function(data, 
+                            variable, 
+                            signif_digits = 2, 
+                            sep = ' to ', 
+                            collapse = NULL) {
+    
+    median <- median(data[[variable]], na.rm = TRUE) %>% 
+      signif(signif_digits)
+    
+    iqr <- quantile(data[[variable]], c(0.25, 0.75), na.rm = TRUE) %>% 
+      signif(signif_digits) %>% 
+      paste(collapse = sep)
+    
+    if(is.null(collapse)) return(list(median = median, iqr = iqr) )
+    
+    paste(median, iqr, sep = collapse)
+
+  }
+  
+  get_percent <- function(data, variable, signif_digits = 2) {
+    
+    count <- table(data[[variable]])
+    
+    complete <- sum(table(data[[variable]]))
+    
+    percent <- signif(count/complete * 100, signif_digits)
+    
+    list(count = count, 
+         complete = complete, 
+         percent = percent)
   }
 
 # END -----

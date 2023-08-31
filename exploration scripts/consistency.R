@@ -19,15 +19,8 @@
   
   ## a list with variables
   
-  cons$var_list <- list(dsm5_total = c('dsm5_B', 
-                                       'dsm5_C', 
-                                       'dsm5_D', 
-                                       'dsm5_E'), 
-                        ptgi_total = c('ptgi_fctI', 
-                                       'ptgi_fctII', 
-                                       'ptgi_fctIII', 
-                                       'ptgi_fctIV', 
-                                       'ptgi_fctV'), 
+  cons$var_list <- list(dsm5_total = paste0('dsm5_q', 1:20), 
+                        ptgi_total = paste0('ptgi_q', 1:21), 
                         rs13_total = paste0('rs13_q', 1:13), 
                         brcs_total = paste0('brcs_q', 1:4), 
                         cage_total = paste0('cage_q', 1:4), 
@@ -36,6 +29,7 @@
                         gad7_total = paste0('phqd_psych_satisf_q', 10:16), 
                         phqd_panic_total = paste0('phqd_panic_q', 1:4), 
                         phq_events_total = paste0('phqd_events_q', 1:13), 
+                        soc9l_total = paste0('soc9l_q', 1:9), 
                         eurohis_total = paste0(c('eurohis_qol', 
                                                  'eurohis_health', 
                                                  'eurohis_energy', 
@@ -147,7 +141,7 @@
            scale_x_discrete(limits = lims) + 
            scale_y_discrete(limits = lims) + 
            scale_fill_gradient2(low = 'steelblue', 
-                                mid = 'black', 
+                                mid = 'white', 
                                 high = 'firebrick', 
                                 midpoint = 0.5, 
                                 limits = c(0, 1), 
@@ -195,11 +189,13 @@
          ~.x + labs(title = .y))
   
   ## numbers of factors: manual entry based on the bend of the scree plot
+  ## this is just the first shot, adjustments are based on the bend of the 
+  ## variance curve of the factor analysis
   
   cons$pca_factor_n <- 
-    c(dsm5_total = 1, 
-      ptgi_total = 2, 
-      rs13_total = 2, 
+    c(dsm5_total = 4, 
+      ptgi_total = 4, 
+      rs13_total = 3, 
       brcs_total = 1, 
       cage_total = 1, 
       pss4_total = 1, 
@@ -207,6 +203,7 @@
       gad7_total = 3, 
       phqd_panic_total = 1, 
       phq_events_total = 4, 
+      soc9l_total = 3, 
       eurohis_total = 4)
   
 # Factor analysis ---------

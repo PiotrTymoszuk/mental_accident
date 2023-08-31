@@ -15,6 +15,7 @@
   library(soucer)
   library(rmdformats)
   library(trafo)
+  library(patchwork)
 
   insert_head()
   
@@ -25,7 +26,8 @@
   
   insert_msg('Launching the report scripts')
   
-  c('./paper scripts/tables.R', 
+  c('./paper scripts/links.R', 
+    './paper scripts/tables.R', 
     './paper scripts/figures.R', 
     './paper scripts/supplementary.R', 
     './paper scripts/render.R') %>% 

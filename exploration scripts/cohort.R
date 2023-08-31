@@ -37,10 +37,10 @@
                   'cage_total_class', 
                   #'somatic_comorbidity', 
                   'somatic_comorbidity_type', 
-                  'psych_comorbidity', 
-                  'traumatic_event', 
+                  'traumatic_number', 
                   'prime_trauma_event', 
-                  'prime_trauma_event_past'), 
+                  'prime_trauma_event_past', 
+                  'psych_comorbidity'), 
          accident = c('prior_accident', 
                       'sport_type', 
                       'accident_alone', 
@@ -172,9 +172,9 @@
   
   cohort$mental_details$plots <- 
     list(variables = cohort$mental_details$variables, 
-         plot_title = c('EUROHIS QOL domains', 
-                        'PCL-5 DSM-5 domains', 
-                        'PTGI factors'), 
+         plot_title = c('Quality of life, EUROHIS QOL domains', 
+                        'PTSD, PCL-5 domains', 
+                        'Post-traumatic growth, PTGI factors'), 
          fill = c('darkolivegreen3', 
                   'coral3', 
                   'steelblue')) %>% 
@@ -209,7 +209,9 @@
     set_names(cohort$mental_details$variables$eurohis) %>% 
     map(~count(ptsd$dataset, .data[[.x]])) %>% 
     map(set_names, c('score', 'n')) %>% 
-    map(mutate, perc = n/sum(n) * 100) %>% 
+    map(mutate, 
+        n_total = sum(n), 
+        perc = n/sum(n) * 100) %>% 
     compress(names_to = 'factor') %>% 
     mutate(factor = factor(factor, 
                            rev(cohort$mental_details$variables$eurohis)),
@@ -234,7 +236,8 @@
                        stri_extract(regex = '\\w+$')) + 
     globals$common_theme + 
     theme(axis.title.y = element_blank()) + 
-    labs(title = 'EUROHIS QOL domains', 
+    labs(title = 'Quality of life, EUROHIS QOL domains', 
+         subtitle = paste('n = ', cohort$qol_details$data$n_total[[1]]), 
          x = '% of participants')
   
 # Plotting percentages of positivity in the PTSD domains ------
@@ -272,6 +275,88 @@
                                          cohort$ptsd_cluster$frequency$n_total[[1]])) + 
     scale_y_discrete(limits = rev(cohort$ptsd_cluster$variables), 
                      labels = function(x) stri_extract(x, regex = 'B|C|D|E'))
+  
+# Overlap of the DSM domain positivity ---------
+  
+  insert_msg('Overlap of the DSM domain positivity')
+  
+  ## variables and analysis data frame
+  
+  cohort$ptsd_overlap$variables <- 
+    c('dsm5_B_class', 
+      'dsm5_C_class',
+      'dsm5_D_class', 
+      'dsm5_E_class')
+  
+  cohort$ptsd_overlap$data <- ptsd$dataset %>% 
+    select(all_of(cohort$ptsd_overlap$variables)) %>% 
+    map_dfc(~.x == 'positive') %>% 
+    set_names(c('B', 'C', 'D', 'E'))
+
+  ## Venn plot
+  
+  cohort$ptsd_overlap$venn_plot <- cohort$ptsd_overlap$data %>% 
+    ggvenn(fill_color = c('coral1', 'steelblue1', 'plum4', 'darkolivegreen4'), 
+           set_name_size = 2.75, 
+           text_size = 2.75) + 
+    labs(title = 'Overlap between PCL-5 PTSD domain symptoms', 
+         subtitle = '% of participants positive for at least one domain') + 
+    theme(plot.title = element_text(size = 8, face = 'bold'), 
+          plot.subtitle = globals$common_text)
+  
+  ## Upset plot, based on an example from:
+  ## https://github.com/krassowski/complex-upset/issues/133
+  
+  cohort$ptsd_overlap$upset_plot <- 
+    upset(cohort$ptsd_overlap$data, 
+          intersect = c('B', 'C', 'D', 'E'), 
+          name = 'Exclusive overlap between the PCL-5 DSM-5 domains', 
+          mode = 'exclusive_intersection', 
+          keep_empty_groups = FALSE, 
+          min_degree = 1, 
+          wrap = TRUE, 
+          width_ratio = 1/3, 
+          sort_intersections_by = 'degree', 
+          sort_intersections = 'ascending', 
+          stripes = upset_stripes(colors = NA), 
+          encode_sets = FALSE, 
+          themes = upset_modify_themes(list('intersections_matrix' = theme(axis.title = globals$common_text))),  
+          base_annotations = list(
+            'Intersection size' = intersection_size(text_mapping = aes(label = signif(!!get_size_mode('exclusive_intersection')/nrow(ptsd$dataset) * 100, 2)), 
+                                                    fill = 'darkolivegreen4', 
+                                                    color = 'black', 
+                                                    text = list(size = 2.75)) + 
+              ylab('Overlap, % of cohort') + 
+              scale_y_continuous(labels = scales::percent_format(scale = 100/nrow(ptsd$dataset), 
+                                                                 suffix = ''), 
+                                 breaks = seq(0, 3.5, by = 0.5)/100 * 
+                                   nrow(ptsd$dataset))  +
+              globals$common_theme + 
+              theme(axis.title.x = element_blank(), 
+                    axis.text.x = element_blank(), 
+                    axis.line.x = element_blank(), 
+                    axis.ticks.x = element_blank())), 
+          set_sizes = upset_set_size(filter_intersections = TRUE, 
+                                     position = 'right', 
+                                     geom = geom_bar(aes(y = after_stat(count/nrow(ptsd$dataset) * 100)), 
+                                                     stat = 'count', 
+                                                     fill = 'coral3', 
+                                                     color = 'black'))  + 
+            geom_text(aes(y = after_stat(count/nrow(ptsd$dataset) * 100 - 1), 
+                          label = after_stat(signif(count/nrow(ptsd$dataset) * 100, 2))), 
+                      stat = 'count', 
+                      color = 'white', 
+                      size = 2.75) + 
+            ylab('Domain-positive, % of cohort') + 
+            globals$common_theme + 
+            theme(axis.title.y = element_blank(), 
+                  axis.text.y = element_blank(), 
+                  axis.line.y = element_blank(), 
+                  axis.ticks.y = element_blank())) + 
+    labs(title = 'PTSD symptoms, PCL-5 domains', 
+         subtitle = paste('n =', nrow(ptsd$dataset))) + 
+    theme(plot.title = element_text(size = 8, face = 'bold'), 
+          plot.subtitle = globals$common_text)
   
 # END -----
   

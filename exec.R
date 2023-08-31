@@ -2,10 +2,14 @@
 
   library(soucer)
   
+  ## analysis of single factors affecting the psychometric outcomes
+  ## is skipped for now
+  
   print(source_all(c('import.R', 
                      'exploration.R', 
-                     'factor.R', 
+                     #'factor.R', 
                      'clustering.R', 
                      'classification.R', 
                      'paper.R'), 
                    message = TRUE, crash = TRUE))
+  

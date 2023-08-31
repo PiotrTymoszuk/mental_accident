@@ -21,7 +21,8 @@
   library(psych)
   library(clustTools)
   library(ggrepel)
-  library(mixtools)
+  library(proxy)
+  library(ggtext)
 
   insert_head()
   
@@ -41,7 +42,6 @@
   
   clust_globals$variables <- ptsd$mental_variables
   
-  ## date: no transformation, 
   ## analysis table: normalized, median-centered psychometric data
 
   clust_globals$data <- ptsd$dataset %>% 
@@ -59,10 +59,15 @@
   c('./clustering scripts/development.R', 
     './clustering scripts/clustering.R', 
     './clustering scripts/characteristic.R', 
-    './clustering scripts/background.R', 
-    './clustering scripts/mix_development.R', 
-    './clustering scripts/mix_clustering.R') %>% 
+    './clustering scripts/background.R') %>% 
     source_all(message = TRUE, crash = TRUE)
+  
+  ## mixture modeling, not performed as a standard
+  ## shown only on request - but it delivers quite similar results
+  
+  #c('./clustering scripts/mix_development.R', 
+   # './clustering scripts/mix_clustering.R') %>% 
+    #source_all(message = TRUE, crash = TRUE)
   
 # END ------
   

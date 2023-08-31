@@ -17,9 +17,13 @@
   library(ggrepel)
   library(DescTools)
 
+  library(ggvenn)
+  library(ComplexUpset)
+
   insert_head()
   
   explore <- exda::explore
+  var <- clustTools::var
   
   source_all('./tools/tools.R', 
              message = TRUE, 
@@ -51,6 +55,7 @@
   
   c('./exploration scripts/missingness.R', 
     './exploration scripts/cohort.R', 
+    './exploration scripts/mental_comorbidity.R', 
     './exploration scripts/distribution.R', 
     './exploration scripts/consistency.R', 
     './exploration scripts/bias.R', 
