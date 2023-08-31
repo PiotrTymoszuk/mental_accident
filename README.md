@@ -1,13 +1,13 @@
 # mental_accident
-Mental health after a free time sport accident
+Mental health after a mountain sport accident
 
 ## Summary
 
-Herein, we investigated patterns of mental phenomena in a cross-sectional cohort of victims of leisure time sport accidents in Tyrol, Austria. 
-The analysis techniques encompassed semi-supervised PAM clustering, canonical hypothesis testing and machine learning with oneR and conditional random forest algorithms.
+Herein, we investigated patterns of mental health in a cross-sectional cohort of victims of mountain sport accidents treated in a tertiary trauma center in Tyrol, Austria. 
+The analysis techniques encompassed semi-supervised PAM clustering, canonical hypothesis testing and machine learning with random forest, conditional random forest, neural network, recursive partitioning, support vector machines and elastic net regression algorithms.
 
 <p align = "center"> 
-<img src = "https://user-images.githubusercontent.com/80723424/221284887-7971c65c-de72-4f15-b596-fdd3e37b4836.png" width = "50%">
+<img src = "https://github.com/PiotrTymoszuk/mental_accident/assets/80723424/319b175c-516c-4d53-be62-fafb37a49509" width = "50%">
 </p>
 
 By clustering in respect to measures of anxiety, depression, somatization, panic, resilience, sense of coherence, quality of life, post-traumatic growth and post-traumatic stress disorder signs, three subsets of accident victims were identified:
