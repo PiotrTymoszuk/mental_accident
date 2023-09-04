@@ -32,13 +32,11 @@
              k = 3, 
              seed = 1234)
   
-  semi_clust$clust_obj$training$clust_assignment <- 
-    semi_clust$clust_obj$training$clust_assignment %>% 
-    mutate(clust_id = car::recode(as.character(clust_id), 
-                                  "'1' = 'PTS'; 
-                                  '2' = 'neutral'; 
-                                  '3' = 'PTG'"), 
-           clust_id = factor(clust_id, c('neutral', 'PTG', 'PTS'))) 
+  semi_clust$clust_obj$training <- 
+    semi_clust$clust_obj$training %>% 
+    rename(nm = c('2' = 'neutral', 
+                  '3' = 'PTG', 
+                  '1' = 'PTS'))
   
   ## test
   
@@ -63,38 +61,64 @@
     map(~.x$clust_assignment) %>% 
     map(set_names, c('ID', 'clust_id'))
   
-# Clustering variances ------
+# Clustering variances and silhouettes ------
   
-  insert_msg('Clustering variances')
+  insert_msg('Clustering variances and silhouettes')
   
-  semi_clust$variance <- semi_clust$clust_obj %>% 
+  ## variance
+  
+  semi_clust$stats$variance <- semi_clust$clust_obj %>% 
     map(var) %>% 
     map(~.x$frac_var) %>% 
     compress(names_to = 'partition', 
              values_to = 'variance') %>% 
     map_dfc(unlist)
   
-  ## plotting the variance values
+  ## average silhouette and percentage of observations with negative 
+  ## metric values indicative of possible miss-classification
   
-  semi_clust$variance_plot <- semi_clust$variance %>% 
-    ggplot(aes(x = variance, 
-               y = reorder(partition, variance), 
+  semi_clust$stats$silhouette <- semi_clust$clust_obj %>% 
+    map(silhouette) %>% 
+    map(summary) %>% 
+    map(filter, clust_id == 'global') %>% 
+    compress(names_to = 'partition') %>% 
+    select(partition, perc_negative, mean) %>% 
+    set_names(c('partition', 
+                'perc_negative_sil', 
+                'mean_sil'))
+  
+  semi_clust$stats <- reduce(semi_clust$stats, left_join, by = 'partition')
+
+# Plots of variances and average silhouettes -------
+  
+  insert_msg('Plots of variances and silhouettes')
+  
+  semi_clust$stat_plot <- semi_clust$stats %>% 
+    pivot_longer(cols = all_of(c('variance', 'mean_sil')), 
+                 names_to = 'statistic', 
+                 values_to = 'value') %>%  
+    ggplot(aes(x = value, 
+               y = reorder(statistic, value), 
                fill = partition)) + 
     geom_bar(stat = 'identity', 
-             color = 'gray20') + 
-    geom_text(aes(label = signif(variance, 2)), 
+             color = 'gray20', 
+             position = position_dodge(0.9)) + 
+    geom_text(aes(label = signif(value, 2)), 
               size = 2.5, 
               hjust = 1.4, 
-              color = 'white') + 
+              color = 'white', 
+              position = position_dodge(0.9)) + 
     scale_fill_manual(values = c(training = 'steelblue4', 
                                  test = 'coral4'), 
                       name = 'Subset') +
-    guides(fill = 'none') + 
     scale_x_continuous(limits = c(0, 1)) + 
+    scale_y_discrete(labels = c(mean_sil = 'avg. silhouette', 
+                                variance = 'variance')) + 
     globals$common_theme + 
     theme(axis.title.y = element_blank()) + 
     labs(title = 'Semi-supervised clustering', 
-         x = 'Fraction explained clustering variance')
+         x = 'Statistic value')
+  
   
 # Diagnostic plots  ------
   
@@ -149,13 +173,27 @@
                 axis.title = element_blank(), 
                 axis.ticks = element_blank()))
   
+  ## silhouette widths for single observations
+  
+  semi_clust$silhouette_plots <- semi_clust$clust_obj %>% 
+    map(silhouette) %>% 
+    map(plot, 
+        fill_by = 'neighbor', 
+        cust_theme = globals$common_theme) %>% 
+    map(~.x + 
+          theme(panel.grid.major.y = element_blank()) + 
+          scale_fill_manual(values = globals$clust_colors, 
+                            name = 'Nearest neighbor cluster'))
+  
   ## appending the plots with more informative titles
   
   semi_clust[c("dist_mds", 
                "data_umap",
-               "dist_hm")] <- semi_clust[c("dist_mds", 
-                                           "data_umap",
-                                           "dist_hm")] %>%
+               "dist_hm", 
+               "silhouette_plots")] <- semi_clust[c("dist_mds", 
+                                                    "data_umap",
+                                                    "dist_hm", 
+                                                    "silhouette_plots")] %>%
     map(~map2(.x, c('Training', 'Test'), 
               ~.x + 
                 labs(title = .y, 
@@ -179,7 +217,7 @@
     compress(names_to = 'partition')
   
   semi_clust$n_numbers$complete_lab <- semi_clust$clust_obj %>% 
-    map(clustTools::nobs) %>% 
+    map(nobs) %>% 
     map_dbl(~.x$observations)
   
   semi_clust$n_numbers$complete_lab  <- 
@@ -215,104 +253,71 @@
   ## mean cosine distance between the clusters within each of
   ## the training and test subsets
   
-  semi_clust$intra_distance$data <- semi_clust$clust_obj %>% 
-    map(clust_distance, method = 'cosine')
-  
-  ## distance heat map
+  semi_clust$intra_distance$stats <- semi_clust$clust_obj %>% 
+    map(cross_distance) %>% 
+    map(summary)
+
+  ## distance heat maps
  
-  semi_clust$intra_distance$plots <- 
-    list(x = semi_clust$intra_distance$data, 
-         y = c('Training', 'Test')) %>% 
-    pmap(function(x, y) x %>% 
-           ggplot(aes(x = clust_1,
-                      y = clust_2, 
-                      fill = dist)) + 
-           geom_tile(color = 'black') + 
-           geom_text(aes(label = signif(dist, 2)), 
-                     size = 2.75) + 
-           scale_fill_gradient2(limits = c(0.5, 1), 
-                                low = 'firebrick', 
-                                mid = 'white', 
-                                high = 'steelblue', 
-                                midpoint = 0.75, 
-                                oob = scales::squish, 
-                                name = 'cosine distance') + 
-           globals$common_theme + 
-           theme(axis.title = element_blank()) + 
-           labs(title = y, 
-                subtitle = 'Cross-distances between the clusters'))
-  
+  semi_clust$intra_distance$plots <- semi_clust$clust_obj %>% 
+    map(cross_distance) %>% 
+    map(plot, 
+        type = 'mean', 
+        cust_theme = globals$common_theme) %>% 
+    map2(., c('Training', 'Test'), 
+         ~.x + 
+           labs(title = .y, 
+                x = paste0('Mentral cluster, ', 
+                           tolower(.y), 
+                           ' subset'), 
+                y = paste0('Mentral cluster, ', 
+                           tolower(.y), 
+                           ' subset')))
+
 # Cross distances between the clusters in the subsets ------
   
   insert_msg('Cross distances between the clusters in the subsets')
   
   ## cross-distances
   
-  semi_clust$inter_distance$data <- 
-    semi_distance(semi_clust$clust_obj$training, 
-                  semi_clust$clust_obj$test, 
-                  method = 'cosine')
-  
+  semi_clust$inter_distance$stats <- 
+    cross_distance(semi_clust$clust_obj$training, 
+                   semi_clust$clust_obj$test, 
+                   method = 'euclidean') %>% 
+    summary
+
   ## distance heat map
   
-  semi_clust$inter_distance$plot <- semi_clust$inter_distance$data %>% 
-    ggplot(aes(x = clust_train, 
-               y = clust_test, 
-               fill = dist)) + 
-    geom_tile(color = 'black') + 
-    geom_text(aes(label = signif(dist, 2)), 
-              size = 2.75) + 
-    scale_fill_gradient2(limits = c(0.5, 1), 
-                         low = 'firebrick', 
-                         mid = 'white', 
-                         high = 'steelblue', 
-                         midpoint = 0.75, 
-                         oob = scales::squish, 
-                         name = 'cosine distance') + 
-    globals$common_theme + 
+  semi_clust$inter_distance$plot <- 
+    cross_distance(semi_clust$clust_obj$training, 
+                   semi_clust$clust_obj$test) %>% 
+    plot(type = 'mean', 
+         cust_theme = globals$common_theme) + 
     labs(title = 'Cross-distances between the clusters', 
          subtitle = 'Cosine distance, training vs test subset', 
          x = 'training subset', 
          y = 'test subset')
-    
   
 # Importance of the clustering variables -------
   
   insert_msg('Importance')
   
-  set.seed(1234)
+  ## permutation importance stats
   
-  plan('multisession')
-  
-  semi_clust$importance <- 1:50 %>% 
-    future_map(~impact(semi_clust$clust_obj$training, 
-                       .parallel = FALSE), 
-               .options = furrr_options(seed = TRUE)) %>% 
-    set_names(paste0('shuffle_', 1:50))
-  
-  plan('sequential')
-  
-  ## formatting the results
-  
-  semi_clust$importance <- semi_clust$importance %>% 
-    compress(names_to = 'shuffle')
-  
+  semi_clust$importance <- 
+    impact(semi_clust$clust_obj$training, 
+           n_iter = 50, 
+           seed = 1234, 
+           .parallel = TRUE)
+
   ## plotting the importance
   
   semi_clust$importance_plot <- semi_clust$importance %>% 
-    filter(variable != 'data') %>% 
-    ggplot(aes(x = frac_diff, 
-               y = reorder(variable, frac_diff))) + 
-    geom_vline(xintercept = 0, 
+    plot(cust_theme = globals$common_theme, 
+         fill_color = 'steelblue', 
+         point_size = 1) + 
+    geom_vline(xintercept = 0,
                linetype = 'dashed') + 
-    geom_boxplot(fill = 'steelblue', 
-                 alpha = 0.25, 
-                 outlier.color = NA) + 
-    geom_point(shape = 16, 
-               size = 1, 
-               position = position_jitter(width = 0, 
-                                          height = 0.1), 
-               color = 'gray40') + 
     scale_y_discrete(labels = clust_globals$variables %>% 
                        exchange(dict = ptsd$var_lexicon, 
                                 key = 'variable', 

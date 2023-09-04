@@ -1251,108 +1251,6 @@
     
   }
 
-# Cluster diagnostic ------
-  
-  clust_distance <- function(clust_obj, method = 'cosine') {
-    
-    ## computes mean distance within clusters and between the clusters
-    
-    ## clustering factor levels in the clusters
-    
-    assignment <- clust_obj$clust_assignment %>% 
-      set_names(c('ID','clust_id'))
-    
-    clust_data <- model.frame(clust_obj) %>% 
-      rownames_to_column('ID')
-    
-    clust_data <- left_join(clust_data, 
-                            assignment, 
-                            by = 'ID') %>% 
-      column_to_rownames('ID') %>% 
-      blast(clust_id) %>% 
-      map(select, -clust_id) %>% 
-      map(as.matrix)
-    
-    ## within-cluster distances
-    
-    within_dist <- clust_data %>% 
-      map(~proxy::dist(.x, method = method)) %>% 
-      map_dbl(mean) %>% 
-      compress(names_to = 'clust_1', 
-               values_to = 'dist')
-    
-    ## between cluster distances
-    
-    pairs <- names(clust_data) %>% 
-      combn(m = 2, simplify = FALSE)
-    
-    pair_tbl <- pairs %>% 
-      map_dfr(~tibble(clust_1 = .x[1], 
-                      clust_2 = .x[2]))
-    
-    between_dist <- pairs %>% 
-      map(~proxy::dist(x = clust_data[[.x[1]]],
-                       y = clust_data[[.x[2]]], 
-                       method = method)) %>% 
-      map_dbl(mean)
-    
-    between_dist <- pair_tbl %>% 
-      mutate(dist = between_dist)
-    
-    ## a single output table
-    
-    within_dist <- within_dist %>% 
-      mutate(clust_2 = clust_1) %>% 
-      select(clust_1, clust_2, dist)
-    
-    rbind(within_dist, between_dist) %>% 
-      mutate(clust_1 = factor(clust_1, levels(assignment$clust_id)), 
-             clust_2 = factor(clust_2, levels(assignment$clust_id)))
-    
-  }
-  
-  semi_distance <- function(clust_train, clust_test, method = 'cosine') {
-    
-    ## calculates cross distances between the clusters of two objects
-    
-    clust_lst <- list(train = clust_train, 
-                      test = clust_test)
-    
-    assignment <- clust_lst %>% 
-      map(~.x$clust_assignment) %>% 
-      map(set_names, c('ID', 'clust_id'))
-    
-    clust_data <- clust_lst %>% 
-      map(model.frame) %>% 
-      map(rownames_to_column, 'ID') %>% 
-      map2(., assignment, 
-           left_join, by = 'ID') %>% 
-      map(column_to_rownames, 'ID') %>% 
-      map(blast, clust_id) %>% 
-      map(map, select, -clust_id) %>% 
-      map(map, as.matrix)
-    
-    ## cross-distances
-    
-    pairs <- levels(assignment[[1]]$clust_id) %>% 
-      map_dfr(~tibble(clust_train = .x, 
-                      clust_test = levels(assignment[[1]]$clust_id)))
-    
-    cross_dist <- pairs %>% 
-      pmap(function(clust_train, clust_test) proxy::dist(x = clust_data[[1]][[clust_train]], 
-                                                         y = clust_data[[2]][[clust_test]], 
-                                                         method = method)) %>% 
-      map_dbl(mean)
-    
-    pairs %>% 
-      mutate(dist = cross_dist, 
-             clust_train = factor(clust_train, 
-                                  levels(assignment[[1]]$clust_id)), 
-             clust_test = factor(clust_test, 
-                                 levels(assignment[[1]]$clust_id)))
-    
-  }
-  
 # Labellers --------
   
   psych_labeller <- 
@@ -1456,24 +1354,7 @@
     stri_replace(str, regex = '^\\w{1}', replacement = toupper(first_letter))
     
   }
-  
-  set_widths <- function(x, widths) {
-    
-    ## sets widths of the table columns
-    
-    stopifnot(is.numeric(widths))
-    
-    for(i in seq_along(widths)) {
-      
-      x <- x %>% 
-        flextable::width(i, width = widths[i], unit = 'cm')
-      
-    }
-    
-    return(x)
-    
-  }
-  
+
   my_word <- function(...) {
     
     form <- word_document2(number_sections = FALSE, 

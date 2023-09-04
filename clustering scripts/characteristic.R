@@ -36,10 +36,9 @@
     map(as_tibble)
   
   feat_clust$ident_tbl <- ptsd$dataset %>% 
-    dlply('partition', 
-          select, 
-          ID, 
-          all_of(feat_clust$variables)) %>% 
+    blast(partition) %>% 
+    map(select, 
+        ID, all_of(feat_clust$variables)) %>% 
     map2(., feat_clust$clust_obj, 
          ~left_join(.x, 
                     set_names(.y$clust_assignment, c('ID', 'clust_id')), 
@@ -51,12 +50,11 @@
   insert_msg('Descriptive stats')
   
   feat_clust$desc_stats <- feat_clust$ident_tbl %>% 
-    future_map(explore, 
+    map(explore, 
                variables = feat_clust$variables, 
                split_factor = 'clust_id', 
                what = 'table', 
-               pub_styled = TRUE, 
-               .options = furrr_options(seed = TRUE))
+               pub_styled = TRUE)
   
 # Testing for differences -----
   

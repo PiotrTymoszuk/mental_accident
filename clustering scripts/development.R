@@ -61,6 +61,18 @@
              values_to = 'variance') %>% 
     mutate(variance = unlist(variance))
   
+# Average silhouette widths -------
+  
+  insert_msg('Average silhouette widths')
+  
+  clust_devel$silhouette <- clust_devel$algos %>% 
+    map(silhouette) %>% 
+    map(summary) %>% 
+    map(filter, clust_id == 'global') %>% 
+    compress(names_to = 'method') %>% 
+    select(method, perc_negative, mean) %>% 
+    set_names(c('method', 'perc_negative_sil', 'mean_sil'))
+  
 # Cross-validation ----
   
   insert_msg('Cross-validation')
@@ -88,9 +100,9 @@
   
   insert_msg('Common result table and result visualization')
   
-  clust_devel$result_tbl <- left_join(clust_devel$variance, 
-                                      clust_devel$cv, 
-                                      by = 'method') %>% 
+  clust_devel$result_tbl <- 
+    clust_devel[c("variance", "silhouette", "cv")] %>% 
+    reduce(left_join, by = 'method') %>% 
     mutate(method_lab = stri_split_fixed(method, 
                                      pattern = '_', 
                                      simplify = TRUE)[, 1] %>% 
@@ -102,25 +114,35 @@
                               sep = ', '), 
            cv_accuracy = 1 - mean_error)
   
-  ## plot  
+# Plot ------
+  
+  insert_msg('Plot')
   
   clust_devel$result_plot <- clust_devel$result_tbl %>% 
-    pivot_longer(cols = c(variance, cv_accuracy), 
+    pivot_longer(cols = c(variance, mean_sil, cv_accuracy), 
                  names_to = 'statistic', 
                  values_to = 'value') %>% 
     ggplot(aes(x = value, 
                y = reorder(method_lab, value), 
-               fill = statistic)) + 
+               fill = reorder(statistic, value))) + 
     geom_bar(stat = 'identity', 
              color = 'black', 
              position = position_dodge(0.9)) + 
     scale_fill_manual(values = c(variance = 'steelblue2', 
+                                 mean_sil = 'indianred3', 
                                  cv_accuracy = 'darkolivegreen4'), 
-                      labels = c(variance = 'Expl. variance', 
+                      labels = c(variance = 'Explained variance', 
+                                 mean_sil = 'Mean silhouette', 
                                  cv_accuracy = 'CV accuracy'), 
                       name = '') + 
+    facet_grid(. ~ statistic, 
+               labeller = as_labeller(c(variance = 'Explained variance', 
+                                        mean_sil = 'Mean silhouette', 
+                                        cv_accuracy = 'CV accuracy')), 
+               scales = 'free') + 
     globals$common_theme + 
-    theme(axis.title.y = element_blank()) + 
+    theme(axis.title.y = element_blank(), 
+          legend.position = 'none') + 
     labs(title = 'Performance of clustering algorithms', 
          subtitle = paste('Training subset, k = 3 clusters, n =', 
                           nrow(clust_globals$analysis_tbl$training)), 

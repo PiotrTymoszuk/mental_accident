@@ -63,10 +63,7 @@
   
   ## upper panel: variance and cross-validation
   
-  suppl_figures$clust_dev$upper <- 
-    plot_grid(clust_devel$result_plot, 
-              ncol = 2, 
-              rel_widths = c(0.8, 0.2))
+  suppl_figures$clust_dev$upper <- clust_devel$result_plot
   
   ## bottom panel: WSS and silhouette
   
@@ -106,7 +103,7 @@
   suppl_figures$semi_clust$upper <- 
     list(x = semi_clust$data_umap, 
          y = paste('UMAP,', c('training', 'test')), 
-         z = semi_clust$variance$variance) %>% 
+         z = semi_clust$stats$variance) %>% 
     pmap(function(x, y, z) x + 
            labs(title = y, 
                 subtitle = paste0(x$labels$subtitle, 
