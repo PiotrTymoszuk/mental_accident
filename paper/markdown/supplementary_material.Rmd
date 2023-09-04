@@ -64,7 +64,7 @@ Statistical hypothesis testing and correlation analyses were accomplished with [
 
 For semi-supervised clustering, diagnostic and performance of the clustering analysis, the package [_clustTools_](https://github.com/PiotrTymoszuk/clustTools) with implementation of algorithms and distance measures from _factoextra_, _cluster_ and _philentropy_ [@Schubert2019; @Drost2018; @Kassambara2020] was utilized. 
 UMAP (uniform manifold approximation and projection) was done with the _umap_ and [_clustTools_](https://github.com/PiotrTymoszuk/clustTools) packages [@Konopka2022; @McInnes2018]. 
-Cross-distances between the training and test subsets of the study cohort and cross-distances between clusters in the training and test subsets of the study cohort were computed with _proxy_ [@Meyer2022].
+Cross-distances between the training and test subsets of the study cohort and cross-distances between clusters in the training and test subsets of the study cohort were computed with _philentropy_ [@Drost2018] and [_clustTools_](https://github.com/PiotrTymoszuk/clustTools).
 
 Multi-variable classifiers of cluster assignment were developed with the following algorithms: 
 random forests [@Breiman2001; @Wright2017], 
@@ -143,7 +143,7 @@ All psychometric tools used in the study except for the stress PSS-4 scale [@Coh
 The poorly performing PSS-4 and BRCS scales were excluded from the further analysis.
 
 To find the optimal size of a training subset of the study cohort, random subsamples of the study dataset of varying sizes were investigated (`r paste(pow$sizes, collapse = ', ')` observations, 50 random draws per subsample size). 
-For each random subsample, clustering tendency was assessed by Hopkins statistic (function `get_clust_tendency()`, package [_clustTools_](https://github.com/PiotrTymoszuk/clustTools)). 
+For each random subsample, clustering tendency was assessed by Hopkins statistic (function `get_clust_tendency()`, package [_clustTools_](https://github.com/PiotrTymoszuk/clustTools)) [@Hopkins1954]. 
 For n = 250 observations, the median Hopkins statistic was 
 `r pow$hopkins %>% filter(size == 250) %>% .$hopkins_stat %>% median %>% signif(2)` (interquartile range: 
 `r pow$hopkins %>% filter(size == 250) %>% .$hopkins_stat %>% quantile(probs = c(0.25, 0.75)) %>% signif(2) %>% paste(collapse = ' - ')`) indicative of good clustering tendency. 
@@ -194,12 +194,16 @@ The number of cluster was chosen based on the bend of the curve of within-cluste
 By this means, three mental clusters were defined: the neutral, PTG (post-traumatic growth) and PTS (post-traumatic stress) cluster (__Supplementary Figure S\@ref(fig:fig-clust-dev)B__). 
 
 Assignment of the training subset observations to the mental clusters was accomplished with an inverse distance weighted 27-nearest neighbor classifier. 
-This semi-supervised procedure yielded clustering structures with similar fractions of explained variance in the training (V = `r signif(semi_clust$variance$variance[1], 2)`) and test subset (V = `r signif(semi_clust$variance$variance[2], 2)`). 
+This semi-supervised procedure yielded clustering structures with similar fractions of explained variance and similar average silhouette statistic [@Rousseeuw1987] in the 
+training (variance = `r signif(semi_clust$stats$variance[1], 2)`, 
+average silhouette = `r signif(semi_clust$stats$mean_sil[1], 2)`) and 
+test subset (variance = `r signif(semi_clust$stats$variance[2], 2)`, 
+average silhouette = `r signif(semi_clust$stats$mean_sil[2], 2)`). 
 Comparably good separation of the clusters could be discerned in the training and test subsets by 
 a visual analysis of UMAP layouts and 
 pairwise distance heat maps (__Supplementary Figure S\@ref(fig:fig-semi-clust)__). 
 Distribution of the cluster frequency was similar in the training and test subset (__Supplementary Figure S\@ref(fig:fig-cosine)__). 
-An analysis of cosine cross-distances between the clusters in the training and test subsets revealed far higher similarity of the corresponding mental clusters (i.e. neutral vs neutral, PTG vs PTG, PTS vs PTS) as compared with similarity of non-analogous clusters (e.g. neutral vs PTG) (distances computed with the function `dist()`, package _proxy_; __Supplementary Figure S\@ref(fig:fig-cosine)B__). 
+An analysis of cosine cross-distances between the clusters in the training and test subsets revealed far higher similarity of the corresponding mental clusters (i.e. neutral vs neutral, PTG vs PTG, PTS vs PTS) as compared with similarity of non-analogous clusters (e.g. neutral vs PTG) (distances computed with the function `cross_distance()`, package [_clustTools_](https://github.com/PiotrTymoszuk/clustTools); __Supplementary Figure S\@ref(fig:fig-cosine)B__). 
 Finally, quality of semi-supervised clustering was investigated by comparison of normalized levels of the clustering variables in the training and test subset by Kruskal-Wallis test with $\eta^2$ effect size statistic (function `compare_variables()`, package [_ExDA_](https://github.com/PiotrTymoszuk/ExDA); __Figure 2__, __Supplementary Figure S\@ref(fig:fig-feat-hm)__, __Supplementary Table S\@ref(tab:tab-clust-fct)__).
 
 Differences in frequencies of mental disorder symptoms as well as demographic, socioeconomic, clinical, accident- and recovery-related factors between the mental clusters were assessed in the entire cohort by $\chi^2$ test with Cramer V effect size statistic and by Kruskal-Wallis test with $\eta^2$ effect size statistic for categorical and numeric variables, respectively (function `compare_variables()`, package [_ExDA_](https://github.com/PiotrTymoszuk/ExDA); __Supplementary Table S\@ref(tab:tab-clust-bcg)__).
@@ -511,7 +515,7 @@ __Supplementary Figure S\@ref(fig:fig-clust-dev). Definition of the mental clust
 
 _The mental clusters were defined in respect to psychometric scoring in the training subset of the study cohort by PAM (partition around medoids) with cosine distance between the observations._
 
-_(A) Comparison of explanatory performance and reproducibility of various clustering algorithms in the training subset. The explanatory performance was measured as a fraction of explained clustering variance (ratio of between-cluster sum of squares to total sum of squares). The reproducibility was assessed by the rate of correct cluster assignment in 10-fold cross-validation (CV) with cluster assignment in the folds by an inverse distance weighted 27-nearest neighbors classifier. Note the superior stability of the PAM/cosine distance algorithm._
+_(A) Comparison of explanatory performance, cluster separation and reproducibility of various clustering algorithms in the training subset. The explanatory performance was measured as a fraction of explained clustering variance (ratio of between-cluster sum of squares to total sum of squares). The cluster separation was assessed with average silhouette width. The reproducibility was assessed by the rate of correct cluster assignment in 10-fold cross-validation (CV) with cluster assignment in the folds by an inverse distance weighted 27-nearest neighbors classifier. Note the superior stability of the PAM/cosine distance algorithm._
 
 _(B) Determination of the cluster number by the bend of the within-cluster sum of squares curve and the peak mean silhouette statistic._
 

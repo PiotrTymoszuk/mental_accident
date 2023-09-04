@@ -213,7 +213,7 @@ Differences in numeric variables were analyzed by Mann-Whitney or Kruskal-Wallis
 Differences in categorical variable distribution were assessed by $\chi^2$ test with Cramer V effect size statistic [@Kassambara2021]. 
 
 The training subset was clustered in respect to normalized median-centered psychometric scores by partition around medoids with cosine distance [@Drost2018; @Schubert2019]. 
-This algorithm had a good explanatory performance (ratio of between-cluster sum of squares to total sum of squares) and the superior accuracy in 10-fold cross-validation [@Lange2004] as compared with the hierarchical clustering and KMEANS algorithms. 
+This algorithm had a good explanatory performance (ratio of between-cluster sum of squares to total sum of squares), separation between clusters (average silhouette width) [@Rousseeuw1987] and the superior accuracy in 10-fold cross-validation [@Lange2004] as compared with the hierarchical clustering and KMEANS algorithms. 
 The k = 3 cluster number choice was based on the bend of within-cluster sum of squares curve and maximal mean silhouette statistic [@Kassambara2020; @Rousseeuw1987]. 
 The training subset observations were assigned to the clusters with an inverse distance-weighted 27-nearest neighbor classifier.
 
@@ -309,7 +309,9 @@ Significant differences of weak effect size between these subsets concerned resi
 To explore symptoms of PTSD and further facets of mental health following mountain sport accidents, we subjected the participants to partition around medoids clustering in respect to a broad range of psychometry scores [@Drost2018; @Schubert2019] (__Supplementary Table S2__). 
 Three mental clusters: 'neutral', 'PTG' (post-traumatic growth) and 'PTS' (post-traumatic stress), named after their key mental characteristic were identified in the training subset (__Supplementary Figure S3__). 
 Subsequently, the mental cluster assignment could be validated in the test subset as evident from comparable fractions of explained clustering variance 
-(training: `r signif(semi_clust$variance$variance[1], 2)`, test: `r signif(semi_clust$variance$variance[2], 2)`), 
+(training: `r signif(semi_clust$stats$variance[1], 2)`, test: `r signif(semi_clust$stats$variance[2], 2)`), 
+comparable average silhouette statistics 
+(training: `r signif(semi_clust$stats$mean_sil[1], 2)`, test: `r signif(semi_clust$stats$mean_sil[2], 2)`) [@Rousseeuw1987], 
 comparable cluster sizes, good visual cluster separation and high similarity between the corresponding clusters in the training and test cohort subsets (__Supplementary Figures S4 - S6__). 
 
 The mental clusters were of approximately equal size. 
