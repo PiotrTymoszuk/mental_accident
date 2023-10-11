@@ -165,34 +165,16 @@
 # Fit stat summary ------
   
   insert_msg('Overall fit stat summary')
-  
-  ## square errors and Brier scores, the reference 
-  ## is a purely random classifier
-  
-  set.seed(12345)
-  
-  ens_class$brier <- ens_class$predictions %>% 
-    map(class_brier, return_ref = TRUE)
-  
-  ## overall performance stats
-  
+
   ens_class$overall_stats <- ens_class$predictions %>% 
     map(map, summary) %>% 
     map(map, select, statistic, estimate) %>% 
     map(map, column_to_rownames, 'statistic') %>% 
     map(map, t) %>% 
     map(map, as.data.frame) %>% 
-    map(compress, names_to = 'dataset')
-  
-  ## a common table with the performance stats
-  
-  ens_class$overall_stats <- 
-    map2(ens_class$overall_stats, 
-         map(ens_class$brier, ~.x$total_bs), 
-         left_join, by = 'dataset') %>% 
-    map(as_tibble) %>% 
+    map(compress, names_to = 'dataset') %>% 
     compress(names_to = 'method') %>% 
-    mutate(dataset = factor(dataset, c('train', 'cv', 'test')))
+    as_tibble
 
 # Plot of the model performance stats ------- 
   
@@ -222,11 +204,10 @@
   
   insert_msg('Plots of Brier square errors')
   
-  ens_class$square_error_plots <- 
-    list(sq_table = map(ens_class$brier, 
-                        ~.x$squares), 
-         plot_title = class_globals$predictor_labs[names(ens_class$brier)]) %>% 
-    pmap(plot_clust_squares)  
+  ens_class$square_error_plots <- ens_class$predictions %>% 
+    map(map, 
+        plot, 
+        type = 'class_p')
   
 # Cluster-specific stats ------
   

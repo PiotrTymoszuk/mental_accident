@@ -242,13 +242,7 @@ where $f_{tc}$ is the output probability of assignment of the i-th observation t
 $o_{ic}$ is the numeric-coded actual assignment of the i-th observation to the c-th cluster, 
 $R$ is the total cluster number and 
 $N$ is the total observation number. 
-Brier skill scores [@Brier1950] were computed with the following formula: 
 
-$$BSS = 1 - \frac{BS_{model}}{BS_{random}}$$
-
-where $BS_{model}$ is the Brier score of the model and 
-$BS_{random}$ is the Brier score obtained for a purely random cluster assignment. 
-Brier scores, Brier skill scores, sensitivity and specificity of the PTS cluster assignment were computed with in-house developed R functions. 
 Performance statistics for the training subset, 10-fold cross-validation and test subset of the study cohort are listed in __Supplementary Table S\@ref(tab:tab-early-classifiers)__ and __Supplementary Table S\@ref(tab:tab-full-classifiers)__ for the classifiers employing the early and full predictor set, respectively. 
 
 Variable importance statistic specific for the machine learning algorithm were extracted from the _caret_ models with the `varImp()` function from package _caret_ [@Kuhn2008]. 
@@ -430,7 +424,7 @@ flextable::flextable(suppl_tables$tuning) %>%
 ```{r tab-early-classifiers, tab.cap = 'Performance statistics of machine learning classifiers at predicting the mental cluster assignment. Models employing early predictors available during acute medical management of the accident.'}
 
 flextable::flextable(suppl_tables$early_classifiers) %>% 
-  set_widths(c(2.3, 2.5, rep(2.3, 6))) %>% 
+  set_widths(c(2.3, 2.5, rep(2.3, 5))) %>% 
   merge_v(1) %>% 
   footnote(1, 1, 
            value = as_paragraph('RF: random forest; NNet: neural network with a single hidden layer; SVM/radial: support vector machines with radial kernel; RPart: recursive partitioning; SDA: shrinkage discriminant analysis; cForest: conditional random forest; Elastic Net: elastic net multinomial regression.'), 
@@ -440,10 +434,6 @@ flextable::flextable(suppl_tables$early_classifiers) %>%
            value = as_paragraph('CV: cross-validation'), 
            part = 'header',  
            ref_symbols = 'b') %>% 
-  footnote(1, 6, 
-           value = as_paragraph('Brier Skill Score comparing the given classifier with the purely random cluster assignment.'), 
-           part = 'header', 
-           ref_symbols = 'c') %>% 
   theme_vanilla
 
 ```
@@ -453,7 +443,7 @@ flextable::flextable(suppl_tables$early_classifiers) %>%
 ```{r tab-full-classifiers, tab.cap = 'Performance statistics of machine learning classifiers at predicting the mental cluster assignment. Models employing the full predictor set available during acute medical management of the accident and follow-up.'}
 
 flextable::flextable(suppl_tables$full_classifiers) %>% 
-  set_widths(c(2.3, 2.5, rep(2.3, 6))) %>% 
+  set_widths(c(2.3, 2.5, rep(2.3, 5))) %>% 
   merge_v(1) %>% 
   footnote(1, 1, 
            value = as_paragraph('RF: random forest; NNet: neural network with a single hidden layer; SVM/radial: support vector machines with radial kernel; RPart: recursive partitioning; SDA: shrinkage discriminant analysis; cForest: conditional random forest; Elastic Net: elastic net multinomial regression.'), 
@@ -463,10 +453,6 @@ flextable::flextable(suppl_tables$full_classifiers) %>%
            value = as_paragraph('CV: cross-validation'), 
            part = 'header',  
            ref_symbols = 'b') %>% 
-  footnote(1, 6, 
-           value = as_paragraph('Brier Skill Score comparing the given classifier with the purely random cluster assignment.'), 
-           part = 'header', 
-           ref_symbols = 'c') %>% 
   theme_vanilla
 
 ```

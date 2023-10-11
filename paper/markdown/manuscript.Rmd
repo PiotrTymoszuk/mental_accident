@@ -367,18 +367,18 @@ Such models would enable early identification of mountain sport accident victims
 
 The cluster assignment models employing early predictors demonstrated a moderate-to-excellent prediction performance in the training subset of the study cohort 
 (`r paste0((filter(early_class$overall_stats, dataset == 'train')$correct_rate %>% range %>% signif(2)) * 100, '%') %>% paste(collapse = ' - ')`% of correctly assigned observations, 
-Cohen's $\kappa$: `r signif(range(filter(early_class$overall_stats, dataset == 'train')$kappa), 2) %>% paste(collapse = ' - ')`, Brier score: `r signif(range(filter(early_class$overall_stats, dataset == 'train')$bs), 2) %>% paste(collapse = ' - ')`). 
+Cohen's $\kappa$: `r signif(range(filter(early_class$overall_stats, dataset == 'train')$kappa), 2) %>% paste(collapse = ' - ')`, Brier score: `r signif(range(filter(early_class$overall_stats, dataset == 'train')$brier_score), 2) %>% paste(collapse = ' - ')`). 
 However, their accuracy in cross-validation and in the test subset was poor 
 (test: `r paste0((filter(early_class$overall_stats, dataset == 'test')$correct_rate %>% range %>% signif(2)) * 100, '%') %>% paste(collapse = ' - ')`% of correctly assigned observations, 
 Cohen's $\kappa$: `r signif(range(filter(early_class$overall_stats, dataset == 'test')$kappa), 2) %>% paste(collapse = ' - ')`, 
-Brier score: `r signif(range(filter(early_class$overall_stats, dataset == 'test')$bs), 2) %>% paste(collapse = ' - ')`). 
+Brier score: `r signif(range(filter(early_class$overall_stats, dataset == 'test')$brier_score), 2) %>% paste(collapse = ' - ')`). 
 Concerning the early identification of the vulnerable PTS cluster patients, the conditional random forest, random forest and support vector machine models were able to differentiate PTS cluster patients from the pooled neutral + PTG cluster subset with the best, at least 
 `r min(signif(early_class$clust_stats %>% filter(dataset == 'test', clust_id == 'PTS') %>% top_n(n = 3, sens) %>% .$sens, 2) * 100)`% sensitivity in the test subset of the study cohort (__Figure \@ref(fig:fig-early-class)__, __Supplementary Table S12__). 
 Pre-existing mental disorder or physical illness, hospitalization and surgery, injury severity, age, rescue mode, education, annual income, and traumatic events in the past were among the most important explanatory factors employed by these models (__Supplementary Figure S8__). 
 Of note, inclusion of follow-up-related variables such as psychological support, physical health consequences or caution during sport activity in the machine learning models of the mental cluster assignment did not improve their accuracy in cross-validation or the test subset of the study cohort 
 (test: `r paste0((filter(full_class$overall_stats, dataset == 'test')$correct_rate %>% range %>% signif(2)) * 100, '%') %>% paste(collapse = ' - ')`% of correctly assigned observations, 
 Cohen's $\kappa$: `r signif(range(filter(full_class$overall_stats, dataset == 'test')$kappa), 2) %>% paste(collapse = ' - ')`, 
-Brier score: `r signif(range(filter(full_class$overall_stats, dataset == 'test')$bs), 2) %>% paste(collapse = ' - ')`). 
+Brier score: `r signif(range(filter(full_class$overall_stats, dataset == 'test')$brier_score), 2) %>% paste(collapse = ' - ')`). 
 
 # Discussion
 

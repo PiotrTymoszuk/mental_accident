@@ -93,8 +93,9 @@
   plan('sequential')
   
   clust_devel$cv <- clust_devel$cv %>% 
-    map(~.x$summary) %>% 
-    compress(names_to = 'method')
+    map(summary) %>% 
+    compress(names_to = 'method') %>% 
+    select(method, accuracy_mean)
     
 # Common results table and result visualization ------
   
@@ -111,15 +112,14 @@
                               stri_split_fixed(method, 
                                                pattern = '_', 
                                                simplify = TRUE)[, 2], 
-                              sep = ', '), 
-           cv_accuracy = 1 - mean_error)
+                              sep = ', '))
   
 # Plot ------
   
   insert_msg('Plot')
   
   clust_devel$result_plot <- clust_devel$result_tbl %>% 
-    pivot_longer(cols = c(variance, mean_sil, cv_accuracy), 
+    pivot_longer(cols = c(variance, mean_sil, accuracy_mean), 
                  names_to = 'statistic', 
                  values_to = 'value') %>% 
     ggplot(aes(x = value, 
@@ -130,15 +130,15 @@
              position = position_dodge(0.9)) + 
     scale_fill_manual(values = c(variance = 'steelblue2', 
                                  mean_sil = 'indianred3', 
-                                 cv_accuracy = 'darkolivegreen4'), 
+                                 accuracy_mean = 'darkolivegreen4'), 
                       labels = c(variance = 'Explained variance', 
                                  mean_sil = 'Mean silhouette', 
-                                 cv_accuracy = 'CV accuracy'), 
+                                 accuracy_mean = 'CV accuracy'), 
                       name = '') + 
     facet_grid(. ~ statistic, 
                labeller = as_labeller(c(variance = 'Explained variance', 
                                         mean_sil = 'Mean silhouette', 
-                                        cv_accuracy = 'CV accuracy')), 
+                                        accuracy_mean = 'CV accuracy')), 
                scales = 'free') + 
     globals$common_theme + 
     theme(axis.title.y = element_blank(), 

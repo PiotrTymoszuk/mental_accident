@@ -314,11 +314,11 @@
     map(map_dfc, function(x) if(is.numeric(x)) signif(x, 2) else x) %>% 
     map(select, 
         method, dataset, 
-        correct_rate, kappa, bs, bss, sens, spec) %>% 
+        correct_rate, kappa, brier_score, sens, spec) %>% 
     map(set_names, 
         c('Algorithm', 'Data subset', 
           'Accuracy', "Cohen's \u03BA", 
-          'Brier score', 'Brier skill score', 
+          'Brier score', 
           'Sensitivity, PTS cluster', 'Specificity, PTS cluster'))
 
   suppl_tables[c('early_classifiers', 'full_classifiers')] <- 

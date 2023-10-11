@@ -35,14 +35,6 @@
   
   insert_msg('Overall model performance stats')
 
-  ## square errors and Brier scores, the reference 
-  ## is a purely random classifier
-  
-  set.seed(12345)
-  
-  early_class$brier <- early_class$predictions %>% 
-    map(class_brier, return_ref = TRUE)
-  
   ## overall performance stats
   
   early_class$overall_stats <- early_class$predictions %>% 
@@ -51,17 +43,10 @@
     map(map, column_to_rownames, 'statistic') %>% 
     map(map, t) %>% 
     map(map, as.data.frame) %>% 
-    map(compress, names_to = 'dataset')
-
-  ## a common table with the performance stats
-  
-  early_class$overall_stats <- 
-    map2(early_class$overall_stats, 
-         map(early_class$brier, ~.x$total_bs), 
-         left_join, by = 'dataset') %>% 
-    map(as_tibble) %>% 
+    map(compress, names_to = 'dataset') %>% 
     compress(names_to = 'method') %>% 
-    mutate(dataset = factor(dataset, c('train', 'cv', 'test')))
+    mutate(dataset = factor(dataset, c('train', 'cv', 'test'))) %>% 
+    as_tibble
   
 # Plot of the model performance stats ------- 
   
@@ -89,11 +74,10 @@
   
   insert_msg('Plots of Brier square errors')
   
-  early_class$square_error_plots <- 
-    list(sq_table = map(early_class$brier, 
-                        ~.x$squares), 
-         plot_title = class_globals$algo_labs[names(early_class$brier)]) %>% 
-    pmap(plot_clust_squares)
+  early_class$square_error_plots <- early_class$predictions %>% 
+    map(map, 
+        plot, 
+        type = 'class_p')
 
 # Cluster prediction stats ------
   

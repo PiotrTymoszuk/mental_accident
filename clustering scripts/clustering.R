@@ -270,7 +270,7 @@
                 x = paste0('Mentral cluster, ', 
                            tolower(.y), 
                            ' subset'), 
-                y = paste0('Mentral cluster, ', 
+                y = paste0('Mental cluster, ', 
                            tolower(.y), 
                            ' subset')))
 

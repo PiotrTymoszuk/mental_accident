@@ -746,10 +746,10 @@
                                  title_prefix = 'Mental cluster prediction,', 
                                  plot_subtitle = NULL) {
     
-    list(x = c('kappa', 'correct_rate', 'bs', 'bss'), 
+    list(x = c('kappa', 'correct_rate', 'brier_score'), 
          y = paste(title_prefix, 
-                   c("\u03BA", 'accuracy', 'Brier score', 'Brier skill score')), 
-         z = c("Cohen's \u03BA", 'Accuracy', 'Brier score', 'Brier skill score')) %>% 
+                   c("\u03BA", 'accuracy', 'Brier score')), 
+         z = c("Cohen's \u03BA", 'Accuracy', 'Brier score')) %>% 
       pmap(function(x, y, z) data %>% 
              ggplot(aes(x = .data[[x]], 
                         y = reorder(.data[[y_var]], .data[[x]]), 
@@ -765,7 +765,7 @@
              theme(axis.title.y = element_blank()) + 
              labs(title = y, 
                   x = z)) %>% 
-      set_names(c('kappa', 'correct_rate', 'bs', 'bss'))
+      set_names(c('kappa', 'correct_rate', 'bs'))
     
   }
   
@@ -829,7 +829,7 @@
              dataset = factor(dataset, c('train', 'cv', 'test')), 
              plot_cap = paste0('Accuracy = ', signif(correct_rate, 2), 
                                ', \u03BA = ', signif(kappa, 2), 
-                               ', BS = ', signif(bs, 2))) %>% 
+                               ', BS = ', signif(brier_score, 2))) %>% 
       blast(all_of(split_factor)) %>% 
       map(blast, dataset) %>% 
       map(map, ~.x$plot_cap)
@@ -990,79 +990,7 @@
     
     
   }
-  
-  plot_clust_squares <- function(sq_table, 
-                                 palette = globals$part_colors, 
-                                 labels = globals$part_labels, 
-                                 facet = TRUE, 
-                                 trend = TRUE, 
-                                 point_alpha = 0.75, 
-                                 plot_title = NULL, ...) {
-    
-    # plotting data and accessories
-    
-    sq_table <- sq_table %>% 
-      mutate(dataset = factor(dataset, 
-                              c('train', 'cv', 'test')))
-    
-    ref_squares <- sq_table$ref_error %>% 
-      mean
-    
-    n_numbers <- sq_table %>% 
-      count(dataset) %>% 
-      mutate(dataset = labels[dataset])
-    
-    n_cap <- 
-      map2_chr(n_numbers[[1]], n_numbers[[2]], 
-               paste, sep = ': n = ')
-    
-    n_cap <- 
-      set_names(n_cap, levels(sq_table$dataset))
-    
-    ## plot
-    
-    sq_plot <- sq_table %>% 
-      ggplot(aes(x = reorder(.observation, sq_error), 
-                 y = sq_error, 
-                 color = dataset)) + 
-      geom_point(shape = 16, 
-                 size = 2, 
-                 alpha = point_alpha) + 
-      geom_hline(yintercept = ref_squares, 
-                 linetype = 'dashed') + 
-      scale_color_manual(values = palette, 
-                         labels = labels, 
-                         name = 'Data subset') + 
-      globals$common_theme + 
-      theme(panel.grid.major.x = element_blank(), 
-            axis.text.x = element_blank(), 
-            axis.ticks.x = element_blank()) + 
-      labs(title = plot_title, 
-           subtitle = paste(n_cap, collapse = ', '), 
-           y = "Brier's square error", 
-           x = 'Observation')
-    
-    if(trend) {
-      
-      sq_plot <- sq_plot + 
-        geom_smooth(se = FALSE, 
-                    method = 'gam')
-      
-    }
-    
-    if(facet) {
-      
-      sq_plot <- sq_plot + 
-        facet_grid(. ~ dataset, 
-                   labeller = as_labeller(labels), ...)
-      
-      
-    }
-    
-    sq_plot
-    
-  }
-  
+
   
   plot_kappa_bs <- function(data, 
                             plot_title = NULL, 
@@ -1083,16 +1011,15 @@
     
     list(x = data, 
          y = globals$part_labels[names(data)], 
-         z = n_numbers, 
-         v = map(data, ~mean(.x$ref_bs))) %>% 
-      pmap(function(x, y, z, v) x %>% 
+         z = n_numbers) %>% 
+      pmap(function(x, y, z) x %>% 
              ggplot(aes(x = kappa, 
-                        y = 2 - bs, 
+                        y = 2 - brier_score, 
                         fill = method, 
                         size = correct_rate)) + 
              geom_vline(xintercept = 0, 
                         linetype = 'dashed') + 
-             geom_hline(yintercept = 2 - v, 
+             geom_hline(yintercept = 0.66, 
                         linetype = 'dashed') + 
              geom_point(shape = 21, 
                         color = 'black') + 
