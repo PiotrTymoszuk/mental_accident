@@ -1,5 +1,6 @@
 # Exploratory data analysis: 
-# cohort characteristic, numeric variable distribution, distribution plots
+# cohort characteristic, numeric variable distribution, distribution plots, 
+# principle component analysis and assessment of spontaneous clustering tendency
 
 # tools ------
 
@@ -60,7 +61,8 @@
     './exploration scripts/consistency.R', 
     './exploration scripts/bias.R', 
     './exploration scripts/partition.R', 
-    './exploration scripts/pca.R') %>% 
+    './exploration scripts/pca.R', 
+    './exploration scripts/time_psycho.R') %>% 
     source_all(message = TRUE, 
                crash = TRUE)
   
@@ -78,6 +80,12 @@
                message = TRUE, crash = TRUE)
     
   }
+  
+  ## observation time dependency of psychometric variables
+  
+  c('./exploration scripts/time_psycho.R', 
+    './exploration scripts/time_symptoms.R') %>% 
+    source_all(message = TRUE, crash = TRUE)
   
 # END -----
   

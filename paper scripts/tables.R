@@ -29,29 +29,12 @@
   
   tables$cohort_demo <- 
     rbind(tables$cohort_demo, 
-          mental$result_tbl)
+          mental$short_result_tbl)
   
-  ## some re-wording proposed by the team
+  ## re-wording requested by the study team
   
-  tables$cohort_accident <- tables$cohort_accident %>% 
-    map_dfc(stri_replace, 
-            fixed = 'Psychological support need', 
-            replacement = 'Self-reported need for psychological support after the accident') %>% 
-    map_dfc(stri_replace, 
-            fixed = 'Psychological support', 
-            replacement = 'Psychological or psychiatric support received after the accident') %>% 
-    map_dfc(stri_replace, 
-            fixed = 'Physical health consequences', 
-            replacement = 'Persisting physical consequences of the accident') %>% 
-    map_dfc(stri_replace, 
-            fixed = 'Returned to same sport', 
-            replacement = 'Returned to the same mountain sport after the accident') %>% 
-    map_dfc(stri_replace,
-            fixed = 'Caution post accident', 
-            replacement = 'Behavior during mountain sport after the accident') %>% 
-    map_dfc(stri_replace, 
-            fixed = 'Flashback frequency', 
-            replacement = 'Flashbacks during mountain sport')
+ # tables$cohort_mental %>% 
+  #  map_dfc(stri_replace)
   
   ## table objects
   
@@ -228,27 +211,43 @@
                             'The table is available in a', 
                             'supplementary Excel file.'))
   
-# Supplementary Table S8: differences between the clusters -----
+# Supplementary Table S8: mental disorder symptoms in the clusters ------
   
-  insert_msg('Table S8: differences between the clusters')
+  insert_msg('Supplementary Table S8: mental disorder symptoms in the clusters')
+  
+  suppl_tables$clust_symptoms <- clust_bcg$result_tbl %>% 
+    filter(source_var %in% c('n_number', clust_bcg$mental_variables)) %>% 
+    select(- source_var) %>% 
+    mdtable(label = 'table_s8_clustrer_mental_symptoms', 
+            ref_name = 'clust_symptoms', 
+            caption = paste('Frequency of mental disorder symptoms in the', 
+                            'mental health clusters in the entire cohort.', 
+                            'Categorical variables are presented as', 
+                            'percentages and counts within the clusters.'))
+  
+# Supplementary Table S9: differences between the clusters -----
+  
+  insert_msg('Table S9: differences between the clusters')
   
   suppl_tables$clust_bcg <- clust_bcg$result_tbl %>% 
-    mdtable(label = 'table_s8_clustering_factors', 
+    filter(!source_var %in% c(clust_bcg$mental_variables)) %>% 
+    select(- source_var) %>% 
+    mdtable(label = 'table_s9_cluster_background', 
             ref_name = 'clust_bcg', 
-            caption = paste('Significant',
-                            'differences in demographic, socioeconomic,', 
+            caption = paste('Differences in demographic, socioeconomic,', 
                             'clinical, accident- and recovery-related factors,', 
-                            'and mental disorder symptoms', 
-                            'between the mental clusters in the entire cohort.', 
+                            'and between the mental clusters in the entire', 
+                            'cohort.', 
+                            'Significant effects are presented, the full table', 
+                            'is available as a supplementary Excel file.', 
                             'Numeric variables are presented as medians', 
                             'with interquartile ranges (IQR). Categorical', 
                             'variables are presented as percentages', 
-                            'and counts within the complete', 
-                            'observation set.'))
+                            'and counts within the clusters.'))
   
-# Supplementary Table S9: early and late candidate predictors of mental clusters ------
+# Supplementary Table S10: early and late candidate predictors of mental clusters ------
   
-  insert_msg('Table S9: explanatory factors for mental cluster modeling')
+  insert_msg('Table S10: explanatory factors for mental cluster modeling')
 
   suppl_tables$mod_variables <- class_globals$variables %>% 
     map(exchange, dict = ptsd$var_lexicon) %>% 
@@ -257,15 +256,15 @@
     set_names(c('early predictor model', 'full set predictor model')) %>% 
     compress(names_to = 'Classifier type', 
              values_to = 'Explanatory variables') %>% 
-    mdtable(label = 'table_s9_modeling_variables', 
+    mdtable(label = 'table_s10_modeling_variables', 
             ref_name = 'mod_variables', 
             caption = paste('Sets of explanatory factors', 
                             'used for modeling of the mental', 
                             'cluster assignment.'))
   
-# Supplementary Table S10: tuning -------
+# Supplementary Table S11: tuning -------
   
-  insert_msg('Tables S10: tuning')
+  insert_msg('Tables S11: tuning')
   
   suppl_tables$tuning <- 
     list(ranger = ranger_tune, 
@@ -288,25 +287,24 @@
     compress(names_to = 'Classifier type') %>% 
     mutate(Algorithm = class_globals$algo_labs[Algorithm]) %>% 
     relocate(`Classifier type`) %>% 
-    mdtable(label = 'table_s10_tuning', 
+    mdtable(label = 'table_s11_tuning', 
             ref_name = 'tuning', 
             caption = paste('The optimal combinations of machine learning', 
                             'algorithm parameters found in 10-fold', 
                             'cross-validation of the training subset', 
                             'of the study cohort.'))
   
-# Supplementary Table S11 - S12: performance of machine learning models -----
+# Supplementary Table S12 - S13: performance of machine learning models -----
   
-  insert_msg('Table S11 - S12: performance of cluster classifiers')
+  insert_msg('Table S12 - S13: performance of cluster classifiers')
   
   ## The table includes: overall accuracy, kappa, Brier score
   ## as well as sensitivity and specificity for the PTS cluster
   
   suppl_tables[c('early_classifiers', 'full_classifiers')] <- 
     list(early_class, full_class) %>% 
-    map(~left_join(.x$overall_stats, 
-                   filter(.x$clust_stats, 
-                          clust_id == 'PTS')[c('method', 'dataset', 'sens', 'spec')], 
+    map(~left_join(.x$overall_stats[c('method', 'dataset', 'correct_rate', 'kappa', 'brier_score')], 
+                   filter(.x$clust_stats, clust_id == 'PTS')[c('method', 'dataset', 'Se', 'Sp')], 
                    by = c('method', 'dataset'))) %>%
     map(mutate, 
         dataset = globals$part_labels[as.character(dataset)], 
@@ -314,7 +312,7 @@
     map(map_dfc, function(x) if(is.numeric(x)) signif(x, 2) else x) %>% 
     map(select, 
         method, dataset, 
-        correct_rate, kappa, brier_score, sens, spec) %>% 
+        correct_rate, kappa, brier_score, Se, Sp) %>% 
     map(set_names, 
         c('Algorithm', 'Data subset', 
           'Accuracy', "Cohen's \u03BA", 
@@ -324,16 +322,16 @@
   suppl_tables[c('early_classifiers', 'full_classifiers')] <- 
     suppl_tables[c('early_classifiers', 'full_classifiers')] %>% 
     list(x = ., 
-         label = c('table_s11_early_predictor_classifiers', 
-                   'table_s12_late_predictor_classifiers'), 
+         label = c('table_s12_early_predictor_classifiers', 
+                   'table_s13_late_predictor_classifiers'), 
          ref_name = names(.), 
          caption = paste('Performance statistics of machine learning', 
                          'classifiers at predicting the mental cluster', 
                          'assignment.', 
                          c(paste('Models employing early predictors available during', 
-                                 'acute medical management of the accident.'), 
+                                 'acute medical management of the patient.'), 
                            paste('Models employing the full predictor set available', 
-                                 'during acute medical management of the accident', 
+                                 'during acute medical management of the patient', 
                                  'and follow-up.')))) %>% 
     pmap(mdtable)
     

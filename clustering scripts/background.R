@@ -19,24 +19,36 @@
   
   insert_msg('Analysis globals')
   
-  ## explanatory variables 
+  ## mental disorder symptoms
   
-  clust_bcg$variables <- ptsd$var_lexicon %>% 
-    filter(type %in% c('characteristic')) %>% 
-    .$variable
-  
-  clust_bcg$variables <- 
-    c(clust_bcg$variables, 
-      'dsm5_cluster_class', 
+  clust_bcg$mental_variables <- 
+    c('dsm5_cluster_class', 
       'dsm5_B_class', 
       'dsm5_C_class', 
       'dsm5_D_class', 
       'dsm5_E_class', 
+      'unwilling_flashback', 
+      'flashback_frequency', 
       'rs13_total_class', 
       'phq9_total_class', 
       'gad7_total_class', 
       'phqd_panic_total_class', 
       'phq_events_total_class')
+  
+  ## background demographic and clinical variables
+  
+  clust_bcg$bcg_variables <- ptsd$var_lexicon %>% 
+    filter(type %in% c('characteristic')) %>% 
+    .$variable
+  
+  clust_bcg$bcg_variables <- 
+    clust_bcg$bcg_variables[!clust_bcg$bcg_variables %in% clust_bcg$mental_variables]
+  
+  ## explanatory variables 
+
+  clust_bcg$variables <- 
+    c(clust_bcg$bcg_variables, 
+      clust_bcg$mental_variables)
 
   ## cluster assignment schemes
   
@@ -126,7 +138,7 @@
            paste(collapse = ', '), 
          x = '% of cluster')
 
-# Key differences between the clusters in a table ------
+# Summary result table ------
   
   insert_msg('Key differences between the clusters, table')
   
@@ -143,9 +155,7 @@
     right_join(clust_bcg$desc_stats %>% 
                 reduce(left_join, by= 'variable') %>% 
                 set_names(c('variable', names(clust_bcg$desc_stats))), 
-              clust_bcg$test %>% 
-                filter(p_adjusted < 0.05) %>% 
-                select(variable, significance, eff_size), 
+              clust_bcg$test[c('variable', 'significance', 'eff_size')], 
               by = 'variable') %>% 
     format_summ_tbl %>% 
     full_rbind(clust_bcg$n_numbers , .) %>% 
@@ -153,7 +163,9 @@
             regex = '\nn\\s{1}=\\s{1}\\d+', 
             replacement = '') %>% 
     set_names( c('Variable', 'Neutral cluster', 'PTG cluster', 'PTS cluster', 
-                 'Significance', 'Effect size'))
+                 'Significance', 'Effect size')) %>% 
+    mutate(source_var = c('n_number', clust_bcg$variables)) %>% 
+    relocate(source_var)
   
 # Bar plots for frequencies of PTSD symptoms ------
   
@@ -209,13 +221,7 @@
   clust_bcg$mental_symptoms$ax_labs <- 
     symptom_ax_labs(test_data = clust_bcg$test, 
                     variables = clust_bcg$mental_symptoms$variables) 
-  
-  clust_bcg$mental_symptoms$ax_labs <- 
-    clust_bcg$mental_symptoms$ax_labs %>% 
-    stri_replace(fixed = ' symptoms', replacement = '') %>% 
-    stri_replace(fixed = 'Somatic', replacement = 'Somatic symptoms') %>% 
-    set_names(names(clust_bcg$mental_symptoms$ax_labs))
-  
+
   ## the plot
   
   clust_bcg$mental_symptoms$plot <- 

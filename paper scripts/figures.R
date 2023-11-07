@@ -200,12 +200,7 @@
   
   figures$injury$top <- 
     clust_bcg$plots[c("accident_culprit", "accident_rescue")]
-  
-  figures$injury$top$accident_rescue <- 
-    figures$injury$top$accident_rescue + 
-    scale_fill_brewer(palette = 'Reds', 
-                      labels = c('self', 'comrade', 'professional'))
-  
+
   figures$injury$top <- figures$injury$top %>% 
     plot_grid(plotlist = ., 
               ncol = 2, 

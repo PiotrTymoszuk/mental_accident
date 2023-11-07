@@ -35,16 +35,13 @@
   
   insert_msg('Overall model performance stats')
 
-  full_class$overall_stats <- full_class$predictions %>% 
-    map(map, summary) %>% 
-    map(map, select, statistic, estimate) %>% 
-    map(map, column_to_rownames, 'statistic') %>% 
-    map(map, t) %>% 
-    map(map, as.data.frame) %>% 
+  full_class$overall_stats <- full_class$models %>% 
+    map(summary, 
+        newdata = class_globals$analysis_tbl$test, 
+        wide = TRUE) %>% 
     map(compress, names_to = 'dataset') %>% 
     compress(names_to = 'method') %>% 
-    mutate(dataset = factor(dataset, c('train', 'cv', 'test'))) %>% 
-    as_tibble
+    mutate(dataset = factor(dataset, c('train', 'cv', 'test')))
   
 # Plot of the model performance stats ------- 
   
@@ -81,11 +78,12 @@
   
   insert_msg('Cluster prediction stats')
   
-  full_class$clust_stats <- full_class$predictions %>% 
-    map(clust_pred_stats) %>% 
-    map(compress, names_to = 'clust_id') %>% 
-    compress(names_to = 'method') %>% 
-    mutate(clust_id = factor(clust_id, 
+  full_class$clust_stats <- full_class$models %>% 
+    map(clstats, 
+        newdata = class_globals$analysis_tbl$test) %>% 
+    map(compress, names_to = 'dataset') %>% 
+    compress(names_to = 'method') %>%  
+    mutate(clust_id = factor(.outcome, 
                              levels(class_globals$assignment$training$clust_id)), 
            dataset = factor(dataset,
                             c('train', 'cv', 'test')))

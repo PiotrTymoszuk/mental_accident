@@ -73,6 +73,16 @@
     mutate(variable = stri_capitalize(variable)) %>% 
     set_names(c('Variable', 'Statistic'))
   
+  ## a compacted table version requested by the study team
+  
+  mental$short_result_tbl <- 
+    map2_chr(tolower(mental$result_tbl[[1]]), 
+             mental$result_tbl[[2]], 
+             paste, sep = ': ') %>% 
+    paste(collapse = '\n') %>% 
+    tibble(Variable = 'Type of pre-existing diagnosed mental disorder', 
+           Statistic = .)
+  
 # END -------
   
   insert_tail()

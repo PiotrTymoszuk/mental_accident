@@ -189,95 +189,28 @@
   
   ## working essentially with cached tuning results
   
-  if(file.exists('./cache/ranger_tune.RData')) {
-    
-    insert_msg('Loading cached RF tuning results')
-    
-    load('./cache/ranger_tune.RData')
-    
-  } else {
-    
-    source_all('./classification scripts/rf_tuning.R', 
-               message = TRUE, crash = TRUE)
-    
-  }
-
-  if(file.exists('./cache/nnet_tune.RData')) {
-    
-    insert_msg('Loading cached NNet tuning results')
-    
-    load('./cache/nnet_tune.RData')
-    
-  } else {
-    
-    source_all('./classification scripts/nnet_tuning.R', 
-               message = TRUE, crash = TRUE)
-    
-  }
-
-  if(file.exists('./cache/svm_tune.RData')) {
-    
-    insert_msg('Loading cached SVM tuning results')
-    
-    load('./cache/svm_tune.RData')
-    
-  } else {
-    
-    source_all('./classification scripts/svm_tuning.R', 
-               message = TRUE, crash = TRUE)
-    
-  }
-  
-  if(file.exists('./cache/rpart_tune.RData')) {
-    
-    insert_msg('Loading cached RPart tuning results')
-    
-    load('./cache/rpart_tune.RData')
-    
-  } else {
-    
-    source_all('./classification scripts/rpart_tuning.R', 
-               message = TRUE, crash = TRUE)
-    
-  }
-  
-  if(file.exists('./cache/sda_tune.RData')) {
-    
-    insert_msg('Loading cached SDA tuning results')
-    
-    load('./cache/sda_tune.RData')
-    
-  } else {
-    
-    source_all('./classification scripts/da_tuning.R', 
-               message = TRUE, crash = TRUE)
-    
-  }
-  
-  if(file.exists('./cache/crf_tune.RData')) {
-    
-    insert_msg('Loading cached SDA tuning results')
-    
-    load('./cache/crf_tune.RData')
-    
-  } else {
-    
-    source_all('./classification scripts/cforest_tuning.R', 
-               message = TRUE, crash = TRUE)
-    
-  }
-  
-  if(file.exists('./cache/elnet_tune.RData')) {
-    
-    insert_msg('Loading cached Elastic Net tuning results')
-    
-    load('./cache/elnet_tune.RData')
-    
-  } else {
-    
-    source_all('./classification scripts/elnet_tuning.R')
-    
-  }
+  list(cache_path = c('./cache/ranger_tune.RData', 
+                      './cache/nnet_tune.RData', 
+                      './cache/svm_tune.RData', 
+                      './cache/rpart_tune.RData', 
+                      './cache/sda_tune.RData', 
+                      './cache/crf_tune.RData', 
+                      './cache/elnet_tune.RData'), 
+       script_path = c('./classification scripts/rf_tuning.R', 
+                       './classification scripts/nnet_tuning.R', 
+                       './classification scripts/svm_tuning.R', 
+                       './classification scripts/rpart_tuning.R', 
+                       './classification scripts/da_tuning.R', 
+                       './classification scripts/cforest_tuning.R', 
+                       './classification scripts/elnet_tuning.R'), 
+       message = c('Loading cached RF tuning results', 
+                   'Loading cached NNet tuning results', 
+                   'Loading cached SVM tuning results', 
+                   'Loading cached RPart tuning results', 
+                   'Loading cached SDA tuning results', 
+                   'Loading cached SDA tuning results', 
+                   'Loading cached Elastic Net tuning results')) %>% 
+    pwalk(access_cache)
   
 # Modeling ------
   

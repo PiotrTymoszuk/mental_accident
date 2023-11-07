@@ -269,11 +269,11 @@
                                                '3+ persons', 
                                                'no information')), 
            accident_rescue = car::recode(accident_rescue, 
-                                         "'tour partner' = 'partner/third party'; 
-                                         'third party' = 'partner/third party'"), 
-           accident_rescue = factor(accident_rescue , c('self', 
-                                                        'partner/third party', 
-                                                        'rescue team')), 
+                                         "'tour partner' = 'companion'; 
+                                         'third party' = 'companion'"), 
+           accident_rescue = factor(accident_rescue, c('self', 
+                                                       'companion', 
+                                                       'rescue team')), 
            accident_rescue_mode = ifelse(accident_rescue != 'rescue team', 
                                          'no rescue team involved', 
                                          accident_rescue_mode), 

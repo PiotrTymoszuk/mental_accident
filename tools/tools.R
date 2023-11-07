@@ -256,11 +256,14 @@
                                     fixed = ' (', 
                                     replacement = '<br>('), 
              var_lab = stri_replace(var_lab, 
-                                    fixed = ' symptoms', 
-                                    replacement = ''), 
+                                    fixed = 'clinically relevant', 
+                                    replacement = 'clinically relevant<br>'), 
              var_lab = stri_replace(var_lab, 
                                     fixed = ' during', 
                                     replacement = '<br>during'), 
+             var_lab = stri_replace(var_lab, 
+                                    fixed = 'at least one PCL-5 domain positive', 
+                                    replacement = 'at least one domain'), 
              var_lab = paste(var_lab, plot_cap, sep = '<br>'), 
              var_lab = ifelse(p_adjusted < 0.05, 
                               paste0('<b>', var_lab, '</b>'), 
@@ -694,53 +697,6 @@
     
   }
   
-  clust_pred_stats <- function(pred_lst) {
-    
-    ## calculates prediction accuracy, specificity and sensitivity
-    ## for predictions of particular clusters
-    
-    pred_data <- pred_lst %>% 
-      map(~.x$data) %>% 
-      map(select, .outcome, .fitted) %>% 
-      map(set_names, c('obs', 'pred'))
-    
-    levs <- levels(pred_data[[1]]$obs)
-    
-    clust_lst <- list()
-    clust_stats <- list()
-    corr_detection <- list()
-    
-    for(i in levs) {
-      
-      clust_lst[[i]] <- pred_data %>% 
-        map(mutate, 
-            obs = ifelse(obs == i, 'yes', 'no'), 
-            pred = ifelse(pred == i, 'yes', 'no'),
-            correct = obs == pred, 
-            true_pos = (obs == 'yes' & pred == 'yes'), 
-            false_pos = (obs == 'no' & pred == 'yes'), 
-            true_neg = (obs == 'no' & pred == 'no'), 
-            false_neg = (obs == 'yes' & pred == 'no'))
-      
-      corr_detection[[i]] <- clust_lst[[i]] %>% 
-        map(filter, obs == 'yes') %>% 
-        map(~sum(.x$correct)/nrow(.x))
-      
-      clust_stats[[i]] <- 
-        map2(clust_lst[[i]], 
-             corr_detection[[i]], 
-             ~tibble(accuracy = sum(.x$correct)/nrow(.x), 
-                     correct_assignment = .y, 
-                     sens = sum(.x$true_pos)/(sum(.x$false_neg) + sum(.x$true_pos)), 
-                     spec = sum(.x$true_neg)/(sum(.x$true_neg) + sum(.x$false_pos)))) %>% 
-        compress(names_to = 'dataset')
-      
-    }
-    
-    return(clust_stats)
-    
-  }
-
   plot_overall_stats <- function(data, 
                                  y_var, 
                                  title_prefix = 'Mental cluster prediction,', 
@@ -774,8 +730,8 @@
                                  title_prefix = 'Cluster detection', 
                                  y_lab = 'Algorithm') {
     
-    list(x = c('sens', 'spec', 'accuracy'), 
-         y = paste('Cluster detection, ensemble,', 
+    list(x = c('Se', 'Sp', 'correct_rate'), 
+         y = paste(title_prefix, 
                    c('sensitivity', 'specificity', 'accuracy')), 
          z = c('Sensitivity', 'Specificity', 'Accuracy')) %>% 
       pmap(function(x, y, z) data %>% 
@@ -911,86 +867,15 @@
              geom_bar(stat = 'identity', 
                       fill = z, 
                       color = 'black') + 
+             scale_y_discrete(labels = function(x) stri_replace(x, 
+                                                                regex = ':\\s{1}(yes|no)$', 
+                                                                replacement = '')) + 
              globals$common_theme + 
              theme(axis.title.y = element_blank()) + 
              labs(title = y, 
                   x = 'Overall variable importance'))
     
   }
-  
-  class_brier <- function(pred_lst, return_ref = FALSE) {
-    
-    ## Calculates multi-class Brier score
-    ## The reference is a purely random classifier, which assigns 
-    ## observations to classes by their proportion
-    
-    if(all(map_lgl(pred_lst, is_predx))) {
-      
-      pred_lst <- pred_lst %>% 
-        map(~.x$data)
-      
-    }
-    
-    pred_data <- pred_lst %>% 
-      compress(names_to = 'dataset') %>% 
-      mutate(neutral_observed = 0, 
-             PTG_observed = 0, 
-             PTS_observed = 0) %>% 
-      blast(.outcome)
-
-    squares <- pred_data %>% 
-      map2_dfr(., names(.), 
-               ~mutate(.x, !!paste0(.y, '_observed') := 1)) %>% 
-      mutate(sq_error = (neutral - neutral_observed)^2 + 
-               (PTG - PTG_observed)^2 + 
-               (PTS - PTS_observed)^2) %>% 
-      select(dataset, .observation, .outcome, .fitted, sq_error)
-
-    total_bs <- squares %>% 
-      summarise(.by = dataset, bs = mean(sq_error))
-    
-    if(!return_ref) {
-      
-      return(list(squares = squares, 
-                  total_bs = total_bs))
-      
-    }
-    
-    ## obtaining the reference: assignment probabilities are re-shuffled
-    ## randomly
-    
-    pred_data <- pred_data %>% 
-      reduce(rbind) %>% 
-      blast(dataset) %>% 
-      map(~.x[sample(1:nrow(.x), nrow(.x), replace = FALSE), ]) %>% 
-      map(~mutate(.x, .fitted = sample(.fitted, nrow(.x), replace = FALSE))) %>% 
-      map(~mutate(.x, 
-                  neutral = ifelse(.fitted == 'neutral', 1, 0), 
-                  PTG = ifelse(.fitted == 'PTG', 1, 0), 
-                  PTS = ifelse(.fitted == 'PTS', 1, 0)))
-    
-    ref_brier <- pred_data %>% 
-      class_brier(return_ref = FALSE)
-    
-    squares <- 
-      left_join(squares, 
-                set_names(ref_brier$squares[c('dataset', '.observation', 'sq_error')], 
-                          c('dataset', '.observation', 'ref_error')), 
-                by = c('dataset', '.observation'))
-    
-    total_bs <- 
-      left_join(total_bs, 
-                set_names(ref_brier$total_bs, 
-                          c('dataset', 'ref_bs')), 
-                by = 'dataset') %>% 
-      mutate(bss = 1 - bs/ref_bs)
-    
-    list(squares = squares,
-         total_bs = total_bs)
-    
-    
-  }
-
   
   plot_kappa_bs <- function(data, 
                             plot_title = NULL, 
@@ -1096,14 +981,14 @@
     if(rev_levels) {
       
       roc_stats <- roc_stats %>% 
-        mutate(plot_lab = paste0('Se = ', signif(spec, 2), 
-                                 ', Sp = ', signif(sens, 2)))
+        mutate(plot_lab = paste0('Se = ', signif(Sp, 2), 
+                                 ', Sp = ', signif(Se, 2)))
       
     } else {
       
       roc_stats <- roc_stats %>% 
-        mutate(plot_lab = paste0('Se = ', signif(sens, 2), 
-                                 ', Sp = ', signif(spec, 2)))
+        mutate(plot_lab = paste0('Se = ', signif(Se, 2), 
+                                 ', Sp = ', signif(Sp, 2)))
       
     }
     
@@ -1184,13 +1069,13 @@
     c('pss4_total' = 'stress, PSS4', 
       'gad7_total' = 'anxiety, GAD-7', 
       'phq9_total' = 'depression, PHQ-9', 
-      'phq_events_total' = 'somatic symptoms, PHQ-15', 
+      'phq_events_total' = 'somatization, PHQ-15', 
       'phqd_panic_total' = 'panic, PHQ-panic', 
       'soc9l_total' = 'lack of SOC, SOC-9L', 
       'rs13_total' = 'resilience, RS-13', 
-      'eurohis_total' = 'sum score', 
-      'dsm5_total' = 'sum score', 
-      'ptgi_total' = 'sum score')
+      'eurohis_total' = 'EUROHIS-QOL8 mean', 
+      'dsm5_total' = 'PCL-5 sum', 
+      'ptgi_total' = 'PTGI sum')
   
   
 # varia -----
@@ -1325,6 +1210,20 @@
     list(count = count, 
          complete = complete, 
          percent = percent)
+  }
+  
+  digit2string <- function(x) {
+    
+    x <- as.integer(x)
+    
+    if(x > 10) return(x)
+    
+    digits <- 
+      c('one', 'two', 'three', 'four', 
+        'five', 'six', 'seven', 'eight', 'nine', 'ten')
+    
+    digits[x]
+    
   }
 
 # END -----

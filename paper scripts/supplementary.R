@@ -302,7 +302,9 @@
          full_class$importance$plots[c("ranger", "svmRadial", "sda", "cforest")]) %>% 
     map(map, ~.x + 
           theme(plot.title.position = 'plot', 
-                plot.title = element_text(hjust = 0.2))) %>% 
+                plot.title = element_text(hjust = 0.2), 
+                axis.text = element_text(size = 6),
+                axis.title.x = element_text(size = 6))) %>% 
     map(~plot_grid(plotlist = ., 
                    ncol = 2, 
                    align = 'hv', 

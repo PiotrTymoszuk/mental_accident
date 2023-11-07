@@ -59,15 +59,10 @@
   c('./clustering scripts/development.R', 
     './clustering scripts/clustering.R', 
     './clustering scripts/characteristic.R', 
-    './clustering scripts/background.R') %>% 
+    './clustering scripts/background.R', 
+    './clustering scripts/time.R') %>% 
     source_all(message = TRUE, crash = TRUE)
-  
-  ## mixture modeling, not performed as a standard
-  ## shown only on request - but it delivers quite similar results
-  
-  #c('./clustering scripts/mix_development.R', 
-   # './clustering scripts/mix_clustering.R') %>% 
-    #source_all(message = TRUE, crash = TRUE)
+
   
 # END ------
   

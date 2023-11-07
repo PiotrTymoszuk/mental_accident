@@ -310,7 +310,7 @@
   cohort$ptsd_overlap$upset_plot <- 
     upset(cohort$ptsd_overlap$data, 
           intersect = c('B', 'C', 'D', 'E'), 
-          name = 'Exclusive overlap between the PCL-5 DSM-5 domains', 
+          name = 'Exclusive overlap between the PCL-5 domains', 
           mode = 'exclusive_intersection', 
           keep_empty_groups = FALSE, 
           min_degree = 1, 

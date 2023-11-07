@@ -167,11 +167,9 @@
   insert_msg('Overall fit stat summary')
 
   ens_class$overall_stats <- ens_class$predictions %>% 
-    map(map, summary) %>% 
-    map(map, select, statistic, estimate) %>% 
-    map(map, column_to_rownames, 'statistic') %>% 
-    map(map, t) %>% 
-    map(map, as.data.frame) %>% 
+    map(map, 
+        summary, 
+        wide = TRUE) %>% 
     map(compress, names_to = 'dataset') %>% 
     compress(names_to = 'method') %>% 
     as_tibble
@@ -214,10 +212,10 @@
   insert_msg('Cluster-specific stats')
   
   ens_class$clust_stats <- ens_class$predictions %>% 
-    map(clust_pred_stats) %>% 
-    map(compress, names_to = 'clust_id') %>% 
+    map(map, clstats) %>% 
+    map(compress, names_to = 'dataset') %>% 
     compress(names_to = 'method') %>% 
-    mutate(clust_id = factor(clust_id, 
+    mutate(clust_id = factor(.outcome, 
                              levels(class_globals$assignment$training$clust_id)), 
            dataset = factor(dataset,
                             c('train', 'cv', 'test')))
