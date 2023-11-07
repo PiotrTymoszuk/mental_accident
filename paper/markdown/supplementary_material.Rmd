@@ -62,7 +62,7 @@ Consistency of psychometric tools was assessed with the packages _psych_ [@Revel
 Clustering tendency was investigated with _factoextra_ [@Kassambara2020] and [_clustTools_](https://github.com/PiotrTymoszuk/clustTools). 
 Statistical hypothesis testing and correlation analyses were accomplished with [_ExDA_](https://github.com/PiotrTymoszuk/ExDA) and _rstatix_ [@Kassambara2021].
 
-For semi-supervised clustering, diagnostic and performance of the clustering analysis, the package [_clustTools_](https://github.com/PiotrTymoszuk/clustTools) with implementation of algorithms and distance measures from _factoextra_, _cluster_ and _philentropy_ [@Schubert2019; @Drost2018; @Kassambara2020] was utilized. 
+For semi-supervised clustering, diagnostic and performance testing of the clustering analysis, the package [_clustTools_](https://github.com/PiotrTymoszuk/clustTools) with implementation of algorithms and distance measures from _factoextra_, _cluster_ and _philentropy_ [@Schubert2019; @Drost2018; @Kassambara2020] was utilized. 
 UMAP (uniform manifold approximation and projection) was done with the _umap_ and [_clustTools_](https://github.com/PiotrTymoszuk/clustTools) packages [@Konopka2022; @McInnes2018]. 
 Cross-distances between the training and test subsets of the study cohort and cross-distances between clusters in the training and test subsets of the study cohort were computed with _philentropy_ [@Drost2018] and [_clustTools_](https://github.com/PiotrTymoszuk/clustTools).
 
@@ -93,39 +93,40 @@ The psychometric battery (__Supplementary Table S\@ref(tab:tab-mental-battery)__
 anxiety (GAD-7: 7-item general anxiety disorder scale) [@Spitzer2006], 
 depression (PHQ: patient health questionnaire, PHQ-9) [@Lowe2002; @Grafe2004], 
 panic (PHQ-panic module) [@Lowe2002; @Grafe2004], 
-persistent somatic symptoms (PHQ-15) [@Kroenke2002], 
+common persistent somatic symptoms as a substitute for somatization (PHQ-15) [@Kroenke2002], 
 resilience (RS13: 13-item resilience scale) [@Leppert2008], 
 loss of sense of coherence (SOC-9L: Leipzig 9-item sense of coherence questionnaire) [@Schumacher2000], 
 quality of life (EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale) [@Schmidt2006], 
 post-traumatic growth (PTGI: post-traumatic growth inventory) [@Tedeschi1996] and 
-post-traumatic stress disorder (PCL-5 DSM-5: PTSD checklist for DSM-5) [@Bovin2016]. 
+post-traumatic stress disorder (PCL-5: PTSD checklist for DSM-5) [@Bovin2016]. 
 
-Clinically relevant symptoms of anxiety were defined as GAD-7 $geq$ 10, 
+Clinically relevant symptoms of anxiety were defined as GAD-7 $\geq$ 10, 
 clinically relevant symptoms of depression were defined as PHQ-9 $\geq$ 11 [@Manea2012], 
 significant persistent somatic symptoms were defined as PHQ-15 $\geq$ 11 [@Kroenke2002]. 
 Resilience classes were defined as follows: low: RS-13 0 - 65, moderate: 66 - 72, high: $\geq$ 73 [@Leppert2008]. 
 
-Items of the EUROHIS QOL 8 tool were scored as with 1 - 5 likert scales (1: extreme concerns, no satisfaction at all, 5: no concerns/full satisfaction) with each item representing a single domain of quality of life (quality of life, health, energy, finances, activity, self-esteem, relationship and housing). 
+Items of the EUROHIS QOL 8 tool were scored as with 1 - 5 Likert scales (1: extreme concerns, no satisfaction at all, 5: no concerns/full satisfaction) with each item representing a single domain of quality of life (quality of life, health, energy, finances, activity, self-esteem, relationship and housing). 
 The total EUROHIS QOL score was defined as the arithmetic mean of all items [@Schmidt2006]. 
 
 Separate scores were computed for each domain of the PTGI tool (I: relations, II: possibilities, III: personal strength, IV: spiritual strength, V: life appreciation) with each item scores as 0: none, 1: very little, 2: little, 3: moderate, 4: great, 5: extremely great. 
 In addition, the total PTGI score was calculated as the sum of all items [@Tedeschi1996]. 
 
-Separate scores were calculated for domains B, C, D and E of the PCL-5 DSM-5 tool along with the total score being the sum of all items. 
-Each PCL-5 DSM-5 item was scored as 0: not at all, 1: a little bit, 2: moderate, 3: quite a bit and 4: extremely. 
+Separate scores were calculated for domains B, C, D and E of the PCL-5 tool along with the total score being the sum of all items. 
+Each PCL-5 item was scored as 0: not at all, 1: a little bit, 2: moderate, 3: quite a bit and 4: extremely. 
 Participants positive for the B domain or C domain PTSD symptoms were identified by at least one item per domain scored with 'moderate' or higher. 
 Participants positive for the D or E domain PTSD symptoms were identified by at least two items per domain scored with 'moderate' or higher. 
-Significant PTSD symptoms where assumed in participants screened positive for at least one of the B, C, D or E PCL-5 DSM-5 domains [@Bovin2016]. 
+Significant PTSD symptoms where assumed in participants screened positive for at least one of the B, C, D or E PCL-5 domains [@Bovin2016]. 
 
-Traumatic events prior to the sport accident were assessed with the DIA-X tool (Diagnostic Expert System) [@Maercker2005]. 
+Traumatic events prior to the mountain sport accident were assessed with the DIA-X tool (Diagnostic Expert System) [@Maercker2005]. 
 Direct personal experience or being a witness of a traumatic event specified by the DIA-X questionnaire or by an additional yes/no item ('other traumatic events') was scored as 1. 
 Prior traumatic event was assumed with at least one DIA-X item scored with 1. 
-Prior sport accidents, 
+Pre-existing mental disorder diagnosed by a physician, 
+prior mountain sport accidents, 
 flashbacks during mountain sport activity, 
 confusion during mountain sport activity, 
-self-reported need for psychological support, 
+self-reported need for psychological support following the accident, 
 psychological/psychiatric support/therapy after the accident 
-and presence of persistent physical health consequences after the accident 
+and presence of persistent physical health consequences related to the accident 
 were surveyed as single yes/no items. 
 Flashbacks frequency during mountain sport activity was assessed in the following categories: none, more than one per year and more than one per month. 
 Smoking was surveyed as a single yes/no question. 
@@ -173,7 +174,7 @@ Intervals of effect sizes were defined as follows [@McHugh2012; @Field2013; @Coh
 
 * $\eta^2$ statistic: weak: < 0.06, moderate: 0.06 - 0.14, large: $\geq$ 0.14
 
-* Cohen's $\kappa$ reliability: none: < 0.2, minimal: 0.2 - 0.4, weak: 0.4 - 0.6, moderate: 0.6 - 0.8, strong: $\geq$ 0.8
+* Cohen's $\kappa$ inter-rater reliability statistic: none: < 0.2, minimal: 0.2 - 0.4, weak: 0.4 - 0.6, moderate: 0.6 - 0.8, strong: $\geq$ 0.8
 
 ## Assessment of selection bias
 
@@ -189,11 +190,15 @@ Observations of the training subset of the study cohort were subjected to cluste
 The score values were normalized and median-centered (function `center_data()`, package [_clustTools_](https://github.com/PiotrTymoszuk/clustTools)). 
 For clustering, the PAM (partition around medoids) algorithm [@Schubert2019] with the cosine distance measure between observations [@Drost2018] was employed. 
 The clustering object was constructed with the function `kcluster()` from the  [_clustTools_](https://github.com/PiotrTymoszuk/clustTools) package.
-The choice of the clustering algorithm was motivated by its good explanatory performance measured by the fraction of explained clustering variance (ratio of between-cluster sum of squares to total sum of squares, method `var()`, [_clustTools_](https://github.com/PiotrTymoszuk/clustTools)) and superior reproducibility in 10-fold cross-validation [@Lange2004] (cluster assignment in the folds by an inverse distance weighted 27-nearest neighbors classifier, method `cv()`, [_clustTools_](https://github.com/PiotrTymoszuk/clustTools)) in a comparison with several other clustering algorithms presented in __Supplementary Figure S\@ref(fig:fig-clust-dev)A__. 
+The choice of the clustering algorithm was motivated by 
+its good explanatory performance measured by the fraction of explained clustering variance (ratio of between-cluster sum of squares to total sum of squares), 
+good separability between the clusters measured by mean silhouette width [@Rousseeuw1987], 
+and superior reproducibility in 10-fold cross-validation [@Lange2004] (cluster assignment in the folds by an inverse distance weighted 27-nearest neighbors classifier) in a comparison with several other clustering algorithms presented in __Supplementary Figure S\@ref(fig:fig-clust-dev)A__. 
+The explained variance, mean silhouette width and cross-validated accuracy statistics were computed with the methods `var()`, `silhouette()` and `cv()` from the [_clustTools_](https://github.com/PiotrTymoszuk/clustTools) package. 
 The number of cluster was chosen based on the bend of the curve of within-cluster sum of squares and the peak of mean silhouette statistic (method `plot()`, package [_ExDA_](https://github.com/PiotrTymoszuk/ExDA)) [@Rousseeuw1987; @Kassambara2020]. 
-By this means, three mental clusters were defined: the neutral, PTG (post-traumatic growth) and PTS (post-traumatic stress) cluster (__Supplementary Figure S\@ref(fig:fig-clust-dev)B__). 
+By this means, three mental health clusters were defined: the neutral, PTG (post-traumatic growth) and PTS (post-traumatic stress) cluster (__Supplementary Figure S\@ref(fig:fig-clust-dev)B__). 
 
-Assignment of the training subset observations to the mental clusters was accomplished with an inverse distance weighted 27-nearest neighbor classifier. 
+Assignment of the training subset observations to the mental health clusters was accomplished with an inverse distance weighted 27-nearest neighbor classifier. 
 This semi-supervised procedure yielded clustering structures with similar fractions of explained variance and similar average silhouette statistic [@Rousseeuw1987] in the 
 training (variance = `r signif(semi_clust$stats$variance[1], 2)`, 
 average silhouette = `r signif(semi_clust$stats$mean_sil[1], 2)`) and 
@@ -203,20 +208,20 @@ Comparably good separation of the clusters could be discerned in the training an
 a visual analysis of UMAP layouts and 
 pairwise distance heat maps (__Supplementary Figure S\@ref(fig:fig-semi-clust)__). 
 Distribution of the cluster frequency was similar in the training and test subset (__Supplementary Figure S\@ref(fig:fig-cosine)__). 
-An analysis of cosine cross-distances between the clusters in the training and test subsets revealed far higher similarity of the corresponding mental clusters (i.e. neutral vs neutral, PTG vs PTG, PTS vs PTS) as compared with similarity of non-analogous clusters (e.g. neutral vs PTG) (distances computed with the function `cross_distance()`, package [_clustTools_](https://github.com/PiotrTymoszuk/clustTools); __Supplementary Figure S\@ref(fig:fig-cosine)B__). 
-Finally, quality of semi-supervised clustering was investigated by comparison of normalized levels of the clustering variables in the training and test subset by Kruskal-Wallis test with $\eta^2$ effect size statistic (function `compare_variables()`, package [_ExDA_](https://github.com/PiotrTymoszuk/ExDA); __Figure 2__, __Supplementary Figure S\@ref(fig:fig-feat-hm)__, __Supplementary Table S\@ref(tab:tab-clust-fct)__).
+An analysis of cosine cross-distances between the clusters in the training and test subsets revealed far higher similarity of the corresponding mental health clusters (i.e. neutral vs neutral, PTG vs PTG, PTS vs PTS) as compared with similarity of non-analogous clusters (e.g. neutral vs PTG) (distances computed with the function `cross_distance()`, package [_clustTools_](https://github.com/PiotrTymoszuk/clustTools); __Supplementary Figure S\@ref(fig:fig-cosine)B__). 
+Finally, quality of semi-supervised clustering was investigated by comparison of normalized levels of the clustering variables between the mental health clusters in the training and test subset by Kruskal-Wallis test with $\eta^2$ effect size statistic (function `compare_variables()`, package [_ExDA_](https://github.com/PiotrTymoszuk/ExDA); __Figure 2__, __Supplementary Figure S\@ref(fig:fig-feat-hm)__, __Supplementary Table S\@ref(tab:tab-clust-fct)__).
 
-Differences in frequencies of mental disorder symptoms as well as demographic, socioeconomic, clinical, accident- and recovery-related factors between the mental clusters were assessed in the entire cohort by $\chi^2$ test with Cramer V effect size statistic and by Kruskal-Wallis test with $\eta^2$ effect size statistic for categorical and numeric variables, respectively (function `compare_variables()`, package [_ExDA_](https://github.com/PiotrTymoszuk/ExDA); __Supplementary Table S\@ref(tab:tab-clust-bcg)__).
+Differences in frequencies of mental disorder symptoms as well as demographic, socioeconomic, clinical, accident- and recovery-related factors between the mental health clusters were assessed in the entire cohort by $\chi^2$ test with Cramer V effect size statistic and by Kruskal-Wallis test with $\eta^2$ effect size statistic for categorical and numeric variables, respectively (function `compare_variables()`, package [_ExDA_](https://github.com/PiotrTymoszuk/ExDA); __Supplementary Table S\@ref(tab:tab-clust-symptoms)__ and __S\@ref(tab:tab-clust-bcg)__).
 
 ## Cluster assignment classifiers
 
-Two types of multi-parameter machine learning classifiers of the mental cluster assignment were developed in the training subset:
+Two types of multi-parameter machine learning classifiers of the mental health cluster assignment were developed in the training subset:
 
-1. models employing candidate early predictors of cluster assignment, i.e. demographic, socioeconomic, medical history and accident-related explanatory factors available during acute medical management of the accident
+1. models employing candidate early predictors of cluster assignment, i.e. demographic, socioeconomic, medical history and accident-related explanatory factors available during acute medical management of the accident victim
 
 2. models including additionally recovery-related predictors such as persistent physical health consequences, flashbacks or cautious behavior during sport
 
-Of note, psychometric variables used for definition of the mental clusters as well as mental disorder symptoms, presence and frequency of flashbacks were excluded from the explanatory variable sets. 
+Of note, psychometric variables used for definition of the mental health clusters as well as symptoms of mental disorders, presence and frequency of flashbacks were excluded from the explanatory variable sets. 
 The explanatory variables are listed in __Supplementary Table S\@ref(tab:tab-mod-variables)__.
 
 The models employed the following algorithms: 
@@ -261,7 +266,7 @@ The study analysis pipeline is available at https://github.com/PiotrTymoszuk/men
 
 # Supplementary Tables
 
-```{r tab-analysis-vars, tab.cap = 'Variables used in the analysis pipeline.'}
+```{r tab-analysis-vars, tab.cap = 'Variables used in the analysis pipeline. The table is available as a supplementary Excel file.'}
 
 suppl_tables$analysis_vars[1, 1] %>% 
   mutate(`Variable name in R` = '') %>% 
@@ -279,7 +284,7 @@ flextable::flextable(suppl_tables$mental_battery) %>%
   set_widths(c(2.3, 7, 10)) %>% 
   merge_v(1) %>% 
   footnote(1, 2:3, 
-           value = as_paragraph('GAD-7: 7-item general anxiety disorder scale; PHQ: patient health questionnaire; EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale; SOC-9L: Leipzig 9-item sense of coherence questionnaire; RS13: 13-item resilience scale; PCL-5 DSM-5: PTSD checklist for DSM-5; PTGI: post-traumatic growth inventory'), 
+           value = as_paragraph('GAD-7: 7-item general anxiety disorder scale; PHQ-9: 9-item patient health questionnaire for depressive symptoms; PHQ-15: 15-item patient health questionnaire for common somatic symptoms as a substitute for somatization; PHQ-panic: patient health questionnaire module for panic disorders; EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale; SOC-9L: Leipzig 9-item sense of coherence questionnaire; RS13: 13-item resilience scale; PCL-5: PTSD checklist for DSM-5; PTGI: post-traumatic growth inventory'), 
            part = 'header', 
            ref_symbols = 'a') %>% 
   theme_vanilla
@@ -292,9 +297,9 @@ flextable::flextable(suppl_tables$mental_battery) %>%
 ```{r tab-consistency, tab.cap = "Consistency of the psychometric tools used in the study measured by McDonald's omega."}
 
 flextable::flextable(suppl_tables$consistency) %>% 
-  set_widths(c(3.5, 3, 3)) %>% 
+  set_widths(c(4.5, 3, 3)) %>% 
    footnote(1, 1, 
-           value = as_paragraph('GAD-7: 7-item general anxiety disorder scale; PHQ: patient health questionnaire; EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale; SOC-9L: Leipzig 9-item sense of coherence questionnaire; RS13: 13-item resilience scale; PCL-5 DSM-5: PTSD checklist for DSM-5; PTGI: post-traumatic growth inventory'), 
+           value = as_paragraph('GAD-7: 7-item general anxiety disorder scale; PHQ-9: 9-item patient health questionnaire for depressive symptoms; PHQ-15: 15-item patient health questionnaire for common somatic symptoms as a substitute for somatization; PHQ-panic: patient health questionnaire module for panic disorders; EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale; SOC-9L: Leipzig 9-item sense of coherence questionnaire; RS13: 13-item resilience scale; PCL-5: PTSD checklist for DSM-5; PTGI: post-traumatic growth inventory'), 
            part = 'header', 
            ref_symbols = 'a') %>% 
   theme_vanilla
@@ -308,7 +313,7 @@ flextable::flextable(suppl_tables$consistency) %>%
 flextable::flextable(suppl_tables$no_response) %>% 
   set_widths(c(3.2, 5.8, 5.8, 2.5, 2.2)) %>% 
    footnote(1, 1, 
-           value = as_paragraph('AIS: abbreviated injury scale'), 
+           value = as_paragraph('AIS: abbreviated injury scale; ICD-10: 10th version of the International Statistical Classification of Diseases and Related Health Problems.'), 
            part = 'header', 
            ref_symbols = 'a') %>% 
   footnote(1, 4:5, 
@@ -358,7 +363,7 @@ flextable::flextable(suppl_tables$train_test) %>%
 
 \newpage
 
-```{r tab-clust-fct, tab.cap = 'Differences in psychometric clustering factors between the mental clusters. Numeric variables are presented as medians with interquartile ranges (IQR). Statistical significance was determined by false discovery rate-corrected Kruskal-Wallis test with eta-square effect size statistic. The table is available in a supplementary Excel file.'}
+```{r tab-clust-fct, tab.cap = 'Differences in psychometric clustering factors between the mental health clusters. Numeric variables are presented as medians with interquartile ranges (IQR). Statistical significance was determined by false discovery rate-corrected Kruskal-Wallis test with eta-square effect size statistic. The table is available in a supplementary Excel file.'}
 
 suppl_tables$clust_fct[1, 1] %>% 
   mutate(Variable = '') %>% 
@@ -370,12 +375,32 @@ suppl_tables$clust_fct[1, 1] %>%
 
 \newpage
 
-```{r tab-clust-bcg, tab.cap = 'Significant differences in demographic, socioeconomic, clinical, accident- and recovery-related factors, and mental disorder symptoms between the mental clusters in the entire cohort. Numeric variables are presented as medians with interquartile ranges (IQR). Categorical variables are presented as percentages and counts within the complete observation set.'}
+```{r tab-clust-symptoms, tab.cap = 'Frequency of mental disorder symptoms in the mental health clusters in the entire cohort. Categorical variables are presented as percentages and counts within the clusters.'}
 
-flextable::flextable(suppl_tables$clust_bcg) %>% 
+flextable::flextable(suppl_tables$clust_symptoms) %>% 
+  set_widths(c(4, rep(4.3, 3), 2.5, 2.3)) %>% 
+  footnote(1, 1, 
+           value = as_paragraph('GAD-7: 7-item general anxiety disorder scale; PHQ-9: 9-item patient health questionnaire for depressive symptoms; PHQ-15: 15-item patient health questionnaire for common somatic symptoms as a substitute for somatization; PHQ-panic: patient health questionnaire module for panic disorders; RS13: 13-item resilience scale; PCL-5: PTSD checklist for DSM-5; PTSD: post-traumatic stress disorder.'), 
+           part = 'header', 
+           ref_symbols = 'a') %>% 
+  footnote(1, 5:6, 
+           value = as_paragraph('\u03C7\u00B2 test with Cramer V effect size statistic. P values were corrected for multiple testing with the false discovery rate method.'), 
+           part = 'header', 
+           ref_symbols = 'b') %>% 
+  theme_vanilla
+
+```
+
+\newpage
+
+```{r tab-clust-bcg, tab.cap = 'Differences in demographic, socioeconomic, clinical, accident- and recovery-related factors, and between the mental clusters in the entire cohort. Significant effects are presented, the full table is available as a supplementary Excel file. Numeric variables are presented as medians with interquartile ranges (IQR). Categorical variables are presented as percentages and counts within the clusters.'}
+
+suppl_tables$clust_bcg %>%
+  filter(!stri_detect(Significance, regex = '^ns')) %>% 
+  flextable %>% 
   set_widths(c(3, rep(4.3, 3), 2.5, 2.3)) %>% 
   footnote(1, 1, 
-           value = as_paragraph('AIS: abbreviated injury score; PTSD: post-traumatic stress disorder; RS13: 13-item resilience scale; GAD-7: 7-item general anxiety disorder scale; PHQ: patient health questionnaire.'), 
+           value = as_paragraph('psychological support need: subjective need for psychological or psychiatric support following the accident; physical health consequences: physical health consequences related to the accident.'), 
            part = 'header', 
            ref_symbols = 'a') %>% 
   footnote(1, 5:6, 
@@ -388,12 +413,12 @@ flextable::flextable(suppl_tables$clust_bcg) %>%
 
 \newpage
 
-```{r tab-mod-variables, tab.cap = 'Sets of explanatory factors used for modeling of the mental cluster assignment.'}
+```{r tab-mod-variables, tab.cap = 'Sets of explanatory factors used for modeling of the mental health cluster assignment.'}
 
 flextable::flextable(suppl_tables$mod_variables) %>% 
   set_widths(c(2.5, 15.5)) %>% 
   footnote(1, 1, 
-           value = as_paragraph('early predictors: variables available during acute medical management of the accident; full predictor set: variables available during acute medical management of the accident and during follow-up.'), 
+           value = as_paragraph('early predictors: variables available during acute medical management of the patient; full predictor set: variables available during acute medical management of the patient and during follow-up.'), 
            part = 'header', 
            ref_symbols = 'a') %>% 
   theme_vanilla
@@ -408,7 +433,7 @@ flextable::flextable(suppl_tables$tuning) %>%
   set_widths(c(2, 2.5, 8.5)) %>% 
   merge_v(1) %>%
   footnote(1, 1, 
-           value = as_paragraph('early predictors: variables available during acute medical management of the accident; full predictor set: variables available during acute medical management of the accident and during follow-up.'), 
+           value = as_paragraph('early predictors: variables available during acute medical management of the patient; full predictor set: variables available during acute medical management of the patient and during follow-up.'), 
            part = 'header', 
            ref_symbols = 'a') %>% 
   footnote(1, 2, 
@@ -421,7 +446,7 @@ flextable::flextable(suppl_tables$tuning) %>%
 
 \newpage
 
-```{r tab-early-classifiers, tab.cap = 'Performance statistics of machine learning classifiers at predicting the mental cluster assignment. Models employing early predictors available during acute medical management of the accident.'}
+```{r tab-early-classifiers, tab.cap = 'Performance statistics of machine learning classifiers at predicting the mental health cluster assignment. Models employing early predictors available during acute medical management of the patient.'}
 
 flextable::flextable(suppl_tables$early_classifiers) %>% 
   set_widths(c(2.3, 2.5, rep(2.3, 5))) %>% 
@@ -440,7 +465,7 @@ flextable::flextable(suppl_tables$early_classifiers) %>%
 
 \newpage
 
-```{r tab-full-classifiers, tab.cap = 'Performance statistics of machine learning classifiers at predicting the mental cluster assignment. Models employing the full predictor set available during acute medical management of the accident and follow-up.'}
+```{r tab-full-classifiers, tab.cap = 'Performance statistics of machine learning classifiers at predicting the mental health cluster assignment. Models employing the full predictor set available during acute medical management of the patient and follow-up.'}
 
 flextable::flextable(suppl_tables$full_classifiers) %>% 
   set_widths(c(2.3, 2.5, rep(2.3, 5))) %>% 
@@ -491,15 +516,15 @@ _(B) Scores of the domains of the post-traumatic growth inventory (PTGI) scale p
 
 \newpage
 
-```{r fig-clust-dev, fig.width = figur::convert(suppl_figures$clust_dev, to = 'in')$w, fig.height = figur::convert(suppl_figures$clust_dev, to = 'in')$h, fig.cap = 'Definition of the mental clusters in the training subset of the study cohort.'}
+```{r fig-clust-dev, fig.width = figur::convert(suppl_figures$clust_dev, to = 'in')$w, fig.height = figur::convert(suppl_figures$clust_dev, to = 'in')$h, fig.cap = 'Definition of the mental health clusters in the training subset of the study cohort.'}
 
 suppl_figures$clust_dev$plot
 
 ```
 
-__Supplementary Figure S\@ref(fig:fig-clust-dev). Definition of the mental clusters in the training subset of the study cohort.__ 
+__Supplementary Figure S\@ref(fig:fig-clust-dev). Definition of the mental health clusters in the training subset of the study cohort.__ 
 
-_The mental clusters were defined in respect to psychometric scoring in the training subset of the study cohort by PAM (partition around medoids) with cosine distance between the observations._
+_The mental health clusters were defined in respect to psychometric scoring in the training subset of the study cohort by PAM (partition around medoids) with cosine distance between the observations._
 
 _(A) Comparison of explanatory performance, cluster separation and reproducibility of various clustering algorithms in the training subset. The explanatory performance was measured as a fraction of explained clustering variance (ratio of between-cluster sum of squares to total sum of squares). The cluster separation was assessed with average silhouette width. The reproducibility was assessed by the rate of correct cluster assignment in 10-fold cross-validation (CV) with cluster assignment in the folds by an inverse distance weighted 27-nearest neighbors classifier. Note the superior stability of the PAM/cosine distance algorithm._
 
@@ -515,78 +540,79 @@ suppl_figures$semi_clust$plot
 
 __Supplementary Figure S\@ref(fig:fig-semi-clust). Semi-supervised clustering.__ 
 
-_The mental clusters were defined in respect to psychometric scoring in the training subset of the study cohort by PAM (partition around medoids) with cosine distance between the observations. Assignment of the test subset observations to the mental clusters was done with the inverse distance weighted 27-nearest neighbors classifier. By this procedure, three mental clusters were identified: neutral, PTG (post-traumatic growth) and PTS (post-traumatic stress). Numbers of observations in the mental clusters are shown in the plot legend in (A)._
+_The mental health clusters were defined in respect to psychometric scoring in the training subset of the study cohort by PAM (partition around medoids) with cosine distance between the observations. Assignment of the test subset observations to the mental health clusters was done with the inverse distance weighted 27-nearest neighbors classifier. By this procedure, three mental health clusters were identified: neutral, PTG (post-traumatic growth) and PTS (post-traumatic stress). Numbers of observations in the mental health clusters are shown in the plot legend in (A)._
 
 _(A) Observations in the training and test subsets of the study cohorts were subjected to two-dimensional UMAP (uniform manifold approximation and projection) in respect to the psychometric scores. UMAP layouts are shown in scatter plots. Points represent single samples. Point color codes for the cluster assignment._
 
-_(B) Pairwise cosine distances between observations in the mental clusters of the training and test subsets presented in heat maps._
+_(B) Pairwise cosine distances between observations in the mental health clusters of the training and test subsets presented in heat maps._
 
 \newpage
 
-```{r fig-cosine, fig.width = figur::convert(suppl_figures$cosine, to = 'in')$w, fig.height = figur::convert(suppl_figures$cosine, to = 'in')$h, fig.cap = 'Distribution of the mental clusters and cosine distances between the mental clusters in the training and test subset of the study cohort.'}
+```{r fig-cosine, fig.width = figur::convert(suppl_figures$cosine, to = 'in')$w, fig.height = figur::convert(suppl_figures$cosine, to = 'in')$h, fig.cap = 'Distribution of the mental health clusters and cosine distances between the mental health clusters in the training and test subset of the study cohort.'}
 
 suppl_figures$cosine$plot
 
 ```
 
-__Supplementary Figure S\@ref(fig:fig-cosine). Distribution of the mental clusters and cosine distances between the mental clusters in the training and test subset of the study cohort.__ 
+__Supplementary Figure S\@ref(fig:fig-cosine). Distribution of the mental health clusters and cosine distances between the mental health clusters in the training and test subset of the study cohort.__ 
 
-_Study cohorts observations were assigned to the neutral, PTG (post-traumatic growth) and PTS (post-traumatic stress) clusters by semi-supervised clustering as presented in Supplementary Figure S\@ref(fig:fig-semi-clust)._
+_Study cohorts observations were assigned to the neutral, PTG (post-traumatic growth) and PTS (post-traumatic stress) mental health clusters by semi-supervised clustering as presented in Supplementary Figure S\@ref(fig:fig-semi-clust)._
 
-_(A) Percentages of observations in the training and test subsets of the study cohort in the mental clusters. Numbers of complete observations are indicated in the Y axis._
+_(A) Percentages of observations in the training and test subsets of the study cohort in the mental health clusters. Numbers of complete observations are indicated in the Y axis._
 
-_(B) Cosine cross-distances between the mental clusters in the training and test subset of the study dataset visualized as a heat map. Cross-distances are indicated in the tiles._
+_(B) Cosine cross-distances between the mental health clusters in the training and test subsets of the study dataset visualized as a heat map. Average cross-distances with 95% percentile range are indicated in the tiles._
 
 \newpage
 
-```{r fig-feat-hm, fig.width = figur::convert(suppl_figures$feat_hm, to = 'in')$w, fig.height = figur::convert(suppl_figures$feat_hm, to = 'in')$h, fig.cap = 'Levels of psychometric scores used for the cluster definition in the mental clusters.'}
+```{r fig-feat-hm, fig.width = figur::convert(suppl_figures$feat_hm, to = 'in')$w, fig.height = figur::convert(suppl_figures$feat_hm, to = 'in')$h, fig.cap = 'Levels of psychometric scores used for the cluster definition in the mental health clusters.'}
 
 suppl_figures$feat_hm$plot
 
 ```
 
-__Supplementary Figure S\@ref(fig:fig-feat-hm). Levels of psychometric scores used for the cluster definition in the mental clusters.__ 
+__Supplementary Figure S\@ref(fig:fig-feat-hm). Levels of psychometric scores used for the cluster definition in the mental health clusters.__ 
 
-_Levels of psychometric scores used in clustering in the mental clusters. Normalized, median-centered score values (Z scores) are presented as heat maps. Numbers of observations in the clusters are displayed in the plot captions. PSS4: 4-item perceived stress scale; GAD-7: 7-item general anxiety disorder scale; PHQ: patient health questionnaire; EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale; SOC-9L: Leipzig 9-item sense of coherence questionnaire; RS13: 13-item resilience scale; PCL-5 DSM-5: PTSD checklist for DSM-5; PTGI: post-traumatic growth inventory; PTSD: post-traumatic stress disorder._
+_Levels of psychometric scores used in clustering in the mental health clusters. Normalized, median-centered score values (Z scores) are presented as heat maps. Numbers of observations in the clusters are displayed in the plot captions. PSS4: 4-item perceived stress scale; GAD-7: 7-item general anxiety disorder scale; PHQ: patient health questionnaire; EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale; SOC-9L: Leipzig 9-item sense of coherence questionnaire; RS13: 13-item resilience scale; PCL-5: PTSD checklist for DSM-5; PTGI: post-traumatic growth inventory; PTSD: post-traumatic stress disorder._
 
 \newpage
 
-```{r fig-demo, fig.width = figur::convert(suppl_figures$demo, to = 'in')$w, fig.height = figur::convert(suppl_figures$demo, to = 'in')$h, fig.cap = 'Employment status, prior sport accidents, and accident details in the mental clusters.'}
+```{r fig-demo, fig.width = figur::convert(suppl_figures$demo, to = 'in')$w, fig.height = figur::convert(suppl_figures$demo, to = 'in')$h, fig.cap = 'Employment status, prior mountain sport accidents, and accident details in the mental health clusters.'}
 
 suppl_figures$demo$plot
 
 ```
 
-__Supplementary Figure S\@ref(fig:fig-demo). Employment status, prior sport accidents, and accident details in the mental clusters.__ 
+__Supplementary Figure S\@ref(fig:fig-demo). Employment status, prior mountain sport accidents, and accident details in the mental health clusters.__ 
 
-_Distribution of employment status, frequency of sport accidents in the past, distribution of the accidents in the seasons, accident sport types, frequency of being alone during the accident and number of injured persons in the mental clusters. Statistical significance was determined by $\chi^2$ test with Cramer V effect size statistic. P values were corrected for multiple testing with the false discovery rate method. Percentages of variable's categories in the entire study cohort are presented in stack plots. Effect sizes and p-values are displayed in the plot captions. Numbers of observations in the clusters are presented in the X axes._
+_Distribution of employment status, frequency of mountain sport accidents in the past, distribution of the accidents in the seasons, accident sport types, frequency of being alone during the accident and number of injured persons in the mental health clusters. Statistical significance was determined by $\chi^2$ test with Cramer V effect size statistic. P values were corrected for multiple testing with the false discovery rate method. Percentages of variable's categories in the entire study cohort are presented in stack plots. Effect sizes and p-values are displayed in the plot captions. Numbers of observations in the clusters are presented in the X axes._
 
 \newpage
 
-```{r fig-importance-early, fig.width = figur::convert(suppl_figures$importance_early, to = 'in')$w, fig.height = figur::convert(suppl_figures$importance_early, to = 'in')$h, fig.cap = 'Variable importance metrics for the random forest, support vector machine, discriminant analysis, and conditional random forest algorithms. Predictors available during acute medical management of the accident.'}
+```{r fig-importance-early, fig.width = figur::convert(suppl_figures$importance_early, to = 'in')$w, fig.height = figur::convert(suppl_figures$importance_early, to = 'in')$h, fig.cap = 'Variable importance metrics for the random forest, support vector machine, discriminant analysis, and conditional random forest algorithms. Predictors available during acute medical management of the patient.'}
 
 suppl_figures$importance_early$plot
 
 ```
 
-__Supplementary Figure S\@ref(fig:fig-importance-early). Variable importance metrics for the random forest, support vector machine, discriminant analysis, and conditional random forest algorithms. Predictors available during acute medical management of the accident.__ 
+__Supplementary Figure S\@ref(fig:fig-importance-early). Variable importance metrics for the random forest, support vector machine, discriminant analysis, and conditional random forest algorithms. Predictors available during acute medical management of the patient.__ 
 
-_The cluster assignment was modeled with demographic, medical history and accident-related explanatory factors available during acute medical management of the accident. Psychometric variables used for cluster definition, mental disorder symptoms, resilience classes as well as presence and frequency of flashbacks were excluded from the explanatory factor set. Variable importance metrics of machine learning algorithms with the best performance at predicting the mental cluster assignment in the test subset of the study cohorts were computed. Importance metrics for the top 20 most important variables are presented as bar plots._
+_Assignment to the mental health clusters was modeled with demographic, medical history and accident-related explanatory factors available during acute medical management of the patient. 
+Psychometric variables used for cluster definition, mental disorder symptoms, resilience classes, presence and frequency of flashbacks and variables concerning recovery and long term consequences of the accident were excluded from the explanatory factor set. Variable importance metrics of machine learning algorithms with the best performance at predicting the mental health cluster assignment in the test subset of the study cohorts were computed. Importance metrics for the top 20 most important variables are presented as bar plots._
 _(A) Random forest, (B) support vector machines with radial kernel, (C) shrinkage discriminant analysis, (D) conditional random forest._
 
 \newpage
 
-```{r fig-full-class, fig.width = figur::convert(suppl_figures$full_class, to = 'in')$w, fig.height = figur::convert(suppl_figures$full_class, to = 'in')$h, fig.cap = 'Assignment of accident victims to the mental clusters based on explanatory factors available during acute medical management of the accident and long-term follow-up.'}
+```{r fig-full-class, fig.width = figur::convert(suppl_figures$full_class, to = 'in')$w, fig.height = figur::convert(suppl_figures$full_class, to = 'in')$h, fig.cap = 'Assignment of accident victims to the mental health clusters based on explanatory factors available during acute medical management of the patient and long-term follow-up.'}
 
 suppl_figures$full_class$plot
 
 ```
 
-__Supplementary Figure S\@ref(fig:fig-full-class). Assignment of accident victims to the mental clusters based on explanatory factors available during acute medical management of the accident and long-term follow-up.__ 
+__Supplementary Figure S\@ref(fig:fig-full-class). Assignment of accident victims to the mental health clusters based on explanatory factors available during acute medical management of the patient and long-term follow-up.__ 
 
-_The cluster assignment was modeled with demographic, medical history, accident- and recovery-related explanatory factors available during acute medical management of the accident and follow-up. Psychometric variables used for cluster definition, mental disorder symptoms, resilience classes as well as presence and frequency of flashbacks were excluded from the explanatory factor set._
+_Assignment to the mental health clusters was modeled with demographic, medical history, accident- and recovery-related explanatory factors available during acute medical management of the patient and follow-up. Psychometric variables used for cluster definition, symptoms of mental disorders, resilience classes as well as presence and frequency of flashbacks were excluded from the explanatory factor set._
 
-_(A) Accuracy of the predicted Cluster assignment and predictive performance of the modeling algorithms was assessed by overall cluster assignment accuracy, Cohen's $\kappa$ inter-rater accuracy metric (high values indicate good accuracy) and Brier score (low values indicate good performance) in the training and test subsets of the study cohort. Performance metrics are presented in scatter plots. Point size codes for the overall cluster assignment accuracy. Point color codes for the modeling algorithm. Numbers of complete observations are displayed in the plot captions._
+_(A) Accuracy of the predicted Cluster assignment and predictive performance of the modeling algorithms was assessed by overall accuracy, Cohen's $\kappa$ inter-rater accuracy metric (high values indicate good accuracy) and Brier score (low values indicate good performance) in the training and test subsets of the study cohort. Performance metrics are presented in scatter plots. Point size codes for the overall cluster assignment accuracy. Point color codes for the modeling algorithm. Numbers of complete observations are displayed in the plot captions._
 
 _(B) Sensitivity (Se) and specificity (Sp) of detection of participants assigned to the PTS cluster (post-traumatic stress) investigated by receiver-operating characteristic in the training and test subset of the study cohort. Sensitivity and specificity values are indicated in the plots. Line color codes for the modeling algorithm. Numbers of complete observations and observations in the PTS cluster are indicated in the plot captions._
 
@@ -594,15 +620,15 @@ _RF: random forest; NNet: neural network with a single hidden layer; SVM/radial:
 
 \newpage
 
-```{r fig-importance-full, fig.width = figur::convert(suppl_figures$importance_full, to = 'in')$w, fig.height = figur::convert(suppl_figures$importance_full, to = 'in')$h, fig.cap = 'Variable importance metrics for the random forest, support vector machine, discriminant analysis, and conditional random forest algorithms. Predictors available during acute medical management of the accident and during the follow-up.'}
+```{r fig-importance-full, fig.width = figur::convert(suppl_figures$importance_full, to = 'in')$w, fig.height = figur::convert(suppl_figures$importance_full, to = 'in')$h, fig.cap = 'Variable importance metrics for the random forest, support vector machine, discriminant analysis, and conditional random forest algorithms. Predictors available during acute medical management of the patient and follow-up.'}
 
 suppl_figures$importance_full$plot
 
 ```
 
-__Supplementary Figure S\@ref(fig:fig-importance-full). Variable importance metrics for the random forest, support vector machine, discriminant analysis, and conditional random forest algorithms. Predictors available during acute medical management of the accident and during the follow-up.__ 
+__Supplementary Figure S\@ref(fig:fig-importance-full). Variable importance metrics for the random forest, support vector machine, discriminant analysis, and conditional random forest algorithms. Predictors available during acute medical management of the patient and follow-up.__ 
 
-_The cluster assignment was modeled with demographic, medical history, accident- and recovery-related explanatory factors available during acute medical management of the accident and follow-up. Psychometric variables used for cluster definition, mental disorder symptoms, resilience classes as well as presence and frequency of flashbacks were excluded from the explanatory factor set. Variable importance metrics of machine learning algorithms with the best performance at predicting the mental cluster assignment in the test subset of the study cohorts were computed. Importance metrics for the top 20 most important variables are presented as bar plots._
+_Assignment to the mental health clusters was modeled with demographic, medical history, accident- and recovery-related explanatory factors available during acute medical management of the patient and follow-up. Psychometric variables used for cluster definition, symptoms of mental disorders, resilience classes as well as presence and frequency of flashbacks were excluded from the explanatory factor set. Variable importance metrics of machine learning algorithms with the best performance at predicting the mental health cluster assignment in the test subset of the study cohorts were computed. Importance metrics for the top 20 most important variables are presented as bar plots._
 _(A) Random forest, (B) support vector machines with radial kernel, (C) shrinkage discriminant analysis, (D) conditional random forest._
 
 \newpage
