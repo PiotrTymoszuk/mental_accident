@@ -55,7 +55,7 @@
   
 # Cluster assignment ------
   
-  insert_msg('Clusetr assignment tables')
+  insert_msg('Cluster assignment tables')
   
   semi_clust$assignment <- semi_clust$clust_obj %>% 
     map(~.x$clust_assignment) %>% 
@@ -65,36 +65,20 @@
   
   insert_msg('Clustering variances and silhouettes')
   
-  ## variance
-  
-  semi_clust$stats$variance <- semi_clust$clust_obj %>% 
-    map(var) %>% 
-    map(~.x$frac_var) %>% 
-    compress(names_to = 'partition', 
-             values_to = 'variance') %>% 
-    map_dfc(unlist)
-  
+  ## explained clustering variance
   ## average silhouette and percentage of observations with negative 
   ## metric values indicative of possible miss-classification
   
-  semi_clust$stats$silhouette <- semi_clust$clust_obj %>% 
-    map(silhouette) %>% 
+  semi_clust$stats <- semi_clust$clust_obj %>% 
     map(summary) %>% 
-    map(filter, clust_id == 'global') %>% 
-    compress(names_to = 'partition') %>% 
-    select(partition, perc_negative, mean) %>% 
-    set_names(c('partition', 
-                'perc_negative_sil', 
-                'mean_sil'))
-  
-  semi_clust$stats <- reduce(semi_clust$stats, left_join, by = 'partition')
+    compress(names_to = 'partition')
 
 # Plots of variances and average silhouettes -------
   
   insert_msg('Plots of variances and silhouettes')
   
   semi_clust$stat_plot <- semi_clust$stats %>% 
-    pivot_longer(cols = all_of(c('variance', 'mean_sil')), 
+    pivot_longer(cols = all_of(c('frac_var', 'sil_width')), 
                  names_to = 'statistic', 
                  values_to = 'value') %>%  
     ggplot(aes(x = value, 
@@ -112,8 +96,8 @@
                                  test = 'coral4'), 
                       name = 'Subset') +
     scale_x_continuous(limits = c(0, 1)) + 
-    scale_y_discrete(labels = c(mean_sil = 'avg. silhouette', 
-                                variance = 'variance')) + 
+    scale_y_discrete(labels = c(sil_width = 'avg. silhouette', 
+                                frac_var = 'variance')) + 
     globals$common_theme + 
     theme(axis.title.y = element_blank()) + 
     labs(title = 'Semi-supervised clustering', 
@@ -145,15 +129,27 @@
                                label_n(clust_id, sep = ': n = ')))
   
   ## data UMAP
+  ## defining a common UMAP layout in the training subset
+  
+  semi_clust$train_umap <- semi_clust$clust_obj$training %>% 
+    components(red_fun = 'umap', 
+               with = 'data',
+               kdim = 2, 
+               random_state = 12345)
 
-  semi_clust$data_umap <- semi_clust$clust_obj %>% 
-    map(plot, 
-        'components', 
-        red_fun = 'umap',
-        with = 'data', 
-        kdim = 2, 
-        random_state = 12345, 
-        cust_theme = globals$common_theme) %>% 
+  semi_clust$data_umap$training <- semi_clust$train_umap %>% 
+    plot(cust_theme = globals$common_theme) + 
+    labs(subtitle = 'PAM, cosine distance')
+    
+  semi_clust$data_umap$test <- semi_clust$clust_obj$test %>% 
+    plot(type = 'components', 
+         red_fun = 'umap',
+         with = 'data', 
+         kdim = 2, 
+         train_object = semi_clust$train_umap, 
+         cust_theme = globals$common_theme)
+    
+  semi_clust$data_umap <- semi_clust$data_umap %>% 
     map2(., semi_clust$clust_obj, 
          ~.x + 
            scale_fill_manual(values = globals$clust_colors, 

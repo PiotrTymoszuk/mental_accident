@@ -103,7 +103,7 @@
   suppl_figures$semi_clust$upper <- 
     list(x = semi_clust$data_umap, 
          y = paste('UMAP,', c('training', 'test')), 
-         z = semi_clust$stats$variance) %>% 
+         z = semi_clust$stats$frac_var) %>% 
     pmap(function(x, y, z) x + 
            labs(title = y, 
                 subtitle = paste0(x$labels$subtitle, 
@@ -188,6 +188,9 @@
   suppl_figures$feat_hm <- feat_clust$clust_hm %>% 
     map(~.x + 
           theme(legend.position = 'none', 
+                axis.text.x = element_blank(),
+                axis.ticks.x = element_blank(), 
+                axis.line.x = element_blank(), 
                 plot.tag = element_blank(), 
                 strip.background.y = element_blank(), 
                 strip.text.y = element_blank(), 

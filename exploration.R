@@ -68,19 +68,10 @@
   
   ## cached result of the power estimation analysis
   
-  if(file.exists('./cache/power.RData')) {
-    
-    insert_msg('Loading cached power estimation results')
-    
-    load('./cache/power.RData')
-    
-  } else {
-    
-    source_all('./exploration scripts/power.R', 
-               message = TRUE, crash = TRUE)
-    
-  }
-  
+  access_cache(cache_path = './cache/power.RData', 
+               script_path = './exploration scripts/power.R', 
+               message = 'Loading cached power estimation results')
+
   ## observation time dependency of psychometric variables
   
   c('./exploration scripts/time_psycho.R', 

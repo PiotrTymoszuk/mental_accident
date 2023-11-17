@@ -310,9 +310,9 @@ The sole significant differences between these subsets concerned resilience clas
 To explore symptoms of PTSD and further facets of mental health following mountain sport accidents, we subjected the participants to medoid clustering in respect to a broad range of psychometric scores (__Supplementary Table S2__). 
 Three mental health clusters were identified in the training subset of the study cohort: 'neutral', 'PTG' (post-traumatic growth) and 'PTS' (post-traumatic stress) and named after their key mental characteristic (__Supplementary Figure S3__). 
 Subsequently, the mental health cluster assignment could be validated in the test subset as evident from comparable fractions of explained clustering variance 
-(training: `r signif(semi_clust$stats$variance[1], 2)`, test: `r signif(semi_clust$stats$variance[2], 2)`), 
+(training: `r signif(semi_clust$stats$frac_var[1], 2)`, test: `r signif(semi_clust$stats$frac_var[2], 2)`), 
 comparable average silhouette statistics 
-(training: `r signif(semi_clust$stats$mean_sil[1], 2)`, test: `r signif(semi_clust$stats$mean_sil[2], 2)`), 
+(training: `r signif(semi_clust$stats$sil_width[1], 2)`, test: `r signif(semi_clust$stats$sil_width[2], 2)`), 
 comparable cluster sizes, good visual cluster separation and high similarity between the corresponding clusters in the training and test cohort subsets (__Supplementary Figures S4 - S6__). 
 
 The mental health clusters were of approximately equal size. 

@@ -200,10 +200,10 @@ By this means, three mental health clusters were defined: the neutral, PTG (post
 
 Assignment of the training subset observations to the mental health clusters was accomplished with an inverse distance weighted 27-nearest neighbor classifier. 
 This semi-supervised procedure yielded clustering structures with similar fractions of explained variance and similar average silhouette statistic [@Rousseeuw1987] in the 
-training (variance = `r signif(semi_clust$stats$variance[1], 2)`, 
-average silhouette = `r signif(semi_clust$stats$mean_sil[1], 2)`) and 
-test subset (variance = `r signif(semi_clust$stats$variance[2], 2)`, 
-average silhouette = `r signif(semi_clust$stats$mean_sil[2], 2)`). 
+training (variance = `r signif(semi_clust$stats$frac_var[1], 2)`, 
+average silhouette = `r signif(semi_clust$stats$sil_width[1], 2)`) and 
+test subset (variance = `r signif(semi_clust$stats$frac_var[2], 2)`, 
+average silhouette = `r signif(semi_clust$stats$sil_width[2], 2)`). 
 Comparably good separation of the clusters could be discerned in the training and test subsets by 
 a visual analysis of UMAP layouts and 
 pairwise distance heat maps (__Supplementary Figure S\@ref(fig:fig-semi-clust)__). 

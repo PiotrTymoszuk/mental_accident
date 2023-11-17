@@ -6,6 +6,12 @@
   
   clust_devel <- list()
   
+# parallel backend -------
+  
+  insert_msg('Parallel backend')
+  
+  plan('multisession')
+  
 # globals -----
   
   insert_msg('Analysis globals')
@@ -50,36 +56,21 @@
         k = 3, 
         clust_fun = 'pam') 
 
-# Clustering variances ------
+# Silhouettes, fractions of misclassified, variance and neighborhood -----
   
-  insert_msg('Clustering variances')
+  insert_msg('Quality stats')
   
-  clust_devel$variance <- clust_devel$algos %>% 
-    map(var) %>% 
-    map(~.x$frac_var) %>% 
-    compress(names_to = 'method', 
-             values_to = 'variance') %>% 
-    mutate(variance = unlist(variance))
+  ## done for the entire training cohort
   
-# Average silhouette widths -------
-  
-  insert_msg('Average silhouette widths')
-  
-  clust_devel$silhouette <- clust_devel$algos %>% 
-    map(silhouette) %>% 
+  clust_devel$train_stats <- clust_devel$algos %>% 
     map(summary) %>% 
-    map(filter, clust_id == 'global') %>% 
-    compress(names_to = 'method') %>% 
-    select(method, perc_negative, mean) %>% 
-    set_names(c('method', 'perc_negative_sil', 'mean_sil'))
-  
+    compress(names_to = 'method')
+
 # Cross-validation ----
   
   insert_msg('Cross-validation')
   
-  plan('multisession')
-  
-  clust_devel$cv <- clust_devel$algos %>% 
+  clust_devel$cv_stats <- clust_devel$algos %>% 
     future_map(cv, 
                nfolds = 10, 
                kNN = 27, 
@@ -90,19 +81,17 @@
                                         packages = c('clustTools', 
                                                      'somKernels'))) 
   
-  plan('sequential')
-  
-  clust_devel$cv <- clust_devel$cv %>% 
+  clust_devel$cv_stats <- clust_devel$cv %>% 
     map(summary) %>% 
     compress(names_to = 'method') %>% 
-    select(method, accuracy_mean)
+    select(method, ends_with('mean'))
     
 # Common results table and result visualization ------
   
   insert_msg('Common result table and result visualization')
   
   clust_devel$result_tbl <- 
-    clust_devel[c("variance", "silhouette", "cv")] %>% 
+    clust_devel[c("train_stats", "cv_stats")] %>% 
     reduce(left_join, by = 'method') %>% 
     mutate(method_lab = stri_split_fixed(method, 
                                      pattern = '_', 
@@ -119,7 +108,7 @@
   insert_msg('Plot')
   
   clust_devel$result_plot <- clust_devel$result_tbl %>% 
-    pivot_longer(cols = c(variance, mean_sil, accuracy_mean), 
+    pivot_longer(cols = c(frac_var, sil_width, accuracy_mean), 
                  names_to = 'statistic', 
                  values_to = 'value') %>% 
     ggplot(aes(x = value, 
@@ -128,16 +117,16 @@
     geom_bar(stat = 'identity', 
              color = 'black', 
              position = position_dodge(0.9)) + 
-    scale_fill_manual(values = c(variance = 'steelblue2', 
-                                 mean_sil = 'indianred3', 
+    scale_fill_manual(values = c(frac_var = 'steelblue2', 
+                                 sil_width = 'indianred3', 
                                  accuracy_mean = 'darkolivegreen4'), 
-                      labels = c(variance = 'Explained variance', 
-                                 mean_sil = 'Mean silhouette', 
+                      labels = c(frac_var = 'Explained variance', 
+                                 sil_width = 'Mean silhouette', 
                                  accuracy_mean = 'CV accuracy'), 
                       name = '') + 
     facet_grid(. ~ statistic, 
-               labeller = as_labeller(c(variance = 'Explained variance', 
-                                        mean_sil = 'Mean silhouette', 
+               labeller = as_labeller(c(frac_var = 'Explained variance', 
+                                        sil_width = 'Mean silhouette', 
                                         accuracy_mean = 'CV accuracy')), 
                scales = 'free') + 
     globals$common_theme + 
@@ -149,5 +138,7 @@
          x = 'Statistic value')
   
 # END -----
+  
+  plan('sequential')
   
   insert_tail()

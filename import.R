@@ -1097,18 +1097,10 @@
   
   ## randomization be numeric psychometric outcomes
   
-  if(file.exists('./cache/randomization.RData')) {
-    
-    insert_msg('Loading cached randomization results')
-    
-    load('./cache/randomization.RData')
-    
-  } else {
-    
-    source_all('./import scripts/partition.R')
-    
-  }
-  
+  access_cache(cache_path = './cache/randomization.RData', 
+               script_path = './import scripts/partition.R', 
+               message = 'Loading cached randomization results')
+
   ptsd$rand_scheme <- part$best_scheme
   
   ptsd$dataset <- left_join(ptsd$dataset, 
