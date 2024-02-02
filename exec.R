@@ -10,6 +10,8 @@
                      #'factor.R', 
                      'clustering.R', 
                      'classification.R', 
+                     'sensitivity.R', 
+                     'literature.R', 
                      'paper.R'), 
                    message = TRUE, crash = TRUE))
   

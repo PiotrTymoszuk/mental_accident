@@ -5,7 +5,7 @@
 # container ------
   
   suppl_figures <- list()
-  
+
 # Figure S1: injured parts and PTSD -----
   
   insert_msg('Figure S1: injured parts and PTSD, cohort')
@@ -57,9 +57,37 @@
               w = 180, 
               h = 110)
   
-# Figure S3: cluster development ------
+# Figure S3: mental disorder symptoms in the cohort and in literature reports -------
   
-  insert_msg('Figure S3: cluster development')
+  insert_msg('Figure S3: mental disorder symptoms in the cohort and literature')
+  
+  ## as requested by a reviewer
+  
+  suppl_figures$mental_symptoms <- 
+    plot_grid(lit_plots$trauma_plots,
+              lit_plots$ptsd_plot + 
+                scale_x_continuous(limits = c(-3, 25)), 
+              lit_plots$depr_anx_plot + 
+                scale_x_continuous(limits = c(-3, 20)), 
+              ncol = 2, 
+              align = 'hv',
+              axis = 'tblr', 
+              rel_heights = c(1.2, 0.8), 
+              labels = c('A', 'B', 
+                         'C', ''), 
+              label_size = 10) %>% 
+    as_figure(label = 'figure_s3_mental_symptoms_literature', 
+              ref_name = 'mental_symptoms', 
+              caption = paste('Comparison of frequency of traumatic events,', 
+                              'symptoms of PTSD, depression and anxiety', 
+                              'in the study cohort and published population', 
+                              'studies.'), 
+              w = 180,
+              h = 180)
+  
+# Figure S4: cluster development ------
+  
+  insert_msg('Figure S4: cluster development')
   
   ## upper panel: variance and cross-validation
   
@@ -86,7 +114,7 @@
               rel_heights = c(1.1, 1), 
               labels = LETTERS, 
               label_size = 10) %>% 
-    as_figure(label = 'figure_s3_cluster_development', 
+    as_figure(label = 'figure_s4_cluster_development', 
               ref_name = 'clust_dev', 
               caption = paste('Definition of the mental clusters', 
                               'in the training subset', 
@@ -94,11 +122,11 @@
               w = 180, 
               h = 150)
   
-# Figure S4: semi-supervised clustering -------
+# Figure S5: semi-supervised clustering -------
   
-  insert_msg('Figure S4: semi-supervised clustering')
+  insert_msg('Figure S5: semi-supervised clustering')
   
-  ## upper panel: UMAPS
+  ## upper panel: UMAP plots
   
   suppl_figures$semi_clust$upper <- 
     list(x = semi_clust$data_umap, 
@@ -152,15 +180,15 @@
               rel_heights = c(1, 1.2), 
               labels = LETTERS, 
               label_size = 10) %>% 
-    as_figure(label = 'figure_s4_semi_supervised_clustering', 
+    as_figure(label = 'figure_s5_semi_supervised_clustering', 
               ref_name = 'semi_clust', 
               caption = paste('Semi-supervised clustering.'), 
               w = 180, 
               h = 200)
   
-# Figure S5: cluster distribution, inter-cluster cosine distances ------
+# Figure S6: cluster distribution, inter-cluster cosine distances ------
   
-  insert_msg('Figure S5: cluster distribution and distances between clusters')
+  insert_msg('Figure S6: cluster distribution and distances between clusters')
 
   suppl_figures$cosine <- 
     list(semi_clust$n_numbers$plot, 
@@ -172,7 +200,7 @@
               axis = 'tblr', 
               labels = LETTERS, 
               label_size = 10) %>% 
-    as_figure(label = 'figure_s5_cluster_distribution_distance', 
+    as_figure(label = 'figure_s6_cluster_distribution_distance', 
               ref_name = 'cosine', 
               caption = paste('Distribution of the mental clusters and', 
                               'cosine distances between the mental clusters', 
@@ -181,7 +209,7 @@
               w = 180, 
               h = 100)
 
-# Figure S6: feature heat maps -------
+# Figure S7: feature heat maps -------
   
   insert_msg('Figure S6: feature heat maps')
   
@@ -203,17 +231,55 @@
                            theme(legend.position = 'bottom')), 
               nrow = 2, 
               rel_heights = c(0.9, 0.1)) %>% 
-    as_figure(label = 'figure_s6_clustering_feature_heatmaps', 
+    as_figure(label = 'figure_s7_clustering_feature_heatmaps', 
               ref_name = 'feat_hm', 
               caption = paste('Levels of psychometric scores', 
                               'used for the cluster definition', 
                               'in the mental clusters.'), 
               w = 180, 
               h = 140)
-
-# Figure S7: additional background factors ------
   
-  insert_msg('Figure S7: additional background factors')
+# Figure S8: sensitivity analysis for the mental health clusters ------
+  
+  insert_msg('Figure S8: Sensitivity analysis for the clusters')
+  
+  suppl_figures$cluster_se <- 
+    plot_grid(se_summary$delta_plots$frac_var + 
+                theme(legend.position = 'bottom')) %>% 
+    as_figure(label = 'figure_s8_mental_clusters_sensitivity_analysis', 
+              ref_name = 'cluster_se', 
+              caption = paste('Sensitivity analysis of the mental clusters', 
+                              'of mountain sport accident victims.'), 
+              w = 180, 
+              h = 210)
+  
+# Figure S9: mental clusters in the genders --------
+  
+  insert_msg('Figure S9: mental clusters in females and males')
+  
+  suppl_figures$cluster_genders <- se_summary$hm_plots[c("female", "male")] %>% 
+    map(~.x + 
+          theme(legend.position = 'none', 
+                plot.subtitle = element_text(size = 7), 
+                axis.text.y = element_text(size = 7))) %>% 
+    plot_grid(plotlist = ., 
+              ncol = 2, 
+              align = 'hv', 
+              axis = 'tblr') %>% 
+    plot_grid(get_legend(se_summary$hm_plots$female + 
+                           theme(legend.position = 'bottom')), 
+              nrow = 2, 
+              rel_heights = c(0.9, 0.1)) %>% 
+    as_figure(label = 'figure_s9_mental_clusters_genders', 
+              ref_name = 'clusters_genders', 
+              caption = paste('Mental clusters developed for female and male', 
+                              'montain sport accident victims.'), 
+              w = 180, 
+              h = 170)
+
+# Figure S10: additional background factors ------
+  
+  insert_msg('Figure S10: additional background factors')
   
   suppl_figures$demo <- 
     clust_bcg$plots[c("employment_status", "prior_accident", 
@@ -235,16 +301,16 @@
               ncol = 2, 
               align = 'hv', 
               axis = 'tblr') %>% 
-    as_figure(label = 'figure_s7_demographic_factors', 
+    as_figure(label = 'figure_s10_demographic_factors', 
               ref_name = 'demo', 
               caption = paste('Employment status, prior sport accidents,', 
                               'and accident details in the mental clusters.'), 
               w = 180, 
               h = 180)
   
-# Figure S9: mental cluster classifiers, full predictor set ------
+# Figure S12: mental cluster classifiers, full predictor set ------
   
-  insert_msg('Figure S9: mental cluster classfier, full predictor set')
+  insert_msg('Figure S12: mental cluster classfier, full predictor set')
   
   ## upper panel: overall performance stats
   
@@ -286,7 +352,7 @@
               nrow = 2, 
               labels = LETTERS, 
               label_size = 10) %>% 
-    as_figure(label = 'figure_s9_rf_full_classifier', 
+    as_figure(label = 'figure_s12_rf_full_classifier', 
               ref_name = 'full_class', 
               caption = paste('Assignment of accident victims to', 
                               'the mental clusters based on', 
@@ -296,9 +362,9 @@
               w = 180, 
               h = 180)
   
-# Figure S8 and S10: variable importance, early and all predictors -------
+# Figure S11 and S13: variable importance, early and all predictors -------
   
-  insert_msg('Figure S8 and S10: variable importance, early and all predictors')
+  insert_msg('Figure S11 and S13: variable importance, early and all predictors')
   
   suppl_figures[c('importance_early', 'importance_full')] <- 
     list(early_class$importance$plots[c("ranger", "svmRadial", "sda", "cforest")],  
@@ -318,8 +384,8 @@
   suppl_figures[c('importance_early', 'importance_full')] <- 
     suppl_figures[c('importance_early', 'importance_full')] %>% 
     list(x = ., 
-         label = c('figure_s8_importance_early_predictors', 
-                   'figure_s10_importance_all_predictors'), 
+         label = c('figure_s11_importance_early_predictors', 
+                   'figure_s13_importance_all_predictors'), 
          ref_name = names(.), 
          caption = paste(paste('Variable importance metrics for the random forest,', 
                                'support vector machine, discriminant analysis,', 

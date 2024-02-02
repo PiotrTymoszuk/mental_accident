@@ -1063,6 +1063,90 @@
     
   }
 
+# Sensitivity analysis --------
+  
+  minus_level_data <- function(data, 
+                               split_factor, 
+                               variables = se_globals$variables, 
+                               normalize = TRUE, 
+                               norm_center = 'median', 
+                               extremes = TRUE) {
+    
+    ## creates subsets of the data set with subsequent levels of the split 
+    ## factor removed
+    
+    data <- data %>% 
+      filter(!is.na(.data[[split_factor]]))
+    
+    levs <- levels(data[[split_factor]])
+    
+    data_names <- paste0('without_', make.names(levs))
+    
+    levs <- set_names(levs, data_names)
+    
+    data_splits <- levs %>% 
+      map(~filter(data, !.data[[split_factor]] %in% .x)) %>% 
+      map(column_to_rownames, 'ID') %>% 
+      map(select, all_of(variables))
+    
+    if(extremes) {
+      
+      data_splits <- data_splits[c(1, length(data_splits))]
+      
+    }
+    
+    if(normalize) {
+      
+      data_splits <- data_splits %>% 
+        map(center_data, type = norm_center)
+      
+    }
+    
+    data_splits
+    
+  }
+  
+# Literature comparisons -------
+  
+  get_boot_estimate <- function(x, B = 1000) {
+    
+    ### frequency estimates of categories of the factor x
+    ## with BCA 95% confidence intervals
+    
+    x <- x[!is.na(x)]
+    
+    n_total <- length(x)
+    
+    levs <- levels(x)
+    
+    levs <- set_names(levs, levs)
+    
+    boots <- levs %>% 
+      map(~bmap(x, 
+                B = B, 
+                FUN = function(x) table(x)[.x]/n_total * 100,
+                ci_method = 'bca'))
+    
+    map2_dfr(boots, names(boots), 
+             ~tibble(level = .y, 
+                     n_total = n_total, 
+                     percent = .x[[1]], 
+                     lower_ci = .x[[2]]$boot_lower_ci, 
+                     upper_ci = .x[[2]]$boot_upper_ci))
+    
+  }  
+  
+  boot_estimates <- function(df, B = 1000) {
+    
+    df %>% 
+      future_map(get_boot_estimate, 
+                 B = B, 
+                 .options = furrr_options(seed = TRUE)) %>% 
+      compress(names_to = 'variable') %>% 
+      relocate(variable)
+    
+  }
+  
 # Labellers --------
   
   psych_labeller <- 
