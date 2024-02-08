@@ -32,7 +32,7 @@ institute:
   - kufstein: Department of Anesthesiology and Critical Care Medicine, Bezirkskrankenhaus Kufstein, Kufstein, Austria.
   - himed: Austrian Society of Mountain and High-Altitude Medicine, Mieming, Austria. 
   - salzburg: Department of Anesthesiology and Critial Care Medicine, Paracelsus Medical University, Salzburg, Austria.
-  - kurasi:  Austrian Board of Mountain Safety (Österreichisches Kuratorium fur Alpine Sicherheit), Innsbruck, Austria.
+  - kurasi: Austrian Board of Mountain Safety (Österreichisches Kuratorium fur Alpine Sicherheit), Innsbruck, Austria.
   - icar: International Commission for Mountain Emergency Medicine (ICAR), Kloten, Switzerland.
   - eurac: EURAC Research, Institute for Mountain Emergency Medicine, Bolzano/Bozen, Italy.
   - ismm: International Society of Mountain Medicine (ISMM).
@@ -156,8 +156,10 @@ The study protocol was approved by the ethics committee of the Medical Universit
 Individuals treated following a mountain sport accident at the Department for Orthopedics and Traumatology at the University Clinic of Innsbruck between 1^st^ January 2018 and 31^st^ December 2020 were screened for participation. 
 Individuals fulfilling the inclusion criteria: 
 hospital admission at least 6 months prior to the start of the study, 
-age $\geq$ 18 years, residence in a German-speaking country, and 
-proficiency in German (n = `r nrow(ptsd$cleared)`) were invited to participate in the online study survey via conventional mail. 
+age $\geq$ 18 years, 
+residence in a <span custom-style = 'revision'>German-speaking regions (Germany, Austria, Switzerland and South Tyrol/Alto Adige in Italy)</span>, and 
+proficiency in German (n = `r nrow(ptsd$cleared)`) 
+were invited to participate in the online study survey via conventional mail. 
 Out of the invited subjects, `r length(ptsd$interview_ID)` completed the survey. 
 Surveys of `r nrow(ptsd$dataset)` individuals with the complete psychometry data were analyzed (overall response rate: `r signif(nrow(ptsd$dataset)/nrow(ptsd$cleared), 2) * 100`%, __Figure \@ref(fig:fig-consort)__, __Supplementary Tables S1__ - __S3__).
 
@@ -170,13 +172,14 @@ Sociodemographic (e.g. age, sex, education, profession, income, prior mountain s
 The psychometric battery consisted of German versions of assessment tools for symptoms of 
 PTSD (PCL-5: PTSD checklist for DSM-5) [@Bovin2016], 
 anxiety (GAD-7: 7-item general anxiety disorder scale) [@Spitzer2006], 
-depression (PHQ-9: 9-item patient health questionnaire for depressive symptoms) [@Grafe2004], 
+depression (PHQ-9, <span custom-style = 'revision'>PHQ-2 and PHQ-8: 9-, 8- and 2-item patient health questionnaires</span> for depressive symptoms) [@Grafe2004], 
 panic (PHQ-panic module) [@Grafe2004], 
 somatization (PHQ-15: 15-item patient health questionnaire of common somatic symptoms as a substitute for somatization) [@Kroenke2002], 
 resilience (RS13: 13-item resilience scale) [@Leppert2008], 
 sense of coherence (SOC-9L: Leipzig 9-item sense of coherence questionnaire) [@Schumacher2000], 
 quality of life (EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale) [@Schmidt2006], 
 and post-traumatic growth (PTGI: post-traumatic growth inventory) [@Tedeschi1996]. 
+<span custom-style = 'revision'>Items of the PTGI and PTSD instruments were provided with a captions indicating that the questions refer to the mountain sport accident of interest ('The following questions refer to consequences of your accident').</span>
 The tools displayed good-to-excellent consistency [@McDonald1999] (McDonald's $\omega$ > 0.8, __Supplementary Table S2__ and __S3__). 
 
 Clinically significant symptoms of anxiety (GAD-7 $\geq$ 10), 
@@ -189,10 +192,11 @@ Separate scores were calculated for domains B, C, D and E of the PCL-5 tool alon
 Each PCL-5 item was scored as 0: not at all, 1: a little bit, 2: moderate, 3: quite a bit and 4: extremely. 
 Participants positive for the B domain or C domain PTSD symptoms were identified by at least one item per domain scored with 'moderate' or higher. 
 Participants positive for the D or E domain PTSD symptoms were identified by at least two items per domain scored with 'moderate' or higher. 
-Significant PTSD symptoms were assumed in participants screened positive for at least one of the B, C, D or E PCL-5 domains [@Bovin2016]. 
+Significant PTSD symptoms were assumed in participants screened positive for at least one of the B, C, D or E PCL-5 domains. 
+<span custom-style = 'revision'>Manifest PTSD was considered for participants positive for all four PCL-5 domains [@Bovin2016].</span>
 
 Traumatic events prior to the accident were assessed with the DIA-X tool [@Maercker2005]. 
-Flashback frequency was surveyed as none, > 1/year and > 1/month. 
+<span custom-style = 'revision'>Flashbacks of the accident of interest during mountain sport activity were surveyed as</span> none, > 1/year and > 1/month. 
 Smoking was surveyed as a single yes/no question. 
 Problematic alcohol use was investigated with the CAGE tool [@OBrien2008]. 
 Data on the type of the mountain sport activity during the accident, injury diagnosis, severity (AIS: abbreviated injury scale) [@Gennarelli2006] and body location, hospitalization, surgery and number of surgical ICD-10 diagnoses were extracted from electronic patient records.
@@ -241,7 +245,7 @@ Surveys with complete psychometric data from `r nrow(ptsd$dataset)` individuals 
 The median time between the trauma center admission after the accident and the survey completion was 
 `r median(ptsd$dataset$obs_time)` days (interquartile range: `r quantile(ptsd$dataset$obs_time, c(0.25, 0.75)) %>% paste(collapse = ' - ')` days). 
 As compared with the analyzed participants, patients who did not respond to the study invitation were characterized by a higher frequency of biking accidents, lower rate of alpine ski/snowboard accidents, less severe injury, lower hospitalization and surgery rates, and fewer surgery diagnoses (__Supplementary Table S4__). 
-The survey participants excluded from the analysis due to missingness of psychometric data had significantly lower income, less severe injuries, more frequent injuries of the upper limbs, less frequently required hospitalization or surgery, and suffered less frequently from persistent physical health consequences of the accident than the analyzed participants (__Supplementary Table S5__). 
+The survey participants excluded from the analysis due to incomplete psychometric data had significantly lower income, less severe injuries, more frequent injuries of the upper limbs, less frequently required hospitalization or surgery, and suffered less frequently from persistent physical health consequences of the accident than the analyzed participants (__Supplementary Table S5__). 
 Effect sizes of the differences between the included and excluded participants were weak (V $\leq$ 0.22 or r $\leq$ 0.15).
 
 The analyzed participants were predominantly middle-aged 

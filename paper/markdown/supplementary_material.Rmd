@@ -53,9 +53,10 @@ set_flextable_defaults(font.family = 'Cambria', font.size = 9)
 ## Software
 
 Data analysis and transformation was accomplished with R version 4.2.3. 
-The study dataset was imported from an SPSS file with the _foreign_ package [@RCoreTeam]. 
+The study data set was imported from an SPSS file with the _foreign_ package [@RCoreTeam]. 
 Tabular data were handled with the _tidyverse_ package bundle [@Wickham2019], and the packages _rlang_ [@Henry2022] and [_trafo_](https://github.com/PiotrTymoszuk/trafo). 
-Text variables were handled with _stringi_ [@Gagolewski2021].
+Text variables were handled with _stringi_ [@Gagolewski2021]. 
+Imputation of missing values of psychometric variables was done with the package _impute_ [@Hastie2023].
 
 For distribution testing (normality, variance, Gini index), the packages [_ExDA_](https://github.com/PiotrTymoszuk/ExDA), _rstatix_ [@Kassambara2021] and _DescTools_ [@Signorell2022] were utilized. 
 Consistency of psychometric tools was assessed with the packages _psych_ [@Revelle2022], [_ExDA_](https://github.com/PiotrTymoszuk/ExDA) and [_clustTools_](https://github.com/PiotrTymoszuk/clustTools). 
@@ -90,8 +91,8 @@ The list of extracted variables with their description is available in __Supplem
 A total of `r nrow(ptsd$dataset)` participants with the complete set of psychometric battery variables (__Supplementary Table S\@ref(tab:tab-mental-battery)__) were included in the analysis (__Figure 1__).
 
 The psychometric battery (__Supplementary Table S\@ref(tab:tab-mental-battery)__) consisted of German versions of assessment tools for 
-anxiety (GAD-7: 7-item general anxiety disorder scale) [@Spitzer2006], 
-depression (PHQ: patient health questionnaire, PHQ-9) [@Lowe2002; @Grafe2004], 
+anxiety (GAD-7 and GAD-2: 7- and 2-item general anxiety disorder scale) [@Spitzer2006; @Junker2023], 
+depression (PHQ: patient health questionnaire, PHQ-9, PHQ-2 and PHQ-8) [@Lowe2002; @Grafe2004; @Kroenke2002a; @Junker2023], 
 panic (PHQ-panic module) [@Lowe2002; @Grafe2004], 
 common persistent somatic symptoms as a substitute for somatization (PHQ-15) [@Kroenke2002], 
 resilience (RS13: 13-item resilience scale) [@Leppert2008], 
@@ -99,11 +100,14 @@ loss of sense of coherence (SOC-9L: Leipzig 9-item sense of coherence questionna
 quality of life (EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale) [@Schmidt2006], 
 post-traumatic growth (PTGI: post-traumatic growth inventory) [@Tedeschi1996] and 
 post-traumatic stress disorder (PCL-5: PTSD checklist for DSM-5) [@Bovin2016]. 
+In the study survey, items of the PTGI and PTSD instruments were provided with a captions indicating that the questions refer to the mountain sport accident of interest ('The following questions refer to consequences of your accident'). 
 
 Clinically relevant symptoms of anxiety were defined as GAD-7 $\geq$ 10, 
 clinically relevant symptoms of depression were defined as PHQ-9 $\geq$ 11 [@Manea2012], 
 significant persistent somatic symptoms were defined as PHQ-15 $\geq$ 11 [@Kroenke2002]. 
 Resilience classes were defined as follows: low: RS-13 0 - 65, moderate: 66 - 72, high: $\geq$ 73 [@Leppert2008]. 
+For a comparison of frequency of anxious and depressive symptoms in the study cohort with the estimates for the German population [@Junker2023], presence of anxious and depressive symptoms was considered for GAD-2 $\geq$ 3 and PHQ-2 $\geq$ 3 points, respectively. 
+For a comparison of frequency and severity of depressive symptoms in the study cohort with microcensus data for the general Austrian population, mild depressive symptoms were defined as 5 - 9, moderate symptoms as 10 - 14, moderately severe symptoms as 15 - 19, and severe symptoms as $\geq$ 20 points of the PHQ-8 score [@Kroenke2002a].
 
 Items of the EUROHIS QOL 8 tool were scored as with 1 - 5 Likert scales (1: extreme concerns, no satisfaction at all, 5: no concerns/full satisfaction) with each item representing a single domain of quality of life (quality of life, health, energy, finances, activity, self-esteem, relationship and housing). 
 The total EUROHIS QOL score was defined as the arithmetic mean of all items [@Schmidt2006]. 
@@ -115,14 +119,15 @@ Separate scores were calculated for domains B, C, D and E of the PCL-5 tool alon
 Each PCL-5 item was scored as 0: not at all, 1: a little bit, 2: moderate, 3: quite a bit and 4: extremely. 
 Participants positive for the B domain or C domain PTSD symptoms were identified by at least one item per domain scored with 'moderate' or higher. 
 Participants positive for the D or E domain PTSD symptoms were identified by at least two items per domain scored with 'moderate' or higher. 
-Significant PTSD symptoms where assumed in participants screened positive for at least one of the B, C, D or E PCL-5 domains [@Bovin2016]. 
+Significant PTSD symptoms where assumed in participants screened positive for at least one of the B, C, D or E PCL-5 domains. 
+Manifest PTSD was considered for participants positive for all four PCL-5 domains [@Bovin2016]. 
 
 Traumatic events prior to the mountain sport accident were assessed with the DIA-X tool (Diagnostic Expert System) [@Maercker2005]. 
 Direct personal experience or being a witness of a traumatic event specified by the DIA-X questionnaire or by an additional yes/no item ('other traumatic events') was scored as 1. 
 Prior traumatic event was assumed with at least one DIA-X item scored with 1. 
 Pre-existing mental disorder diagnosed by a physician, 
 prior mountain sport accidents, 
-flashbacks during mountain sport activity, 
+flashbacks of the surveyed accident during mountain sport activity, 
 confusion during mountain sport activity, 
 self-reported need for psychological support following the accident, 
 psychological/psychiatric support/therapy after the accident 
@@ -136,6 +141,27 @@ Injury severity was assessed with the abbreviated injury scale (AIS) [@Gennarell
 
 Additional information on study variables and their stratification schemes are presented in __Supplementary Table S\@ref(tab:tab-analysis-vars)__.
 
+Information on  
+genders ($\geq$ 18 years, in 2023) [@StatistikAustria2023], 
+age ($\geq$ 18 years, in 2023) [@StatistikAustria2023], 
+education (15 - 64 years old, in 2020) [@StatistikAustria2020]
+and employment structure ($\geq$ 15 years, in 2021) [@StatistikAustria2021], 
+smoking status ($\geq$ 15 years, in 2019) [@StatistikAustria2019], 
+and self-reported chronic physical or mental illness ($\geq$ 15 years, in 2019) [@StatistikAustria2019a] 
+for the Austrian population were extracted from publications of Statistik Austria, the national statistical bureau.
+
+Counts of mountain accident victims in 2023 in Austria stratified by mountain sport type, age class and month of the accident were extracted from the annual report of the Austrian Board of Mountain Safety [@OsterreichischesKuratoriumfurAlpineSicherheit2024]. 
+Of note, we were not able to consistently eliminate deaths (n = 266), accidents with tourists from non-German-speaking countries, non-adult victims (nation-wide, $\geq$ 20 years old: n = `r 496 + 2074`) and non-sportive accidents (n = 648) from this published nation-wide data set. 
+Yet these subsets of mountain accident victims constituted a minority of all nation-wide mountain accidents in 2023 (n = 13681). 
+
+Lifetime estimates of prevalence of traumatic events and PTSD in the general population were obtained from representative survey studies [@Hauffa2011; @Darves-Bornoz2008; @Kilpatrick2013; @Koenen2017; @Kessler2017]. 
+Frequency of traumatic events, manifest PTSD and PTSD symptoms subsumed under the B, C, D, and E domains of the PCL-5 instrument in Swiss mountain rescuers were extracted from the report by Mikutta et al. [@Mikutta2022]. 
+
+Monthly estimates of population frequency of symptoms of anxiety and depression in the general German population during the study survey (`r ptsd$dataset$survey_date %>% range %>% paste(collapse = ' to ')`) were derived from the [data repository of the German mental health monitoring](https://github.com/robert-koch-institut/Hochfrequente_Mental_Health_Surveillance) [@Junker2023]. 
+Data on frequency and severity of depressive symptoms measured with the PHQ-8 instrument [@Kroenke2002a] in a nation-wide Austrian microcensus study were obtained from a publication by Statistik Austria [@StatistikAustria2019a]. 
+
+Mean scores of resilient comping with their standard deviations (SD) obtained with the RS-13 tool were extracted from reports with samples of the German [@Leppert2008] and Tyrolean [@Chernova2021] populations, and from a cohort of Swiss mountain rescuers [@Mikutta2022]. 
+
 ## Consistency of psychometric tools and power analysis
 
 Consistency of psychometric tools was assessed by factor analysis and McDonald's $\omega$ (function `omega()`, package _psych_) [@McDonald1999; @Revelle2022]. 
@@ -143,20 +169,20 @@ The number of latent factors for calculation of $\omega$ was identified by inspe
 All psychometric tools used in the study except for the stress PSS-4 scale [@Cohen1983] and the BRCS resilience tool [@Sinclair2004] exhibited good-to-excellent consistency with $\omega$ > 0.8 (__Supplementary Table S\@ref(tab:tab-consistency)__). 
 The poorly performing PSS-4 and BRCS scales were excluded from the further analysis.
 
-To find the optimal size of a training subset of the study cohort, random subsamples of the study dataset of varying sizes were investigated (`r paste(pow$sizes, collapse = ', ')` observations, 50 random draws per subsample size). 
+To find the optimal size of a training subset of the study cohort, random subsamples of the study data set of varying sizes were investigated (`r paste(pow$sizes, collapse = ', ')` observations, 50 random draws per subsample size). 
 For each random subsample, clustering tendency was assessed by Hopkins statistic (function `get_clust_tendency()`, package [_clustTools_](https://github.com/PiotrTymoszuk/clustTools)) [@Hopkins1954]. 
 For n = 250 observations, the median Hopkins statistic was 
 `r pow$hopkins %>% filter(size == 250) %>% .$hopkins_stat %>% median %>% signif(2)` (interquartile range: 
 `r pow$hopkins %>% filter(size == 250) %>% .$hopkins_stat %>% quantile(probs = c(0.25, 0.75)) %>% signif(2) %>% paste(collapse = ' - ')`) indicative of good clustering tendency. 
 The Hopkins statistic value for this subset was comparable with the value for the entire subset 
 (`r signif(pca$clust_tendency$data$hopkins_stat, 2)`). 
-For these reasons, 3/4 of the entire dataset or n = 
+For these reasons, 3/4 of the entire data set or n = 
 `r count(ptsd$dataset, partition)$n[1]` was considered as the adequate size of the training subset of the study cohort for a reproducible clustering analysis.
 
 ## Training/test subset definition
 
 The study participants were assigned to the training and test subsets with the 3:1 size ratio (__Figure 1__). 
-To this end, `r nrow(part$dists)` random splits of the datasets were generated. 
+To this end, `r nrow(part$dists)` random splits of the data sets were generated. 
 The subset assignment scheme was chosen with the possibly smallest differences in sociodemographic, medical history, clinical and accident- and injury-related variables assessed by Gower distance between the training and test subsets (function `dist()`, package _proxy_) [@Meyer2022].
 
 ## Statistical hypothesis testing, effect size and multiple testing correction
@@ -183,6 +209,22 @@ Categorical variables were compared by $\chi^2$ test with Cramer V effect size s
 (function `compare_variables()`, package [_ExDA_](https://github.com/PiotrTymoszuk/ExDA)). 
 Potential differences between the training and test subset of the study cohort (__Figure 1__) were analyzed in an analogical way. 
 Significant (p < 0.05) differences between the included/excluded participants are presented in __Supplementary Table S\@ref(tab:tab-no-response)__ and __S\@ref(tab:tab-missing)__.
+
+## Comparison of socioeconomic, accident and mental health features with population estimates and literature reports
+
+Differences in age, gender, education, professional activity, and frequency of chronic physical and mental disorders between the study cohort and the Austrian population [@StatistikAustria2023; @StatistikAustria2023; @StatistikAustria2020; @StatistikAustria2021; @StatistikAustria2019] were investigated by Mann-Whitney U test with r effect size statistic (age as a numeric variable) or $\chi^2$ test with Cramer's V effect size statistic (remaining categorical variables). 
+Global differences in distribution of mountain sport types, age and accident months between the analyzed cohort and the nation-wide collective of Austrian mountain accident victims [@OsterreichischesKuratoriumfurAlpineSicherheit2024] were compared with $\chi^2$ test with Cramer's V effect size statistic. 
+In the comparison of sport types, nation-wide counts of non-sportive mountain accidents (e.g. during forestry or hunting) were excluded. 
+In the comparison of age distributions, only individuals older than 20 years were included. 
+Post-hoc comparisons of the study cohort and nation-wide Austrian counts were done with Holm-corrected $\chi^2$ test. 
+The statistical hypothesis testing was done with the function `compare_variables()` from the [_ExDA_](https://github.com/PiotrTymoszuk/ExDA) package. 
+The comparison results are presented in __Supplementary Table S\@ref(tab:tab-aut-population)__ and __Supplementary Figure S\@ref(fig:fig-accident)__.
+
+Frequency of traumatic events, manifest PTSD and PTSD symptoms in the current cohort was compared with original reports providing estimates of frequency of traumatic events and PTSD in the general population [@Hauffa2011; @Darves-Bornoz2008; @Kilpatrick2013; @Koenen2017; @Kessler2017] and in a cohort of Swiss mountain rescuers [@Mikutta2022]. 
+Frequencies of symptoms of anxiety and depression measured with the GAD-2 and PHQ-2 instruments, respectively, were compared with estimates for the general German population gauged by the German mental health monitoring during the study survey [@Junker2023]. 
+Frequency and severity of depressive symptoms measured by the GAD-8 tools in the study cohort [@Kroenke2002a] were compared with the Austrian microcensus estimates. 
+In those analyses, bootstrap with B = 1000 resamples was used for computation of the bias-corrected and accelerated (BCA) 95% confidence intervals (function `bmap()`, package [_bootStat_](https://github.com/PiotrTymoszuk/bootStat)). 
+Significant differences were assumed for non-overlapping 95% confidence intervals of the mental symptom frequency estimates. 
 
 ## Semi-supervised clustering
 
@@ -212,6 +254,19 @@ An analysis of cosine cross-distances between the clusters in the training and t
 Finally, quality of semi-supervised clustering was investigated by comparison of normalized levels of the clustering variables between the mental health clusters in the training and test subset by Kruskal-Wallis test with $\eta^2$ effect size statistic (function `compare_variables()`, package [_ExDA_](https://github.com/PiotrTymoszuk/ExDA); __Figure 2__, __Supplementary Figure S\@ref(fig:fig-feat-hm)__, __Supplementary Table S\@ref(tab:tab-clust-fct)__).
 
 Differences in frequencies of mental disorder symptoms as well as demographic, socioeconomic, clinical, accident- and recovery-related factors between the mental health clusters were assessed in the entire cohort by $\chi^2$ test with Cramer V effect size statistic and by Kruskal-Wallis test with $\eta^2$ effect size statistic for categorical and numeric variables, respectively (function `compare_variables()`, package [_ExDA_](https://github.com/PiotrTymoszuk/ExDA); __Supplementary Table S\@ref(tab:tab-clust-symptoms)__ and __S\@ref(tab:tab-clust-bcg)__).
+
+## Assessment of effects of missing observations, annual income, prior mountain sport accidents, injury severity, hospitalization, and accident year on mental health cluster definition
+
+To investigate effects observations excluded from the analysis due to an incomplete psychometric data set on definition of the mental health clusters, the excluded observations with less than 80% of missing psychometric entries were subjected to imputation with the 9-nearest neighbor algorithm implemented by the `impute.knn()` function from the R package _impute_ [@Hastie2023]. 
+Subsequently, the mental health clusters were developed for the analysis cohort and for the analysis cohort appended with the imputed observations. 
+Analogically, to explore effects of prior mountain sport accidents, the mental health clusters were developed for the entire cohort, the individuals having experienced a mountain accident in the past, and participants without prior mountain sport accidents. 
+To evaluate effects of annual household income, the mental clusters were developed for the analysis cohort and the analysis cohort without, respectively, participants with no income, yearly income < 30000 Euro, yearly income ranging from 30000 to 45000 Euro and yearly income > 45000 Euro. 
+To assess the impact of injury severity, the mental clusters were developed for the analysis cohort and the analysis cohort depleted of, respectively, individuals with mild (AIS 1), moderate (AIS 2), and severe-to-critical injuries (AIS $\geq$ 3). 
+To investigate the effect of hospitalization, the mental health clusters were developed separately for the analysis cohort, non-hospitalized and hospitalized participants. 
+To assess the impact of accident year, the mental clusters were developed for the analysis cohort without, respectively, accidents in 2018, 2019 and 2022. 
+In each case, the unsupervised PAM/cosine distance clustering algorithm was used, i.e. the procedure employed for definition of the genuine mental health clusters. 
+The effects of extending or depletion of the data set on the quality of the clustering structure was evaluated by comparing fractions of the explained clustering variance between the clustering solutions for the particular data set and for the analysis cohort [@Thabane2013]. 
+Additionally, distribution of sizes of the neutral, PTG and PTS clusters expressed as percentage of all clustered observations was compared (__Supplementary Figure S\@ref(fig:fig-cluster-se)__ and __S\@ref(fig:fig-cluster-miss)__).
 
 ## Cluster assignment classifiers
 
@@ -344,6 +399,20 @@ flextable::flextable(suppl_tables$missing) %>%
 
 \newpage
 
+```{r tab-aut-population, tab.cap = 'Comparison of sociodemographic features of the study cohort and estimates for the general Austrian population. Numeric variables are presented as medians with interquartile ranges (IQR). Categorical variables are presented as percentages and counts within the complete observation set.'}
+
+flextable::flextable(suppl_tables$aut_population) %>% 
+  set_widths(c(3.5, rep(5, 2), 2.8, 2.8)) %>% 
+  footnote(1, 4:5, 
+           value = as_paragraph('Numeric variables: Mann-Whitney test with r effect size statistic, categorical variables: \u03C7\u00B2 test with Cramer V effect size statistic.'), 
+           ref_symbols = 'a', 
+           part = 'header') %>% 
+  theme_vanilla
+
+```
+
+\newpage
+
 ```{r tab-train-test, tab.cap = 'Significant differences between the training and test subset of the study cohort. Numeric variables are presented as medians with interquartile ranges (IQR). Categorical variables are presented as percentages and counts within the complete observation set.'}
 
 flextable::flextable(suppl_tables$train_test) %>% 
@@ -378,7 +447,7 @@ suppl_tables$clust_fct[1, 1] %>%
 ```{r tab-clust-symptoms, tab.cap = 'Frequency of mental disorder symptoms in the mental health clusters in the entire cohort. Categorical variables are presented as percentages and counts within the clusters.'}
 
 flextable::flextable(suppl_tables$clust_symptoms) %>% 
-  set_widths(c(4, rep(4.3, 3), 2.5, 2.3)) %>% 
+  set_widths(c(4, rep(4, 3), 2.5, 2.3)) %>% 
   footnote(1, 1, 
            value = as_paragraph('GAD-7: 7-item general anxiety disorder scale; PHQ-9: 9-item patient health questionnaire for depressive symptoms; PHQ-15: 15-item patient health questionnaire for common somatic symptoms as a substitute for somatization; PHQ-panic: patient health questionnaire module for panic disorders; RS13: 13-item resilience scale; PCL-5: PTSD checklist for DSM-5; PTSD: post-traumatic stress disorder.'), 
            part = 'header', 
@@ -486,6 +555,20 @@ flextable::flextable(suppl_tables$full_classifiers) %>%
 
 # Supplementary Figures
 
+```{r fig-accident, fig.width = figur::convert(suppl_figures$accident, to = 'in')$w, fig.height = figur::convert(suppl_figures$accident, to = 'in')$h, fig.cap = 'Mountain sport type, accident month, and age of the mountain accident victim in the study cohort and Austria.'}
+
+suppl_figures$accident$plot
+
+```
+
+__Supplementary Figure \@ref(fig:fig-accident). Mountain sport type, accident month, and age of the mountain accident victim in the study cohort and Austria.__ 
+
+_Mountain sport types (A), accident months (B) and age class distribution (C) were compared between the study cohort and victims of mountain sport accidents in Austria in 2023. Frequencies for the nation-wide data set of mountain accidents were extracted from the annual report of the Austrian Board of Mountain Safety. In the comparison of sport types, non-sportive mountain accidents (e.g. during hunting or forestry) were excluded and sport types in the study cohort re-classified according to the scheme of the Austrian Board of Mountain Safety. In the comparison of the age class distribution, only individuals older than 20 years were included. Statistical significance of the global differences was determined by $\chi^2$ test with Cramer's V effect size statistic. Pairwise differences for particular sport types, months and age classes were assessed by $\chi^2$ test corrected for multiple testing with the Holm method. Percentages of categories within the complete observation sets are presented as bar plots. Bars are labeled with the corresponding percent values. Total observation numbers are displayed in the plot legends. Global effect sizes and p values are presented in the plot captions. Significant results of post-hoc tests are highlighted with bold X axis labels._
+
+_alpine skiing: alpine skiing and snowboarding in a ski resort and lift accidents; ski touring: ski touring and freeride skiing; air: air sports and paragliding; water: water sports._ 
+
+\newpage
+
 ```{r fig-parts-ptsd, fig.width = figur::convert(suppl_figures$parts_ptsd, to = 'in')$w, fig.height = figur::convert(suppl_figures$parts_ptsd, to = 'in')$h, fig.cap = 'Injured body regions and symptoms of PTSD in the study cohort.'}
 
 suppl_figures$parts_ptsd$plot
@@ -513,6 +596,40 @@ __Supplementary Figure S\@ref(fig:fig-qol-ptg). Scores of quality of life and po
 _(A) Scores of the domains of the EUROHIS project 8-item quality of life scale (EUROHIS-QOL 8) presented in a bar plot. The number of complete observations is displayed in the plot caption._
 
 _(B) Scores of the domains of the post-traumatic growth inventory (PTGI) scale presented in a violin plots. Single observations are visualized as points. Red diamonds with whiskers represent medians with interquartile ranges. The number of complete observations is indicated in the plot caption._
+
+\newpage
+
+```{r fig-ptsd-literature, fig.width = figur::convert(suppl_figures$ptsd_literature, to = 'in')$w, fig.height = figur::convert(suppl_figures$ptsd_literature, to = 'in')$h, fig.cap = 'Comparison of frequency of traumatic events, manifest PTSD, and symptoms of  PTSD in the study cohort and literature.'}
+
+suppl_figures$ptsd_literature$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-ptsd-literature). Comparison of frequency of traumatic events, manifest PTSD, and symptoms of  PTSD in the study cohort and literature.__ 
+
+_Frequency estimates of traumatic events, manifest PTSD and PTSD symptoms with bias-corrected and accelerated (BCA) 95% confidence computed by bootstrap are depicted in Forest plots._
+
+_(A) Comparison of frequencies of traumatic events and manifest PTSD in the study cohort with estimates of population prevalence of lifetime traumatic events and manifest PTSD in published surveys. Tools used for identification of traumatic events and PTSD symptoms are indicated in the Y axis (CIDI: composite international diagnostic interview, DSM-5: diagnostic and statistical manual of mental disorders, 5^th^ edition, PDS: post-traumatic stress diagnostic scale)._
+
+_(B) Comparison of frequencies of traumatic events, manifest PTSD and PTSD symptoms in the study cohort and the cohort of Swiss mountain rescuers reported by Mikutta and colleagues. PTSD symptoms were assessed by the PCL-5 tool and are subsumed under the B, C, B, and E domains. Manifest PTSD is defined as positivity for all domains of the PCL-5 instrument._ 
+
+\newpage
+
+```{r fig-mental-literature, fig.width = figur::convert(suppl_figures$mental_literature, to = 'in')$w, fig.height = figur::convert(suppl_figures$mental_literature, to = 'in')$h, fig.cap = 'Comparison of frequency of anxious and depressive symptoms and of resilience scoring in the study cohort and literature.'}
+
+suppl_figures$mental_literature$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-mental-literature). Comparison of frequency of anxious and depressive symptoms and of resilience scoring in the study cohort and literature.__ 
+
+_Frequency estimates of mental disorder symptoms with bias-corrected and accelerated (BCA) 95% confidence computed by bootstrap are depicted in Forest plots. Mean resilience scores obtained with the RS13 tool with standard deviations (SD) are shown in a Forest plot._
+
+_(A) Comparison of frequency of anxious and depressive symptoms measured by the GAD-2 and PHQ-2 instruments in the study cohort with frequency of anxious and depressive symptoms obtained for the general German population by monthly mental health monitoring._
+
+_(B) Comparison of frequency and severity of depressive symptoms measured by the PHQ-8 tool in the study cohort with 2019 estimates for the general Austrian population._
+
+_(C) Comparison of resilient comping scores in the study cohort, the cohort of Swiss mountain rescuers published by Mikutta at al., and samples of the Tyrolean (Chernova et al.) and German population (Leppert et al.)_
 
 \newpage
 
@@ -560,7 +677,7 @@ _Study cohorts observations were assigned to the neutral, PTG (post-traumatic gr
 
 _(A) Percentages of observations in the training and test subsets of the study cohort in the mental health clusters. Numbers of complete observations are indicated in the Y axis._
 
-_(B) Cosine cross-distances between the mental health clusters in the training and test subsets of the study dataset visualized as a heat map. Average cross-distances with 95% percentile range are indicated in the tiles._
+_(B) Cosine cross-distances between the mental health clusters in the training and test subsets of the study data set visualized as a heat map. Average cross-distances with 95% percentile range are indicated in the tiles._
 
 \newpage
 
@@ -573,6 +690,34 @@ suppl_figures$feat_hm$plot
 __Supplementary Figure S\@ref(fig:fig-feat-hm). Levels of psychometric scores used for the cluster definition in the mental health clusters.__ 
 
 _Levels of psychometric scores used in clustering in the mental health clusters. Normalized, median-centered score values (Z scores) are presented as heat maps. Numbers of observations in the clusters are displayed in the plot captions. PSS4: 4-item perceived stress scale; GAD-7: 7-item general anxiety disorder scale; PHQ: patient health questionnaire; EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale; SOC-9L: Leipzig 9-item sense of coherence questionnaire; RS13: 13-item resilience scale; PCL-5: PTSD checklist for DSM-5; PTGI: post-traumatic growth inventory; PTSD: post-traumatic stress disorder._
+
+\newpage
+
+```{r fig-cluster-se, fig.width = figur::convert(suppl_figures$cluster_se, to = 'in')$w, fig.height = figur::convert(suppl_figures$cluster_se, to = 'in')$h, fig.cap = 'Effects of incomplete psychometry data, annual income, prior mountain sport accidents, injury severity, and hospitalization on development of the mental health clusters.'}
+
+suppl_figures$cluster_se$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-cluster-se). Effects of incomplete psychometry data, annual income, prior mountain sport accidents, injury severity, and hospitalization on development of the mental health clusters.__ 
+
+_The mental health clusters were developed by PAM/cosine distance clustering for the analyzed study cohort, for the analyzed study cohort appended with participants with missing and imputed psychometric variables, participants with and without prior mountain sport accidents, hospitalized and non-hospitalized participants, the analysis cohort without each of no, low, intermediate and high annual income, the analysis cohort without each of 2018, 2019 and 2020 accidents, as well as for the analysis cohort with exclusion of participants with minor (abbreviated injury scale [AIS] 1), moderate (AIS2) and severe-to-critical injuries (AIS $\geq$ 3). Fractions of explained clustering variance (ratio of total between-cluster sum of squares to total sum of squares) were compared between the mental health cluster assignment of the entire cohort and the mental clusters of collectives described above._
+
+_(A) Percent differences in fractions of explained variance between the mental health clusters of the analysis cohort and the mental health clusters in the analysis cohort appended with or depleted of the subsets indicated in the Y axis. Total numbers of observations are displayed in the Y axis._
+
+_(B) Distribution of the mental health clusters sizes expressed as percentages of all observations presented in a stack plot. Total observation numbers are displayed in the Y axis._
+
+\newpage
+
+```{r fig-cluster-miss, fig.width = figur::convert(suppl_figures$cluster_miss, to = 'in')$w, fig.height = figur::convert(suppl_figures$cluster_miss, to = 'in')$h, fig.cap = 'Mental health cluster assignment of participants excluded from the analysis due incomplete psychometry data.'}
+
+suppl_figures$cluster_miss$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-cluster-miss). Mental health cluster assignment of participants excluded from the analysis due incomplete psychometry data.__ 
+
+_Incomplete psychometry data were imputed for participants with < 80% missing answers in the mental health battery by a 9-nearest neighbors regressor. The mental health clusters were developed for separately the analysis cohort (A) and the analysis cohort appended with the imputed psychometry data (B). Normalized levels of the clustering variables (Z-scores) in the mental health clusters are visualized as heat maps. Assignment of the imputed observations to the mental health clusters is depicted in the color bar below the heat map in (B). Numbers of observations in the clusters are displayed in the plot captions._
 
 \newpage
 
