@@ -17,6 +17,9 @@
   insert_msg('Analysis globals')
   
   ## expression for calling objects of interest
+  ## surgery: excluded because clustering of the participants
+  ## with surgery (n = 43) failed (silhouette = 0.2, 12% misclassified, V < 0.5)
+  ## likely due to too low N
   
   se_summary$object_expr <- 
     expr(list(missing = se_missing, 
@@ -27,6 +30,8 @@
               prior_accident = se_accident, 
               accident_year = se_year, 
               injury_sev_strata = se_ais, 
+              hospitalization = se_hosp, 
+              #surgery_done = se_surg, 
               psych_support_post_accident = se_support))
   
   ## lexicon of the splitting factors
@@ -35,7 +40,7 @@
     filter(variable %in% names(eval(se_summary$object_expr))) %>% 
     select(variable, label, axis_lab) %>% 
     rbind(tibble(variable = c('global', 'missing'), 
-                 label = c('entire analysis cohort', 'incomplete observations'), 
+                 label = c('analysis cohort', 'incomplete observations'), 
                  axis_lab = c(NA, NA))) %>% 
     mutate(facet_label = stri_replace_all(label, 
                                           fixed = ' ', 
@@ -66,9 +71,19 @@
       without_no_income = 'without no income', 
       without_30Klo = 'without < 30K', 
       without_30_45K = 'without 30K - 45K', 
-      without_45Kup = 'without > 45K') %>% 
+      without_45Kup = 'without > 45K', 
+      hospitalized = 'hospitalized', 
+      non_hospitalized = 'ambulatory', 
+      surgery = 'surgery', 
+      no_surgery = 'no surgery') %>% 
     compress(names_to = 'variable', 
              values_to = 'label')
+  
+  ## fill colors for the complete observations and observations
+  ## with missing psychometric variables
+  
+  se_summary$miss_colors <- c(complete = 'steelblue', 
+                              missing = 'indianred3')
   
   ## a dummy clustering object grouping the mental health variables
   
@@ -128,7 +143,6 @@
                                  se_summary$dataset_lexicon), 
            axis_label = paste(axis_label, n_total, 
                               sep = '\nn = '))
-    
   
 # Data frames with the cluster sizes -------
   
@@ -144,7 +158,61 @@
   se_summary$clust_size <- se_missing$clust_size$global %>% 
     mutate(split_factor = 'global', 
            dataset = 'global') %>% 
-    rbind(se_summary$clust_size)
+    rbind(se_summary$clust_size)  %>% 
+    mutate(split_factor = factor(split_factor, 
+                                 c('global', 
+                                   names(eval(se_summary$object_expr)))))
+  
+  ## text labels for the plots
+  
+  se_summary$clust_size <- se_summary$clust_size %>% 
+    blast(split_factor, dataset) %>% 
+    map(arrange, desc(clust_id)) %>% 
+    map_dfr(mutate, txt_pos = cumsum(percent) - 0.5 * percent)
+  
+# Clustering objects for plotting and size comparisons -------
+  
+  insert_msg('Clustering objects for plotting and size comparisons')
+  
+  se_summary$clust_obj$global <- se_globals$clust_obj
+  
+  se_summary$clust_obj <- se_summary$object_expr %>% 
+    eval %>% 
+    map(~.x$clust_obj) %>% 
+    map(~.x[names(.x) != 'global']) %>% 
+    reduce(c) %>% 
+    c(se_summary$clust_obj, .)
+  
+# Tests for differences in cluster sizes -------
+  
+  insert_msg('Tests for difference in cluster sizes')
+  
+  ## cluster assignments
+  
+  se_summary$assignment <- se_summary$clust_obj[-1] %>% 
+    map(extract, 'assignment') %>% 
+    map(mutate, 
+        subset = factor('modified', c('global', 'modified'))) %>%
+    map(~rbind(mutate(extract(se_globals$clust_obj, 'assignment'), 
+                      subset = factor('global', 
+                                      c('global', 'modified'))), 
+               .x))
+  
+  ## test: Chi-square test with Cramer's V effect size statistic
+  ## global cluster distribution vs cluster distribution for
+  ## the modified data set
+  
+  se_summary$test <- se_summary$assignment %>% 
+    future_map(~compare_variables(.x, 
+                                  variables = 'clust_id', 
+                                  split_factor = 'subset', 
+                                  what = 'eff_size', 
+                                  types = 'cramer_v', 
+                                  ci = FALSE, 
+                                  exact = FALSE, 
+                                  pub_styled = TRUE), 
+               .options = furrr_options(seed = TRUE)) %>% 
+    compress(names_to = 'dataset')
   
 # Plots of deltas of performance stats -------
   
@@ -207,14 +275,16 @@
   insert_msg('Stack plots of cluster sizes')
   
   se_summary$size_plot <- se_summary$clust_size %>% 
-    mutate(split_factor = factor(split_factor, 
-                                 c('global', 
-                                   names(eval(se_summary$object_expr))))) %>% 
     ggplot(aes(x = percent, 
                y = reorder(dataset, percent), 
                fill = clust_id)) + 
     geom_bar(color = 'black', 
              stat = 'identity') + 
+    geom_label(aes(label = signif(percent, 2), 
+                   x = txt_pos), 
+               size = 2.5, 
+               show.legend = FALSE, 
+               label.padding = unit(0.15, "lines")) + 
     facet_grid(split_factor ~ ., 
                space = 'free', 
                scales = 'free', 
@@ -232,19 +302,6 @@
                                       hjust = 0)) + 
     labs(title = 'Cluster distribution', 
          x = '% of observations')
-  
-# Clustering objects for plotting -------
-  
-  insert_msg('Clustering objects for plotting')
-  
-  se_summary$clust_obj$global <- se_globals$clust_obj
-  
-  se_summary$clust_obj <- se_summary$object_expr %>% 
-    eval %>% 
-    map(~.x$clust_obj) %>% 
-    map(~.x[names(.x) != 'global']) %>% 
-    reduce(c) %>% 
-    c(se_summary$clust_obj, .)
   
 # UMAP layouts -------
   
@@ -298,7 +355,56 @@
                                limits = c(-4, 4), 
                                oob = scales::squish, 
                                name = 'Z-score') + 
-          scale_y_discrete(labels = function(x) exchange(x, se_summary$var_lexicon )))
+          scale_y_discrete(labels = function(x) exchange(x, se_summary$var_lexicon)))
+  
+# Location of the partcipants with incomplete psych variables in the clusters ------
+  
+  insert_msg('Incomplete surveys in the mental health clusters')
+  
+  ## stack plot
+  
+  se_summary$missing_plots$stack_plot <- se_missing$assingment %>% 
+    plot_variable(variable = 'subset', 
+                  split_factor = 'clust_id', 
+                  type = 'stack', 
+                  scale = 'percent', 
+                  cust_theme = globals$common_theme, 
+                  plot_title = 'Observations with missing psychometric variables', 
+                  plot_subtitle = 'kNN imputation', 
+                  y_lab = '% of cluster', 
+                  x_n_labs = TRUE) + 
+    scale_fill_manual(values = se_summary$miss_colors, 
+                      name = 'Mental battery') + 
+    theme(axis.title.x = element_blank())
+  
+  ## color bar to be shown together with the heat map
+  
+  se_summary$missing_plots$obs_order <- 
+    reorder(se_summary$hm_plots$merged$data$sample, 
+            se_summary$hm_plots$merged$data$value)
+  
+  se_summary$missing_plots$color_bar_data <- se_missing$assingment %>% 
+    mutate(ID = factor(ID, levels(se_summary$missing_plots$obs_order)))
+  
+  se_summary$missing_plots$color_bar_plot <- 
+    se_summary$missing_plots$color_bar_data %>% 
+    ggplot(aes(x = ID, 
+               y = 'sample', 
+               fill = subset)) + 
+    geom_tile() + 
+    facet_grid(. ~ clust_id, 
+               space = 'free', 
+               scales = 'free') + 
+    scale_fill_manual(values = se_summary$miss_colors, 
+                      name = 'Mental battery') + 
+    globals$common_theme + 
+    theme(axis.text.x = element_blank(), 
+          axis.text.y = element_blank(), 
+          axis.ticks = element_blank(), 
+          panel.grid.major = element_blank(), 
+          axis.line = element_blank(), 
+          axis.title.y = element_blank()) + 
+    labs(x = 'Sample')
   
 # END ------
   

@@ -126,6 +126,15 @@
   
   rm(i)
   
+  ## recoding of the age strata (the 18 - 30 years -> 16 - 30 years)
+  ## for consistency with the previous version of the manuscript
+  
+  class_globals$analysis_tbl <- class_globals$analysis_tbl %>% 
+    map(mutate, 
+        age_class = cut(age, 
+                        c(-Inf, 30, 65, Inf), 
+                        c('16-30', '31-65', '>65')))
+  
   ## analysis tables: complete cases and normalization of the numeric variables
   
   class_globals$analysis_tbl <- class_globals$analysis_tbl %>% 

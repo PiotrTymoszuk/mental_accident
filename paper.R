@@ -22,9 +22,16 @@
   source_all('./tools/tools.R', 
              message = TRUE, crash = TRUE)
   
-# Report scripts -----
+# Figures and tables for the revision -----
   
-  insert_msg('Launching the report scripts')
+  insert_msg('Figures and tables for the revision')
+  
+  c('./paper scripts/reviewer_figures.R') %>% 
+    source_all(message = TRUE, crash = TRUE)
+  
+# Paper scripts -----
+  
+  insert_msg('Launching the paper scripts')
   
   c('./paper scripts/links.R', 
     './paper scripts/tables.R', 

@@ -2,6 +2,9 @@
 # cohort and in literature reports. 
 # Confidence intervals (BCA) are obtained by bootstrap.
 #
+# We are also gathering resilience scoring data from surveys employing 
+# the RS13 tool.
+#
 # The literature reports are:
 #
 # 1) Koenen et al. DOI: 10.1017/S0033291717000708 with evaluation of 26 World 
@@ -15,6 +18,17 @@
 # 4) Darves-Bornoz et al. 2008. DOI: 10.1002/jts.20357, European survey
 #
 # 5) Hauffa et al. 2011. DOI: 10.1097/NMD.0b013e3182392c0d, German population
+#
+# 6) Mikutta et al. 2022. DOI: 10.3389/FPSYT.2022.780498
+#
+# 7) Leonard et al. 2021, DOI: 10.1186/S13049-021-00912-3
+#
+# 8) Chernova et al. 2021, DOI: 10.3389/FPSYT.2021.766261/FULL, Tyrolean 
+# population during the CoV pandemic
+#
+# 9) Leppert et al. 2008, the seminal paper on the RS13 scale. Normative values 
+# for the German population are used.
+
 
   insert_head()
   
@@ -28,7 +42,7 @@
   
   plan('multisession')
   
-# data -------
+# data of mental disorder symptom prevalence -------
   
   insert_msg('Data')
   
@@ -45,13 +59,13 @@
     reduce(`*`) %>% 
     car::recode("0 = 'negative'; 1 = 'positive'") %>% 
     factor(c('negative', 'positive'))
-  
+
   ## Koenen et al 2017: total n = 71085, PTSD+ (lifetime): n = 4103
   ## traumatic events: n = 51795, PTSD+ trauma-exposed (lifetime): n = 2901
   ## re-crating the data set for trauma-negative and -positive participants
   ## Source of the counts: Table 1. Warning: the numbers for trauma-exposed
   ## and the total sample are the same: likely a flaw. Similarly, the 
-  ## percetages provided in the abstract do not match the Table 1 numbers
+  ## percentages provided in the abstract do not match the Table 1 numbers
   
   lit_data$data$koenen_2017$negative <- 
     tibble(traumatic_event = rep('no', 71085 - 51795), 
@@ -107,6 +121,47 @@
                              rep('negative', 2510 - 73))) %>% 
     mutate(traumatic_event = factor(traumatic_event, c('no', 'yes')), 
            ptsd_lifetime = factor(ptsd_lifetime, c('negative', 'positive')))
+  
+  ## Mikutta et al. 2022, n = 465, n = 331 (71%) with traumatic event 
+  ## n = 65 with at least one domain of PCL-5 positive, n = 3 
+  ## with all domains positive
+  
+  lit_data$data$mikutta_2022 <- 
+    tibble(traumatic_event = c(rep('yes', 331), rep('no', 465 - 331)), 
+           dsm5_cluster_class = c(rep('positive', 65), 
+                                  rep('negative', 465 - 65)), 
+           dsm5_all_class = c(rep('positive', 3), 
+                              rep('negative', 465 - 3)), 
+           dsm5_B_class = c(rep('positive', 38), 
+                            rep('negative', 465 - 38)), 
+           dsm5_C_class = c(rep('positive', 21), 
+                            rep('negative', 465 - 21)), 
+           dsm5_D_class = c(rep('positive', 12), 
+                            rep('negative', 465 - 12)), 
+           dsm5_E_class = c(rep('positive', 29), 
+                            rep('negative', 465 - 29))) %>% 
+    mutate(traumatic_event = factor(traumatic_event, c('no', 'yes')))
+  
+  lit_data$data$mikutta_2022[c('dsm5_cluster_class', 
+                               'dsm5_all_class', 
+                               'dsm5_B_class', 
+                               'dsm5_C_class', 
+                               'dsm5_D_class', 
+                               'dsm5_E_class')] <- 
+    lit_data$data$mikutta_2022[c('dsm5_cluster_class', 
+                                 'dsm5_all_class', 
+                                 'dsm5_B_class', 
+                                 'dsm5_C_class', 
+                                 'dsm5_D_class', 
+                                 'dsm5_E_class')] %>% 
+    map_dfc(factor, c('negative', 'positive'))
+  
+  ## Leonard 2021, n = 55 in total, n = 6 with PTSD according to IES-R
+  
+  lit_data$data$leonard_2021 <- 
+    tibble(dsm5_all_class = c(rep('positive', 6), 
+                              rep('negative', 55 - 6))) %>% 
+    mutate(dsm5_all_class = factor(dsm5_all_class, c('negative', 'positive')))
     
 # Percentages of symptoms and psychometric classes --------
   
@@ -119,6 +174,62 @@
                B = 1000,
                .options = furrr_options(seed = TRUE)) %>% 
     compress(names_to = 'source')
+  
+# Stats of resilience scoring -------
+  
+  insert_msg('Stats of resilience scoring')
+  
+  ## own cohort
+  
+  lit_data$rs_stats$cohort <- 
+    tibble(mean = mean(ptsd$data$rs13_total), 
+           sd = sd(ptsd$data$rs13_total), 
+           min = min(ptsd$data$rs13_total), 
+           max = max(ptsd$data$rs13_total), 
+           median = median(ptsd$data$rs13_total), 
+           q25 = quantile(ptsd$data$rs13_total, 0.25), 
+           q75 = quantile(ptsd$data$rs13_total, 0.75), 
+           n_total = nrow(ptsd$dataset))
+  
+  ## Chernova 2021
+  
+  lit_data$rs_stats$chernova_2021 <- 
+    tibble(mean = 71.7, 
+           sd = 12.3, 
+           min = NA, 
+           max = NA, 
+           median = NA, 
+           q25 = NA, 
+           q75 = NA, 
+           n_total = 1045)
+  
+  ## Leppert 2008
+  
+  lit_data$rs_stats$leppert_2008 <- 
+    tibble(mean = 70, 
+           sd = 12, 
+           min = 13, 
+           max = 91, 
+           median = 72, 
+           q25 = 63, 
+           q75 = 79, 
+           n_total = 2617)
+  
+  ## Mikutta 2022
+  
+  lit_data$rs_stats$mikutta_2022 <- 
+    tibble(mean = 74.8, 
+           sd = 10, 
+           min = NA, 
+           max = NA, 
+           median = NA, 
+           q25 = NA, 
+           q75 = NA, 
+           n_total = 334)
+  
+  lit_data$rs_stats <- lit_data$rs_stats %>% 
+    compress(names_to = 'source')
+  
   
 # END -------
   

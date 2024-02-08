@@ -178,12 +178,28 @@
                      'observation set.'))) %>% 
     pmap(mdtable)
   
-# Supplementary Table S6: differences between the training and test subset -------
+# Supplementary Table S6: differences between the cohort and Austrian population ------
   
-  insert_msg('Table S6: training vas test')
+  insert_msg('Table S6: differences between the cohort and Austrian population')
+  
+  suppl_tables$aut_population <- aut_stats$result_tbl %>% 
+    mdtable(label = 'table_s6_austrian_population', 
+            ref_name = 'aut_population', 
+            caption = paste('Comparison of sociodemographic features of the', 
+                            'study cohort and estimates for the general', 
+                            'Austrian population.', 
+                            'Numeric variables are presented as medians', 
+                            'with interquartile ranges (IQR). Categorical', 
+                            'variables are presented as percentages', 
+                            'and counts within the complete', 
+                            'observation set.'))
+  
+# Supplementary Table S7: differences between the training and test subset -------
+  
+  insert_msg('Table S7: training vas test')
   
   suppl_tables$train_test <- partition$result_tbl %>% 
-    mdtable(label = 'table_s6_included_excluded', 
+    mdtable(label = 'table_s7_included_excluded', 
             ref_name = 'train_test', 
             caption = paste('Significant differences between', 
                             'the training and test subset of the study cohort.', 
@@ -193,13 +209,13 @@
                             'and counts within the complete', 
                             'observation set.'))
   
-# Supplementary Table S7: clustering factors in the mental clusters -------
+# Supplementary Table S8: clustering factors in the mental clusters -------
   
-  insert_msg('Table S7: clustering factors in the mental clusters')
+  insert_msg('Table S8: clustering factors in the mental clusters')
   
   suppl_tables$clust_fct <- feat_clust$result_tbl %>% 
     compress(names_to = 'Cohort subset') %>% 
-    mdtable(label = 'table_s7_clustering_factors', 
+    mdtable(label = 'table_s8_clustering_factors', 
             ref_name = 'clust_fct', 
             caption = paste('Differences in psychometric clustering factors', 
                             'between the mental clusters.', 
@@ -211,28 +227,28 @@
                             'The table is available in a', 
                             'supplementary Excel file.'))
   
-# Supplementary Table S8: mental disorder symptoms in the clusters ------
+# Supplementary Table S9: mental disorder symptoms in the clusters ------
   
-  insert_msg('Supplementary Table S8: mental disorder symptoms in the clusters')
+  insert_msg('Supplementary Table S9: mental disorder symptoms in the clusters')
   
   suppl_tables$clust_symptoms <- clust_bcg$result_tbl %>% 
     filter(source_var %in% c('n_number', clust_bcg$mental_variables)) %>% 
     select(- source_var) %>% 
-    mdtable(label = 'table_s8_clustrer_mental_symptoms', 
+    mdtable(label = 'table_s9_clustrer_mental_symptoms', 
             ref_name = 'clust_symptoms', 
             caption = paste('Frequency of mental disorder symptoms in the', 
                             'mental health clusters in the entire cohort.', 
                             'Categorical variables are presented as', 
                             'percentages and counts within the clusters.'))
   
-# Supplementary Table S9: differences between the clusters -----
+# Supplementary Table S10: differences between the clusters -----
   
-  insert_msg('Table S9: differences between the clusters')
+  insert_msg('Table S10: differences between the clusters')
   
   suppl_tables$clust_bcg <- clust_bcg$result_tbl %>% 
     filter(!source_var %in% c(clust_bcg$mental_variables)) %>% 
     select(- source_var) %>% 
-    mdtable(label = 'table_s9_cluster_background', 
+    mdtable(label = 'table_s10_cluster_background', 
             ref_name = 'clust_bcg', 
             caption = paste('Differences in demographic, socioeconomic,', 
                             'clinical, accident- and recovery-related factors,', 
@@ -245,7 +261,7 @@
                             'variables are presented as percentages', 
                             'and counts within the clusters.'))
   
-# Supplementary Table S10: early and late candidate predictors of mental clusters ------
+# Supplementary Table S11: early and late candidate predictors of mental clusters ------
   
   insert_msg('Table S10: explanatory factors for mental cluster modeling')
 
@@ -256,15 +272,15 @@
     set_names(c('early predictor model', 'full set predictor model')) %>% 
     compress(names_to = 'Classifier type', 
              values_to = 'Explanatory variables') %>% 
-    mdtable(label = 'table_s10_modeling_variables', 
+    mdtable(label = 'table_s11_modeling_variables', 
             ref_name = 'mod_variables', 
             caption = paste('Sets of explanatory factors', 
                             'used for modeling of the mental', 
                             'cluster assignment.'))
   
-# Supplementary Table S11: tuning -------
+# Supplementary Table S12: tuning -------
   
-  insert_msg('Tables S11: tuning')
+  insert_msg('Tables S12: tuning')
   
   suppl_tables$tuning <- 
     list(ranger = ranger_tune, 
@@ -287,16 +303,16 @@
     compress(names_to = 'Classifier type') %>% 
     mutate(Algorithm = class_globals$algo_labs[Algorithm]) %>% 
     relocate(`Classifier type`) %>% 
-    mdtable(label = 'table_s11_tuning', 
+    mdtable(label = 'table_s12_tuning', 
             ref_name = 'tuning', 
             caption = paste('The optimal combinations of machine learning', 
                             'algorithm parameters found in 10-fold', 
                             'cross-validation of the training subset', 
                             'of the study cohort.'))
   
-# Supplementary Table S12 - S13: performance of machine learning models -----
+# Supplementary Table S13 - S14: performance of machine learning models -----
   
-  insert_msg('Table S12 - S13: performance of cluster classifiers')
+  insert_msg('Table S13 - S14: performance of cluster classifiers')
   
   ## The table includes: overall accuracy, kappa, Brier score
   ## as well as sensitivity and specificity for the PTS cluster
@@ -322,8 +338,8 @@
   suppl_tables[c('early_classifiers', 'full_classifiers')] <- 
     suppl_tables[c('early_classifiers', 'full_classifiers')] %>% 
     list(x = ., 
-         label = c('table_s12_early_predictor_classifiers', 
-                   'table_s13_late_predictor_classifiers'), 
+         label = c('table_s13_early_predictor_classifiers', 
+                   'table_s14_late_predictor_classifiers'), 
          ref_name = names(.), 
          caption = paste('Performance statistics of machine learning', 
                          'classifiers at predicting the mental cluster', 

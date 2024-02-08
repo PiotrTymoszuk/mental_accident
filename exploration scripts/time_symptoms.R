@@ -21,6 +21,17 @@
            starts_with('gad7')) %>% 
     names
   
+  ## variable lexicon 
+  
+  time_sympt$var_lexicon <- ptsd$var_lexicon %>% 
+    filter(variable %in% time_sympt$variables) %>% 
+    select(variable, label) %>% 
+    rbind(tibble(variable = c('phq2_total_class', 
+                              'phq8_total_class'), 
+                 label = paste('clinically relevant depression symptoms', 
+                               c('(PHQ-2 \u22653)', 
+                                 '(PHQ-8)'))))
+  
   ## analysis table
   
   time_sympt$analysis_tbl <- ptsd$dataset %>% 
@@ -65,7 +76,8 @@
   time_sympt$plots <- 
     list(variable = time_sympt$test$variable, 
          plot_title = exchange(time_sympt$test$variable, 
-                               dict = ptsd$var_lexicon), 
+                               dict = time_sympt$var_lexicon) %>% 
+           stri_capitalize, 
          plot_subtitle = time_sympt$test$plot_cap) %>% 
     pmap(plot_variable, 
          time_sympt$analysis_tbl, 
@@ -79,7 +91,8 @@
     map(~.x + 
           scale_fill_manual(values = c('steelblue', 
                                        'coral2', 
-                                       'coral4'), 
+                                       'coral4', 
+                                       'gray60'), 
                             name = '')) %>% 
     set_names(time_sympt$variables)
   

@@ -1,4 +1,7 @@
-# Comparison of prevalence of mental disorder symptoms with published reports
+# Comparison of:
+# 1) prevalence of mental disorder symptoms with published reports
+# 2) distribution of accident sport types in the study cohort and in Austria
+# (10-year average).
 
   insert_head()
   
@@ -8,10 +11,13 @@
   library(trafo)
   library(rlang)
   library(stringi)
+  library(readODS)
   
   library(bootStat)
   library(exda)
   library(meta)
+  
+  library(ggtext)
   
   library(soucer)
   library(furrr)
@@ -42,6 +48,10 @@
       'rs13_total_class', 
       'phq9_total_class', 
       'gad7_total_class', 
+      'phq2_total_class', 
+      'gad2_total_class', 
+      'phq9_total_class', 
+      'phq8_total_class', 
       'phqd_panic_total_class', 
       'phq_events_total_class', 
       'traumatic_event')
@@ -50,14 +60,13 @@
   
   insert_msg('Analysis scripts')
   
-  ## frequency estimates
-  
   c('./literature scripts/german_monitoring.R', 
-    './literature scripts/own_estimates.R') %>% 
+    './literature scripts/own_estimates.R', 
+    './literature scripts/austrian_microcensus.R', 
+    './literature scripts/plots.R', 
+    './literature scripts/kurasi.R') %>% 
     source_all(message = TRUE, crash = TRUE)
   
-  ## plots
-
 # END ------
   
   insert_tail()

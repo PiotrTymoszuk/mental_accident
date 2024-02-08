@@ -167,7 +167,7 @@
   ptsd$cleared <- ptsd$cleared %>% 
     mutate(age_class = cut(age, 
                            c(-Inf, 30, 65, Inf), 
-                           c('16-30', '31-65', '>65')), 
+                           c('18-30', '31-65', '>65')), 
            ward_date = pss2date(ward_date), 
            hospitalization = ifelse(hospitalization == 'X', 'yes', 'no'), 
            hospitalization = factor(hospitalization, c('no', 'yes')), 
@@ -328,7 +328,7 @@
                                                'rheumatoid', 'skin', 
                                                'cancer', 'other')), 
            prime_trauma_event = factor(prime_trauma_event, 
-                                       c('none', 
+                                       c('no information', 
                                          'severe accident', 
                                          'physical assult', 
                                          'sexual molestation', 
@@ -336,11 +336,11 @@
                                          'severe disease', 
                                          'natural diseaster', 
                                          'war')), 
-           prime_trauma_event_past = ifelse(prime_trauma_event == 'none', 
-                                            'no trauma event', 
+           prime_trauma_event_past = ifelse(prime_trauma_event == 'no information', 
+                                            'no information', 
                                             as.character(prime_trauma_event_past)), 
            prime_trauma_event_past = factor(prime_trauma_event_past, 
-                                            c('no trauma event', 
+                                            c('no information', 
                                               '0 – 1 years ago', 
                                               '1 – 5 years ago', 
                                               '5 – 10 years ago', 
@@ -421,7 +421,8 @@
   insert_msg('Recoding of the sport type')
   
   ptsd$cleared <- ptsd$cleared %>% 
-    mutate(sport_type = car::recode(as.character(sport_type), 
+    mutate(sport_detail = sport_type, 
+           sport_type = car::recode(as.character(sport_type), 
                                     "'alpine skiing' = 'ski/snowboard/cross-country'; 
                                     'biking' = 'biking'; 
                                     'sledding' = 'sledding'; 
@@ -709,6 +710,21 @@
   
   ptsd$cidi_numeric <- NULL
   
+  ## update of information on the prime traumatic event: 
+  ## DIAX-negative observations are set to 'none'
+  
+  ptsd$cleared <- ptsd$cleared %>% 
+    mutate(prime_trauma_event = ifelse(traumatic_event == 'no', 
+                                       'none', 
+                                       as.character(prime_trauma_event)), 
+           prime_trauma_event = factor(prime_trauma_event, 
+                                       c('none', levels(ptsd$cleared$prime_trauma_event))), 
+           prime_trauma_event_past = ifelse(traumatic_event == 'no', 
+                                            'none', 
+                                            as.character(prime_trauma_event_past)), 
+           prime_trauma_event_past = factor(prime_trauma_event_past, 
+                                            c('none', levels(ptsd$cleared$prime_trauma_event_past))))
+  
 # SOC9l score calculation ----
   
   insert_msg('SOC-9L score calculation')
@@ -794,16 +810,41 @@
     reduce(`+`)
   
   ## score calculation: PHQ9 and stratification with the > 10 cutoff (Manea et al.)
+  ## PHQ-2 and GAD-2 scores for comparison with the German mental health 
+  ## monitoring. Stratification of the PHQ-2 score with the cutoff >= 3.
+  ## PHQ-8 for comparison with the Austrian microcensus data: 
+  ## cutoffs from Kroenke K, Spitzer RL, Psychiatric Annals 2002;32:509-521
   
   ptsd$cleared$phq9_total <- ptsd$cleared %>% 
     select(all_of(paste0('phqd_psych_satisf_q', 1:9))) %>% 
     map_dfc(~as.numeric(.x) - 1) %>% 
     reduce(`+`)
   
+  ptsd$cleared$phq2_total <- ptsd$cleared %>% 
+    select(all_of(paste0('phqd_psych_satisf_q', c(1, 2)))) %>% 
+    map_dfc(~as.numeric(.x) - 1) %>% 
+    reduce(`+`)
+  
+  ptsd$cleared$phq8_total <- ptsd$cleared %>% 
+    select(all_of(paste0('phqd_psych_satisf_q', c(1:8)))) %>% 
+    map_dfc(~as.numeric(.x) - 1) %>% 
+    reduce(`+`)
+  
   ptsd$cleared <- ptsd$cleared %>% 
     mutate(phq9_total_class = cut(phq9_total, 
                                   c(-Inf, 10, Inf), 
-                                  c('negative', 'positive')))
+                                  c('negative', 'positive')), 
+           phq2_total_class = ifelse(phq2_total >= 3, 
+                                     'positive', 'negative'), 
+           phq2_total_class = factor(phq2_total_class, 
+                                     c('negative', 'positive')), 
+           phq8_total_class = cut(phq8_total, 
+                                  c(-Inf, 4, 9, 14, 20, Inf), 
+                                  c('none', 
+                                    'mild', 
+                                    'moderate', 
+                                    'moderately severe', 
+                                    'severe')))
   
   ## score calculation, GAD-7 and stratification with the > 10 cutoff (Spitzer et al.)
   
@@ -812,10 +853,19 @@
     map_dfc(~as.numeric(.x) - 1) %>% 
     reduce(`+`)
   
+  ptsd$cleared$gad2_total <- ptsd$cleared %>% 
+    select(all_of(paste0('phqd_psych_satisf_q', c(1, 3)))) %>% 
+    map_dfc(~as.numeric(.x) - 1) %>% 
+    reduce(`+`)
+  
   ptsd$cleared <- ptsd$cleared %>% 
     mutate(gad7_total_class = cut(gad7_total, 
                                   c(-Inf, 10, Inf), 
-                                  c('negative', 'positive')))
+                                  c('negative', 'positive')), 
+           gad2_total_class = ifelse(gad2_total >= 3, 
+                                     'positive', 'negative'), 
+           gad2_total_class = factor(gad2_total_class, 
+                                     c('negative', 'positive')))
   
 # PHQD panic and anxiety attack scores ------
   

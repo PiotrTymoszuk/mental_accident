@@ -57,7 +57,8 @@
   time_psych$plots <- 
     list(variable = time_psych$test$variable, 
          plot_title = exchange(time_psych$test$variable, 
-                               dict = ptsd$var_lexicon), 
+                               dict = ptsd$var_lexicon) %>% 
+           stri_capitalize, 
          plot_subtitle = time_psych$test$plot_cap) %>% 
     pmap(plot_variable, 
          time_psych$analysis_tbl, 

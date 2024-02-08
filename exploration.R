@@ -8,18 +8,25 @@
   library(tidyverse)
   library(rlang)
   library(stringi)
-  library(exda)
-  library(soucer)
-  library(furrr)
-  library(rstatix)
+  library(readODS)
   library(trafo)
+
+  library(exda)
+  library(rstatix)
+  library(DescTools)
+  
   library(psych)
   library(clustTools)
+
   library(ggrepel)
-  library(DescTools)
+  
 
   library(ggvenn)
   library(ComplexUpset)
+  
+
+  library(soucer)
+  library(furrr)
 
   insert_head()
   
@@ -55,6 +62,7 @@
   insert_msg('Launching the exploration scripts')
   
   c('./exploration scripts/missingness.R', 
+    './exploration scripts/mental_incomplete.R', 
     './exploration scripts/cohort.R', 
     './exploration scripts/mental_comorbidity.R', 
     './exploration scripts/distribution.R', 
@@ -77,6 +85,12 @@
   c('./exploration scripts/time_psycho.R', 
     './exploration scripts/time_symptoms.R') %>% 
     source_all(message = TRUE, crash = TRUE)
+  
+  ## cached results of the comparison with the Austrian general population
+  
+  access_cache(cache_path = './cache/aut_stats.RData', 
+               script_path = './exploration scripts/sociodemographic.R', 
+               message = 'Loading cached comparison with the Austrian population.')
   
 # END -----
   

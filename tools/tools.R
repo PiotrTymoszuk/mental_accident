@@ -1,6 +1,5 @@
 # A medley of functional project tools
 
-  library(plyr)
   library(tidyverse)
   library(rlang)
   library(glue)
@@ -13,6 +12,10 @@
   library(clustTools)
   library(proxy)
   library(flextable)
+  library(microViz)
+  library(trafo)
+  library(exda)
+  library(clipr)
   
 # data import and transformation -----
   
@@ -380,9 +383,8 @@
     ## variables and frequencies
 
     frequency <-  data %>% 
-      dlply(split_factor, 
-            select, 
-            all_of(variables)) %>% 
+      blast(all_of(split_factor)) %>% 
+      map(select, all_of(variables)) %>% 
       map(count_binary) %>% 
       compress(names_to = split_factor) %>% 
       mutate(!!split_factor := factor(.data[[split_factor]], 
@@ -450,9 +452,8 @@
         'injury_lower_limbs', 'injury_external_other')
     
     frequency <- data %>% 
-      dlply(split_factor, 
-            select, 
-            all_of(variables)) %>% 
+      blast(all_of(split_factor)) %>% 
+      map(select, all_of(variables)) %>% 
       map(count_binary) %>% 
       compress(names_to = split_factor) %>% 
       mutate(!!split_factor := factor(.data[[split_factor]], 
@@ -1108,6 +1109,16 @@
   
 # Literature comparisons -------
   
+  counts_to_tbl <- function(df) {
+    
+    ## transforms a data frame with counts to a long format
+    ## data frame
+    
+    map2_dfr(df[[1]], df[[2]], 
+             ~tibble(!!names(df)[1] := rep(.x, .y)))
+    
+  }
+  
   get_boot_estimate <- function(x, B = 1000) {
     
     ### frequency estimates of categories of the factor x
@@ -1144,6 +1155,43 @@
                  .options = furrr_options(seed = TRUE)) %>% 
       compress(names_to = 'variable') %>% 
       relocate(variable)
+    
+  }
+  
+  pairwise_chisq_test <- function(data, 
+                                  split_factor = 'subset', 
+                                  variable = names(data)[names(data) != split_factor][1]) {
+    
+    ## data sets fro pairwise testing
+    
+    levs <- levels(data[[variable]])
+    
+    levs <- set_names(levs, levs)
+    
+    pair_data <- levs %>% 
+      map(~mutate(data, 
+                  !!variable := ifelse(.data[[variable]] == .x, 
+                                       'positive', 'negative'), 
+                  !!variable := factor(.data[[variable]], 
+                                       c('negative', 'positive'))))
+
+    pair_test <- pair_data %>% 
+      map(compare_variables, 
+          variables = variable, 
+          split_factor = split_factor, 
+          what = 'eff_size', 
+          types = 'cramer_v', 
+          ci = FALSE, 
+          exact = FALSE, 
+          pub_styled = TRUE)
+    
+    pair_test %>% 
+      compress(names_to = variable) %>% 
+      re_adjust(p_variable = 'p_value') %>% 
+      mutate(!!variable := factor(.data[[variable]], levs), 
+             xpos = as.numeric(.data[[variable]]), 
+             post_lab = paste(eff_size, significance, sep = '\n'))
+    
     
   }
   
@@ -1221,26 +1269,6 @@
     
   }
   
-  re_adjust <- function(data, method = 'BH') {
-    
-    ## adjusts for multiple testing e.g. with the Benjamini-Hochberg method
-    
-    if(method != 'none') {
-      
-      data <- data %>% 
-        mutate(p_adjusted = p.adjust(p_value, method = method))
-      
-    }
-    
-    data %>% 
-      mutate(significance = ifelse(p_adjusted < 0.001, 
-                                   'p < 0.001', 
-                                   ifelse(p_adjusted >= 0.05, 
-                                          paste0('ns (p = ', signif(p_adjusted, 2), ')'), 
-                                          paste('p =', signif(p_adjusted, 2)))))
-    
-  }
-  
   stri_capitalize <- function(str) {
     
     ## capitalizes the first letter of a string
@@ -1307,6 +1335,27 @@
         'five', 'six', 'seven', 'eight', 'nine', 'ten')
     
     digits[x]
+    
+  }
+  
+  insert_revision <- function(x = NULL) {
+    
+    if(!is.null(x)) {
+      
+      rev_txt <- paste0("<span custom-style = 'revision'>", x, "</span>")
+      
+    } else {
+      
+      rev_txt <- "<span custom-style = 'revision'></span>"
+      
+    }
+    
+    try(write_clip(content = rev_txt,
+                   object_type = 'character',
+                   breaks = '\n'),
+        silent = TRUE)
+    
+    return(invisible(rev_txt))
     
   }
 

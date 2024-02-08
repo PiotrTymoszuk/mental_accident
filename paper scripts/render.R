@@ -25,6 +25,14 @@
          output_format = my_word(), 
          output_dir = './paper')
   
+# point-to-point reply -------
+  
+  insert_msg('Rendering the rebittal letter')
+  
+  render('./paper/markdown/review_response.Rmd', 
+         output_format = my_word(), 
+         output_dir = './paper')
+  
 # END -----
   
   insert_tail()

@@ -116,6 +116,65 @@
                            'missing', 'complete'), 
            subset = factor(subset, c('complete', 'missing')))
   
+# Comparison of psychometry of the missing and complete observations -------
+  
+  insert_msg('Comparison of psychomertic features between imputed and complete')
+  
+  ## working with normalized data used for clustering, we're not presenting
+  ## plots or data until requested
+  
+  se_missing$miss_data <- se_missing$miss_data %>% 
+    rownames_to_column('ID') %>% 
+    left_join(se_missing$assingment, ., by = 'ID')
+  
+  ## descriptive stats
+  
+  se_missing$miss_comparison$stats <- se_missing$miss_data %>% 
+    explore(variables = se_globals$variables, 
+            split_factor = 'subset', 
+            what = 'table', 
+            pub_styled = TRUE) %>%
+    reduce(left_join, by = 'variable') %>% 
+    set_names(c('variable', levels(se_missing$miss_data$subset)))
+  
+  ## testing: Mann-Whitney test with r effect size statistic
+  ## and significant effects
+  
+  se_missing$miss_comparison$test <- se_missing$miss_data %>% 
+    compare_variables(variables = se_globals$variables, 
+                      split_factor = 'subset',
+                      what = 'eff_size', 
+                      types = 'wilcoxon_r', 
+                      exact = FALSE, 
+                      ci = FALSE, 
+                      pub_styled = TRUE, 
+                      adj_method = 'BH') %>% 
+    mutate(plot_cap = paste(eff_size, significance, sep = ', '))
+  
+  se_missing$miss_comparison$significant <- 
+    se_missing$miss_comparison$test %>% 
+    filter(p_adjusted < 0.05) %>% 
+    .$variable
+
+  ## box plots
+  
+  se_missing$miss_comparison$plots <- 
+    list(variable = se_missing$miss_comparison$test$variable, 
+         plot_title = exchange(se_missing$miss_comparison$test$variable, 
+                               ptsd$var_lexicon), 
+         plot_subtitle = se_missing$miss_comparison$test$plot_cap) %>% 
+    pmap(plot_variable, 
+         se_missing$miss_data, 
+         split_factor = 'subset', 
+         type = 'box', 
+         cust_theme = globals$common_theme, 
+         y_lab = 'score', 
+         x_n_labs = TRUE) %>% 
+    map(~.x + 
+          scale_fill_manual(values = c(complete = 'steelblue', 
+                                       missing = 'indianred3'))) %>% 
+    set_names(se_missing$miss_comparison$test$variable)
+  
 # END -------
   
   insert_tail()

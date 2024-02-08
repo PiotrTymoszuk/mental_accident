@@ -46,6 +46,8 @@
     './sensitivity scripts/psych_support.R', 
     './sensitivity scripts/income.R', 
     './sensitivity scripts/education.R', 
+    './sensitivity scripts/hospitalization.R', 
+    './sensitivity scripts/surgery.R', 
     './sensitivity scripts/summary.R') %>% 
     source_all(message = TRUE, crash = TRUE)
   
