@@ -24,46 +24,8 @@
   lit_kurasi$var_lexicon <- ptsd$var_lexicon %>% 
     select(variable, label, axis_lab) %>% 
     rbind(tibble(variable = c('accident_month', 'sport_detail'), 
-                 label = c('accident month', 'sport type, officiel classification'), 
+                 label = c('accident month', 'sport type'), 
                  axis_lab = c('accident month', 'sport type')))
-  
-# analysis data: sport type ------
-  
-  insert_msg('Analysis data: sport type')
-  
-  ## own estimates
-  
-  lit_kurasi$sport_type$own_data <- ptsd$dataset$sport_type
-  
-  ## the KURASI counts: excluding the category 'sonstige' with e.g. 
-  ## hunting and communication accidents
-  
-  lit_kurasi$sport_type$kurasi_n_total <- 13681 - 648
-  
-  lit_kurasi$sport_type$kurasi_data[['ski/snowboard/cross-country']] <- 
-    6177 + 238 + 444 + 44
-  
-  lit_kurasi$sport_type$kurasi_data[['sledding']] <- 327
-  
-  lit_kurasi$sport_type$kurasi_data[['climbing/hiking/mountaineering/skitour']] <- 
-    2987 + 544 + 90 + 682 + 21
-  
-  lit_kurasi$sport_type$kurasi_data[['biking']] <- 1124
-  
-  lit_kurasi$sport_type$kurasi_data[['other']] <- 295 + 45 + 11 + 4
-  
-  ## aggregating the kurasi_data and merging with own estimates
-  
-  lit_kurasi$sport_type$kurasi_data <- 
-    map2(names(lit_kurasi$sport$kurasi_data), 
-         lit_kurasi$sport$kurasi_data, rep) %>% 
-    reduce(c)
-  
-  lit_kurasi$sport_type$data <- 
-    map2_dfr(c('cohort', 'Austria'), 
-             lit_kurasi$sport_type[c("own_data", "kurasi_data")], 
-             ~tibble(subset = .x, 
-                     sport_type = factor(.y, levels(ptsd$dataset$sport_type))))
   
 # analysis data: monthly distribution -------
   
@@ -172,61 +134,30 @@
   
   lit_kurasi$sport_detail$kurasi_data[['climbing']] <- 544 + 11 + 4
   
-  lit_kurasi$sport_detail$kurasi_data[['air']] <- 295
+  lit_kurasi$sport_detail$kurasi_data[['air sport']] <- 295
   
   lit_kurasi$sport_detail$kurasi_data[['mountaineering']] <- 90
   
-  lit_kurasi$sport_detail$kurasi_data[['water']] <- 45
+  lit_kurasi$sport_detail$kurasi_data[['water sport']] <- 45
   
-  lit_kurasi$sport_detail$kurasi_data[['alpine skiing']] <- 6177 + 238
+  lit_kurasi$sport_detail$kurasi_data[['alpine skiing/snowboarding']] <- 6177 + 238
   
-  lit_kurasi$sport_detail$kurasi_data[['ski touring']] <- 682 + 444
+  lit_kurasi$sport_detail$kurasi_data[['ski touring/freeride']] <- 682 + 444
   
   lit_kurasi$sport_detail$kurasi_data[['sledding']] <- 327
   
-  lit_kurasi$sport_detail$kurasi_data[['crosssountry']] <- 44
+  lit_kurasi$sport_detail$kurasi_data[['cross-country skiing']] <- 44
   
   lit_kurasi$sport_detail$kurasi_data[['ice climbing']] <- 21
   
   ## own data
   
-  lit_kurasi$sport_detail$own_counts <- table(ptsd$dataset$sport_detail)
-  
-  lit_kurasi$sport_detail$own_data[['hiking']] <- lit_kurasi$sport_detail$own_counts["hiking"]
-  
-  lit_kurasi$sport_detail$own_data[['biking']] <- 
-    sum(lit_kurasi$sport_detail$own_counts[c("biking", "MTB")])
-  
-  lit_kurasi$sport_detail$own_data[['climbing']] <- 
-    sum(lit_kurasi$sport_detail$own_counts[c("rock climbing", "sport climbing/bouldering")])
-  
-  lit_kurasi$sport_detail$own_data[['air']] <- 
-    lit_kurasi$sport_detail$own_counts["paragliding"]
-  
-  lit_kurasi$sport_detail$own_data[['mountaineering']] <- 
-    lit_kurasi$sport_detail$own_counts["mountaineering"]
-  
-  lit_kurasi$sport_detail$own_data[['water']] <- 
-    sum(lit_kurasi$sport_detail$own_counts[c("other water", "swimming", "surfing", "sailing")])
-  
-  lit_kurasi$sport_detail$own_data[['alpine skiing']] <- 
-    sum(lit_kurasi$sport_detail$own_counts[c("alpine skiing", "snowboarding")])
-  
-  lit_kurasi$sport_detail$own_data[['ski touring']] <- 
-    lit_kurasi$sport_detail$own_counts["skitouring"]
-  
-  lit_kurasi$sport_detail$own_data[['sledding']] <- 
-    lit_kurasi$sport_detail$own_counts["sledding"]
-  
-  lit_kurasi$sport_detail$own_data[['crosssountry']] <- 
-    lit_kurasi$sport_detail$own_counts['crosssountry skiing']
-  
-  lit_kurasi$sport_detail$own_data[['ice climbing']] <- 
-    lit_kurasi$sport_detail$own_counts["ice climbing"]
-  
-  lit_kurasi$sport_detail$own_counts <- NULL
-  lit_kurasi$sport_detail <- compact(lit_kurasi$sport_detail)
-  
+  lit_kurasi$sport_detail$own_data <- ptsd$dataset %>% 
+    filter(sport_type != 'other') %>% 
+    mutate(sport_type = droplevels(sport_type)) %>% 
+    .$sport_type %>% 
+    table
+    
   ## data frame format
   
   lit_kurasi$sport_detail <- lit_kurasi$sport_detail %>% 
@@ -241,18 +172,20 @@
     mutate(season = ifelse(sport_detail %in% c('hiking', 
                                                'biking', 
                                                'climbing', 
-                                               'air', 
+                                               'air sport', 
                                                'mountaineering', 
-                                               'water'), 
+                                               'water sport'), 
                            'summer', 'winter'), 
-           season = factor(season, c('winter', 'summer')))
+           season = factor(season, c('winter', 'summer')), 
+           sport_detail = factor(sport_detail, levels(ptsd$dataset$sport_type)), 
+           sport_detail = droplevels(sport_detail))
   
 # Removal of the redundant data sets and incomplete cases ------
   
   insert_msg('Removal of redundant data sets')
   
   lit_kurasi$data <- 
-    lit_kurasi[c("sport_type", "accident_month", "age_class", "sport_detail")] %>% 
+    lit_kurasi[c("accident_month", "age_class", "sport_detail")] %>% 
     map(~.x$data) %>% 
     map(mutate, subset = factor(subset, c('cohort', 'Austria'))) %>% 
     map(~filter(.x, complete.cases(.x)))
@@ -337,8 +270,8 @@
   
   lit_kurasi$panel_data <- lit_kurasi$data
   
-  lit_kurasi$panel_data[c("sport_type", "age_class")] <- 
-    lit_kurasi$panel_data[c("sport_type", "age_class")] %>% 
+  lit_kurasi$panel_data[c("age_class")] <- 
+    lit_kurasi$panel_data[c("age_class")] %>% 
     map2(., names(.), 
          ~count(.x, subset, .data[[.y]], .drop = FALSE))
   
@@ -374,8 +307,7 @@
                       lit_kurasi$var_lexicon), 
          v = lit_kurasi$test$plot_cap, 
          w = lit_kurasi$panel_n_labs, 
-         u = c('Mountain sport', 
-               'Accident month', 
+         u = c('Accident month', 
                'Age class, years', 
                'Mountain sport')) %>% 
     pmap(function(x, y, z, v, w, u) x %>% 
@@ -412,16 +344,12 @@
                      scales = 'free', 
                      space = 'free'))
 
-  lit_kurasi$panels$sport_type <- lit_kurasi$panels$sport_type + 
-    facet_grid(. ~ sport_type, 
-               scales = 'free')
-  
   lit_kurasi$panels$age_class <- lit_kurasi$panels$age_class + 
     facet_grid(. ~ age_class, 
                scales = 'free')
 
-  lit_kurasi$panels[c("sport_type", "age_class")] <- 
-    lit_kurasi$panels[c("sport_type", "age_class")] %>% 
+  lit_kurasi$panels[c("age_class")] <- 
+    lit_kurasi$panels[c("age_class")] %>% 
     map(~.x + 
           theme(strip.background = element_blank(), 
                 strip.text = element_blank()))

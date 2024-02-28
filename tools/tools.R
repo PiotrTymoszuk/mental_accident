@@ -1358,5 +1358,49 @@
     return(invisible(rev_txt))
     
   }
+  
+  get_est_ci <- function(data, 
+                         ..., 
+                         est_var = 'percent', 
+                         lower_var = 'lower_ci', 
+                         upper_var = 'upper_ci', 
+                         signif_digits = 2,
+                         add_percent = TRUE, 
+                         abbreviate_ci = TRUE) {
+    
+    if(abbreviate_ci) {
+      
+      ci_txt <- '95%CI: '
+      
+    } else {
+      
+      ci_txt <- '95% confidence interval: '
+      
+    }
+    
+    if(add_percent) {
+      
+      data <- data %>% 
+        mutate(lab = paste0(signif(.data[[est_var]], signif_digits), 
+                            '%, ', ci_txt, 
+                            signif(.data[[lower_var]], signif_digits), 
+                            ' to ', 
+                            signif(.data[[upper_var]], signif_digits), 
+                            '%'))
+      
+    } else {
+      
+      data <- data %>% 
+        mutate(lab = paste0(signif(.data[[est_var]], signif_digits), 
+                            ', 95% confidence interval: ', 
+                            signif(.data[[lower_var]], signif_digits), 
+                            ' to ', 
+                            signif(.data[[upper_var]], signif_digits)))
+      
+    }
+    
+    filter(data, ...)$lab
+    
+  }
 
 # END -----

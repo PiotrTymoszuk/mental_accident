@@ -1,5 +1,7 @@
 # Forest plots of point estimates of symptoms of mental disorders in the cohort
-# and publications or the German mental health surveillance system
+# and publications.
+# Population estimates of anxiety and depression: paper by Hummer and colleagues, 
+# because they use the same toolset.
 
   insert_head()
   
@@ -27,7 +29,8 @@
       mikutta_2022 = 'steelblue', 
       leonard_2021 = 'steelblue', 
       chernova_2021 = 'steelblue', 
-      leppert_2008 = 'steelblue')
+      leppert_2008 = 'steelblue', 
+      humer_2022 = 'steelblue')
   
   ## studies with alpine accidents and with general population
   
@@ -39,23 +42,16 @@
   
   lit_plots$studies <- lit_plots$studies[c("general", "alpine")]
 
-# Estimates of depression and anxiety symptoms, German monitoring -------
+# Estimates of depression and anxiety symptoms, Humer 2022 -------
   
   insert_msg('Depression and anxiety, German monitoring')
   
   ## point estimates
   
-  lit_plots$depr_anx_stats <- 
-    list(cohort = lit_data$stats %>% 
-           filter(variable %in% c('gad2_total_class', 
-                                  'phq2_total_class'), 
-                  level == 'positive') %>% 
-           mutate(disorder = ifelse(stri_detect(variable, fixed = 'gad'), 
-                                    'anxiety', 'depression')), 
-         desurv = lit_desurv$stats %>% 
-           mutate(disorder = c('anxiety', 'depression'))) %>% 
-    map(select, disorder, variable, percent, lower_ci, upper_ci) %>% 
-    compress(names_to = 'source') %>% 
+  lit_plots$depr_anx_stats <- lit_data$stats %>% 
+    filter(variable %in% c('gad7_total_class', 
+                           'phq9_total_class'), 
+           level == 'positive') %>% 
     mutate(plot_lab = paste0(signif(percent, 2), 
                              ' [', signif(lower_ci, 2), 
                              ' - ', signif(upper_ci, 2), ']'), 
@@ -64,6 +60,8 @@
                                   'phq2_total_class' = 'PHQ-2'; 
                                   'gad7_total_class' = 'GAD-7'; 
                                   'gad2_total_class' = 'GAD-2'"), 
+           disorder = ifelse(variable == 'GAD-7', 
+                             'anxiety', 'depression'), 
            disorder = factor(disorder, c('anxiety', 'depression')))
   
   ## Forest plots: separate plots for depression and anxiety
@@ -83,17 +81,17 @@
                position = position_dodge(0.9)) + 
     geom_text(aes(label = plot_lab), 
               size = 2.5, 
-              hjust = 0.5,
+              hjust = 0.2,
               vjust = -1.2, 
               position = position_dodge(0.9)) + 
     facet_grid(disorder ~ ., 
-               labeller = as_labeller(c(anxiety = 'Anxiety, GAD-2 \u2265 3', 
-                                        depression = 'Depression, PHQ-2 \u2265 3'))) + 
+               labeller = as_labeller(c(anxiety = 'Anxiety, GAD-7 \u2265 10', 
+                                        depression = 'Depression, PHQ-9 \u2265 10'))) + 
     scale_y_discrete(labels = c(cohort = 'own cohort', 
-                                desurv = 'German mental\nhealth monitoring')) + 
+                                humer_2022 = 'Austrian estimates\nHumer 2022')) + 
     scale_color_manual(values = lit_plots$dataset_colors, 
                        labels = c(cohort = 'own cohort', 
-                                  desurv = 'German mental\nhealth monitoring'), 
+                                  humer_2022 = 'Austrian estimates\nHumer 2022'), 
                        name = '') + 
     guides(color = 'none') +
     globals$common_theme + 
@@ -130,7 +128,7 @@
          z = list(c('cohort' = 'own cohort\nDIA-X', 
                     'koenen_2017' = 'Koenen 2017\nCIDI', 
                     'kessler_2017' = 'Kessler 2017\nCIDI', 
-                    'darvez_bornos_2008_trauma' = 'Darvez-Bornos 2008\nCIDI', 
+                    'darvez_bornos_2008_trauma' = 'Darves-Bornos 2008\nCIDI', 
                     'hauffa_2011' = 'Hauffa 2011\nCIDI', 
                     'kilpatrick_2013' = 'Kilpatrick 2013\nDSM-5 criteria'), 
                   c('cohort' = 'own cohort\nDIA-X', 
@@ -187,7 +185,7 @@
          z = list(c('cohort' = 'own cohort\nall PCL-5 domains+', 
                     'kilpatrick_2013' = 'Kilpatrick 2013\nDSM-5 criteria', 
                     'koenen_2017' = 'Koenen 2017\nCIDI', 
-                    'darvez_bornos_2008_ptsd' = 'Darvez-Bornoz 2008\nCIDI', 
+                    'darvez_bornos_2008_ptsd' = 'Darves-Bornoz 2008\nCIDI', 
                     'hauffa_2011' = 'Hauffa 2011\nPDS'), 
                   c('cohort' = 'own cohort\nall PCL-5 domains+', 
                     'mikutta_2022' = 'Mikutta 2022\nall PCL-5 domains+', 
@@ -231,7 +229,8 @@
                              ' [', signif(lower_ci, 2), 
                              ' - ', signif(upper_ci, 2), ']'), 
            level = factor(level, 
-                          rev(c('mild', 
+                          rev(c('none', 
+                                'mild', 
                                 'moderate', 
                                 'moderately severe', 
                                 'severe'))))
@@ -260,7 +259,8 @@
                        labels = c(cohort = 'own cohort', 
                                   microcensus = 'Austrian\nmicrocensus 2019'), 
                        name = '') + 
-    scale_y_discrete(labels = c('mild' = 'mild\nPHQ-8 5 - 9', 
+    scale_y_discrete(labels = c('none' = 'none', 
+                                'mild' = 'mild\nPHQ-8 5 - 9', 
                                 'moderate' = 'moderate\nPHQ-8 10 - 14', 
                                 'moderately severe' = 'moderately severe\nPHQ-8 15 - 20', 
                                 'severe' = 'severe\nPHQ-8 21+')) + 

@@ -123,8 +123,11 @@
   insert_msg('Figure S5: anxiety, depression, resilience in the cohort and reports')
   
   suppl_figures$mental_literature <- 
-    plot_grid(lit_plots$depr_anx_plot, 
+    plot_grid(lit_plots$depr_anx_plot + 
+                expand_limits(x = 35) + 
+                labs(title = 'Anxious and depressive symptoms'), 
               lit_plots$aut_plot + 
+                labs(title = 'Depressive symptoms') + 
                 theme(legend.position = 'bottom'), 
               lit_plots$rs_plot, 
               ncol = 2, 
@@ -138,7 +141,7 @@
                               'depressive symptoms and of resilience scoring', 
                               'in the study cohort and literature.'), 
               w = 180, 
-              h = 190)
+              h = 200)
   
 # Figure S6: cluster development ------
   
@@ -241,11 +244,30 @@
               w = 180, 
               h = 200)
   
-# Figure S8: cluster distribution, inter-cluster cosine distances ------
+# Figure S8: clustering stats, distribution, inter-cluster cosine distances ------
   
-  insert_msg('Figure S8: cluster distribution and distances between clusters')
+  insert_msg('Figure S8: cluster stats, distribution and distances between clusters')
+  
+  ## upper panel: clustering stats
+  
+  suppl_figures$cosine$upper <- 
+    semi_clust$stat_plots[c("sil_width", 
+                            "frac_misclassified", 
+                            "frac_var", 
+                            "frac_np")] %>% 
+    map(~.x + theme(legend.position = 'none')) %>% 
+    plot_grid(plotlist = ., 
+              ncol = 2, 
+              align = 'hv', 
+              axis = 'tblr') %>% 
+    plot_grid(get_legend(semi_clust$stat_plots[[1]] + 
+                           theme(legend.position = 'bottom')), 
+              nrow = 2, 
+              rel_heights = c(0.8, 0.2))
+  
+  ## bottom panel: distribution and cosine distances
 
-  suppl_figures$cosine <- 
+  suppl_figures$cosine$bottom <- 
     list(semi_clust$n_numbers$plot, 
          semi_clust$inter_distance$plot) %>% 
     map(~.x + theme(legend.position = 'bottom')) %>% 
@@ -253,7 +275,16 @@
               ncol = 2, 
               align = 'hv', 
               axis = 'tblr', 
-              labels = LETTERS, 
+              labels = c('B', 'C'), 
+              label_size = 10)
+  
+  ## the entire figure
+  
+  suppl_figures$cosine <- 
+    plot_grid(suppl_figures$cosine$upper, 
+              suppl_figures$cosine$bottom, 
+              nrow = 2, 
+              labels = c('A', ''), 
               label_size = 10) %>% 
     as_figure(label = 'figure_s8_cluster_distribution_distance', 
               ref_name = 'cosine', 
@@ -262,7 +293,7 @@
                               'in the training and test subset of', 
                               'the study cohort.'), 
               w = 180, 
-              h = 100)
+              h = 200)
 
 # Figure S9: feature heat maps -------
   
@@ -392,7 +423,7 @@
               ncol = 2, 
               align = 'v', 
               axis = 'tblr', 
-              labels = LETTERS, 
+              labels = c('A', 'B', '', ''), 
               label_size = 10, 
               rel_heights = c(0.8, 0.2))
   
@@ -412,21 +443,12 @@
   insert_msg('Figure S12: additional background factors')
   
   suppl_figures$demo <- 
-    clust_bcg$plots[c("employment_status", "prior_accident", 
-                      "accident_season", "sport_type", 
-                      "accident_alone", "accident_injured_persons")] %>% 
-    map(~.x + theme(legend.position = 'right'))
-  
-  suppl_figures$demo$sport_type <- 
-    suppl_figures$demo$sport_type + 
-    scale_fill_brewer(palette = 'Reds', 
-                      labels = c('ski\nsnowboard', 
-                                 'sledding', 
-                                 'climbing\nhiking\nmountaineering', 
-                                 'biking', 
-                                 'other'))
-  
-  suppl_figures$demo <- suppl_figures$demo %>% 
+    clust_bcg$plots[c("employment_status", 
+                      "prior_accident", 
+                      "accident_season", 
+                      "accident_alone", 
+                      "accident_injured_persons")] %>% 
+    map(~.x + theme(legend.position = 'right')) %>% 
     plot_grid(plotlist = ., 
               ncol = 2, 
               align = 'hv', 
@@ -438,9 +460,22 @@
               w = 180, 
               h = 180)
   
-# Figure S14: mental cluster classifiers, full predictor set ------
+# Figure S13: sport types in the clusters -------
   
-  insert_msg('Figure S14: mental cluster classfier, full predictor set')
+  insert_msg('Figure S13: Sport types in the clusters')
+  
+  suppl_figures$cluster_sport <- 
+    plot_grid(clust_bcg$sport_type_panel + 
+                theme(legend.position = 'bottom')) %>% 
+    as_figure(label = 'figure_s13_cluster_sport_type', 
+              ref_name = 'cluster_sport', 
+              caption = 'Mountain sport types in the clusters.', 
+              w = 180, 
+              h = 160)
+  
+# Figure S15: mental cluster classifiers, full predictor set ------
+  
+  insert_msg('Figure S15: mental cluster classfier, full predictor set')
   
   ## upper panel: overall performance stats
   
@@ -482,7 +517,7 @@
               nrow = 2, 
               labels = LETTERS, 
               label_size = 10) %>% 
-    as_figure(label = 'figure_s14_rf_full_classifier', 
+    as_figure(label = 'figure_s15_rf_full_classifier', 
               ref_name = 'full_class', 
               caption = paste('Assignment of accident victims to', 
                               'the mental clusters based on', 
@@ -492,9 +527,9 @@
               w = 180, 
               h = 180)
   
-# Figure S13 and S15: variable importance, early and all predictors -------
+# Figure S14 and S16: variable importance, early and all predictors -------
   
-  insert_msg('Figure S13 and S15: variable importance, early and all predictors')
+  insert_msg('Figure S14 and S16: variable importance, early and all predictors')
   
   suppl_figures[c('importance_early', 'importance_full')] <- 
     list(early_class$importance$plots[c("ranger", "svmRadial", "sda", "cforest")],  
@@ -514,8 +549,8 @@
   suppl_figures[c('importance_early', 'importance_full')] <- 
     suppl_figures[c('importance_early', 'importance_full')] %>% 
     list(x = ., 
-         label = c('figure_s13_importance_early_predictors', 
-                   'figure_s15_importance_all_predictors'), 
+         label = c('figure_s14_importance_early_predictors', 
+                   'figure_s16_importance_all_predictors'), 
          ref_name = names(.), 
          caption = paste(paste('Variable importance metrics for the random forest,', 
                                'support vector machine, discriminant analysis,', 

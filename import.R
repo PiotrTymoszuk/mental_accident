@@ -420,35 +420,46 @@
   
   insert_msg('Recoding of the sport type')
   
+  ## classification according to KURASI
+  
   ptsd$cleared <- ptsd$cleared %>% 
-    mutate(sport_detail = sport_type, 
+    mutate(sport_detail = sport_type,
            sport_type = car::recode(as.character(sport_type), 
-                                    "'alpine skiing' = 'ski/snowboard/cross-country'; 
+                                    "'alpine skiing' = 'alpine skiing/snowboarding'; 
                                     'biking' = 'biking'; 
                                     'sledding' = 'sledding'; 
-                                    'rock climbing' = 'climbing/hiking/mountaineering/skitour'; 
-                                    'hiking' = 'climbing/hiking/mountaineering/skitour'; 
+                                    'rock climbing' = 'climbing'; 
+                                    'hiking' = 'hiking'; 
                                     'MTB' = 'biking'; 
-                                    'sailing' = 'other'; 
-                                    'crosssountry skiing' = 'ski/snowboard/cross-country'; 
-                                    'surfing' = 'other'; 
+                                    'sailing' = 'water sport'; 
+                                    'crosssountry skiing' = 'cross-country skiing'; 
+                                    'surfing' = 'water sport'; 
                                     'skating' = 'other'; 
-                                    'mountaineering' = 'climbing/hiking/mountaineering/skitour'; 
-                                    'skitouring' = 'climbing/hiking/mountaineering/skitour'; 
-                                    'paragliding' = 'climbing/hiking/mountaineering/skitour'; 
-                                    'sport climbing/bouldering' = 'climbing/hiking/mountaineering/skitour'; 
-                                    'snowboarding' = 'ski/snowboard/cross-country'; 
-                                    'other water' = 'other'; 
-                                    'ice climbing' = 'climbing/hiking/mountaineering/skitour'; 
-                                    'other mountain' = 'climbing/hiking/mountaineering/skitour'; 
-                                    'swimming' = 'other'; 
-                                    'figeln' = 'climbing/hiking/mountaineering/skitour'; 
-                                    'ski jumping' = 'ski/snowboard/cross-country'; 
-                                    'bobsledding' = 'sledding'; 
-                                    'other winter' = 'sledding'"), 
+                                    'mountaineering' = 'mountaineering'; 
+                                    'skitouring' = 'ski touring/freeride'; 
+                                    'paragliding' = 'air sport'; 
+                                    'sport climbing/bouldering' = 'climbing'; 
+                                    'snowboarding' = 'alpine skiing/snowboarding'; 
+                                    'ice climbing' = 'ice climbing'; 
+                                    'other mountain' = 'other'; 
+                                    'swimming' = 'water sport'; 
+                                    'figeln' = 'ski touring/freeride'; 
+                                    'ski jumping' = 'other'; 
+                                    'other winter' = 'other'; 
+                                    'other water' = 'water sport'"), 
            sport_type = factor(sport_type, 
-                               c('ski/snowboard/cross-country', 'sledding', 
-                                 'climbing/hiking/mountaineering/skitour', 'biking', 'other')))
+                               c('alpine skiing/snowboarding', 
+                                 'ski touring/freeride', 
+                                 'cross-country skiing', 
+                                 'sledding', 
+                                 'ice climbing', 
+                                 'hiking', 
+                                 'climbing', 
+                                 'mountaineering', 
+                                 'biking', 
+                                 'air sport', 
+                                 'water sport', 
+                                 'other')))
   
 # Counts of injured body regions ------
   
@@ -809,7 +820,7 @@
     map_dfc(~as.numeric(.x) - 1) %>% 
     reduce(`+`)
   
-  ## score calculation: PHQ9 and stratification with the > 10 cutoff (Manea et al.)
+  ## score calculation: PHQ9 and stratification with the >= 10 cutoff (Manea et al.)
   ## PHQ-2 and GAD-2 scores for comparison with the German mental health 
   ## monitoring. Stratification of the PHQ-2 score with the cutoff >= 3.
   ## PHQ-8 for comparison with the Austrian microcensus data: 
@@ -832,7 +843,7 @@
   
   ptsd$cleared <- ptsd$cleared %>% 
     mutate(phq9_total_class = cut(phq9_total, 
-                                  c(-Inf, 10, Inf), 
+                                  c(-Inf, 9, Inf), 
                                   c('negative', 'positive')), 
            phq2_total_class = ifelse(phq2_total >= 3, 
                                      'positive', 'negative'), 
@@ -846,7 +857,7 @@
                                     'moderately severe', 
                                     'severe')))
   
-  ## score calculation, GAD-7 and stratification with the > 10 cutoff (Spitzer et al.)
+  ## score calculation, GAD-7 and stratification with the >= 10 cutoff (Spitzer et al.)
   
   ptsd$cleared$gad7_total <- ptsd$cleared %>% 
     select(all_of(paste0('phqd_psych_satisf_q', 10:16))) %>% 
@@ -860,7 +871,7 @@
   
   ptsd$cleared <- ptsd$cleared %>% 
     mutate(gad7_total_class = cut(gad7_total, 
-                                  c(-Inf, 10, Inf), 
+                                  c(-Inf, 9, Inf), 
                                   c('negative', 'positive')), 
            gad2_total_class = ifelse(gad2_total >= 3, 
                                      'positive', 'negative'), 

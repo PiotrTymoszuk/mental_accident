@@ -242,6 +242,82 @@
     scale_y_discrete(limits = rev(clust_bcg$mental_symptoms$variables), 
                      labels = clust_bcg$mental_symptoms$ax_labs) + 
     theme(axis.text.y = element_markdown())
+  
+# Post-hoc test for frequency of sport types --------
+  
+  insert_msg('Post hoc test for differences in sport types')
+  
+  clust_bcg$sport_post_hoc <- 
+    pairwise_chisq_test(clust_bcg$analysis_tbl, 
+                        variable = 'sport_type', 
+                        split_factor = 'clust_id') %>% 
+    mutate(significant = ifelse(p_adjusted < 0.05, 'yes', 'no'), 
+           post_lab = paste(eff_size, significance, sep = ', '), 
+           post_lab = paste(sport_type, post_lab, sep = '<br>'), 
+           post_lab = ifelse(significant == 'yes', 
+                             paste0('<b>', post_lab, '</b>'), 
+                             post_lab))
+  
+# Bar plot for the sport types --------
+  
+  insert_msg('Bar plot for the sport types')
+  
+  ## fill labels with total n numbers
+
+  clust_bcg$sport_fill_labs <- clust_bcg$analysis_tbl$clust_id %>% 
+    table %>% 
+    map2_chr(names(.), ., 
+             paste, sep = ': n = ') %>% 
+    set_names(levels(clust_bcg$analysis_tbl$clust_id))
+    
+  ## plotting data
+  
+  clust_bcg$sport_panel_data <- clust_bcg$analysis_tbl %>% 
+    count(clust_id, sport_type, .drop = FALSE) %>% 
+    group_by(clust_id) %>% 
+    mutate(n_cluster = sum(n), 
+           perc_cluster = n/n_cluster * 100) %>% 
+    ungroup %>% 
+    mutate(season = ifelse(sport_type %in% c('hiking', 
+                                             'biking', 
+                                             'climbing', 
+                                             'air sport', 
+                                             'mountaineering', 
+                                             'water sport'), 
+                           'summer', 'winter'), 
+           season = factor(season, c('winter', 'summer')))
+  
+  ## bar plot
+  
+  clust_bcg$sport_type_panel <- clust_bcg$sport_panel_data %>% 
+    ggplot(aes(x = perc_cluster, 
+               y = sport_type, 
+               fill = clust_id)) + 
+    geom_bar(stat = 'identity', 
+             color = 'black', 
+             position = position_dodge(0.9)) + 
+    geom_text(aes(label = signif(perc_cluster, 2), 
+                  color = clust_id), 
+              size = 2.5, 
+              show.legend = FALSE, 
+              position = position_dodge(0.9), 
+              hjust = -0.4) + 
+    facet_grid(season ~ ., 
+               space = 'free', 
+               scales = 'free') + 
+    scale_y_discrete(labels = set_names(clust_bcg$sport_post_hoc$post_lab, 
+                                        clust_bcg$sport_post_hoc$sport_type)) + 
+    scale_fill_manual(values = globals$clust_colors, 
+                      labels = clust_bcg$sport_fill_labs, 
+                      name = '') + 
+    scale_color_manual(values = globals$clust_colors, 
+                       name = '') + 
+    globals$common_theme + 
+    theme(axis.title.y = element_blank(), 
+          axis.text.y = element_markdown()) + 
+    labs(title = 'Sport type', 
+         subtitle = filter(clust_bcg$test, variable == 'sport_type')$plot_cap, 
+         x = '% of cluster')
 
 # END ------
   

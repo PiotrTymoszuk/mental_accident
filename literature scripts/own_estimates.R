@@ -28,6 +28,9 @@
 #
 # 9) Leppert et al. 2008, the seminal paper on the RS13 scale. Normative values 
 # for the German population are used.
+#
+# 10) Humer et al. 2022, assessment of anxiety and depression, GAD-7 and PHQ-9, 
+# Austrian population, 2022
 
 
   insert_head()
@@ -162,6 +165,14 @@
     tibble(dsm5_all_class = c(rep('positive', 6), 
                               rep('negative', 55 - 6))) %>% 
     mutate(dsm5_all_class = factor(dsm5_all_class, c('negative', 'positive')))
+  
+  ## Humer 2022, n = 1031
+  
+  lit_data$data$humer_2022 <- 
+    tibble(phq9_total_class = round(1031 * 28.3/100), 
+           gad7_total_class = round(1031 * 16.1/100)) %>% 
+    map_dfc(~c(rep('positive', .x), rep('negative', 1031 - .x))) %>% 
+    map_dfc(factor, c('negative', 'positive'))
     
 # Percentages of symptoms and psychometric classes --------
   

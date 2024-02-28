@@ -357,7 +357,7 @@
                                name = 'Z-score') + 
           scale_y_discrete(labels = function(x) exchange(x, se_summary$var_lexicon)))
   
-# Location of the partcipants with incomplete psych variables in the clusters ------
+# Location of the participants with incomplete psych variables in the clusters ------
   
   insert_msg('Incomplete surveys in the mental health clusters')
   

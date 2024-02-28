@@ -75,35 +75,39 @@
 
 # Plots of variances and average silhouettes -------
   
-  insert_msg('Plots of variances and silhouettes')
+  insert_msg('Plots of variances, silhouettes and neighborhood preservation')
   
-  semi_clust$stat_plot <- semi_clust$stats %>% 
-    pivot_longer(cols = all_of(c('frac_var', 'sil_width')), 
-                 names_to = 'statistic', 
-                 values_to = 'value') %>%  
-    ggplot(aes(x = value, 
-               y = reorder(statistic, value), 
-               fill = partition)) + 
-    geom_bar(stat = 'identity', 
-             color = 'gray20', 
-             position = position_dodge(0.9)) + 
-    geom_text(aes(label = signif(value, 2)), 
-              size = 2.5, 
-              hjust = 1.4, 
-              color = 'white', 
-              position = position_dodge(0.9)) + 
-    scale_fill_manual(values = c(training = 'steelblue4', 
-                                 test = 'coral4'), 
-                      name = 'Subset') +
-    scale_x_continuous(limits = c(0, 1)) + 
-    scale_y_discrete(labels = c(sil_width = 'avg. silhouette', 
-                                frac_var = 'variance')) + 
-    globals$common_theme + 
-    theme(axis.title.y = element_blank()) + 
-    labs(title = 'Semi-supervised clustering', 
-         x = 'Statistic value')
-  
-  
+  semi_clust$stat_plots <- 
+    list(x = c('frac_var', 'sil_width', 
+               'frac_misclassified', 'frac_np'), 
+         y = c('Explained variance', 'Cluster separation', 
+               'Misclassification', 'Neighborhood preservation'), 
+         z = c('between-cluster/total SS', 
+               'mean silhouette width', 
+               'fraction with negative silhouette width', 
+               'fraction of preserved 5-NN')) %>% 
+    pmap(function(x, y, z) semi_clust$stats %>% 
+           ggplot(aes(x = .data[[x]], 
+                      y = ' ', 
+                      fill = partition)) + 
+           geom_bar(stat = 'identity', 
+                    color = 'black', 
+                    position = position_dodge(0.9)) + 
+           geom_text(aes(label = signif(.data[[x]], 2)), 
+                     size = 2.5, 
+                     hjust = 1.4, 
+                     color = 'white', 
+                     position = position_dodge(0.9)) + 
+           scale_fill_manual(values = c(training = 'steelblue4', 
+                                        test = 'coral4'), 
+                             name = 'Subset') +
+           globals$common_theme + 
+           theme(axis.title.y = element_blank()) + 
+           labs(title = y, 
+                x = z)) %>% 
+    set_names(c('frac_var', 'sil_width', 
+                'frac_misclassified', 'frac_np'))
+
 # Diagnostic plots  ------
   
   insert_msg('Diagnostic plots')

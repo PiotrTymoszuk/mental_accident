@@ -109,7 +109,7 @@
   figures$clust_symptoms$upper <- 
     plot_grid(plot_grid(clust_bcg$mental_symptoms$plot + 
                           theme(legend.position = 'none') + 
-                          expand_limits(x = 16), 
+                          expand_limits(x = 20), 
                         get_legend(clust_bcg$mental_symptoms$plot + 
                                      theme(legend.position = 'bottom')),
                         nrow = 2, 
