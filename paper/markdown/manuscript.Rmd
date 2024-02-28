@@ -89,8 +89,7 @@ set_flextable_defaults(font.family = 'Cambria',
 
 # Abstract
 
-__Background:__ The restorative effect of physical activity in natural alpine environments on mental and physical health is increasingly recognized. 
-However, mountain sports are also linked to a risk of accidents. 
+__Background:__ <span custom-style = 'revision'>The restorative effect of physical activity in alpine environments on mental and physical health is recognized. However, risk of accidents and post-accident mental health problems is inherent to every sport, including mountain sport activity.</span>
 We aimed to characterize mental health in individuals following mountain sport accidents requiring professional medical management.
 
 __Methods:__ Adult victims of mountain sport accidents treated at the hospital of the Medical University of Innsbruck (Austria) between 2018 and 2020 completed a cross-sectional survey at a median `r round(median(ptsd$dataset$obs_time)/30.436)` months following the admission (n = `r nrow(ptsd$dataset)`). 
@@ -119,26 +118,36 @@ Physical activity in mountains, such as hiking, climbing, alpine skiing or ski t
 Outdoor physical activity in general and mountain sports in particular exert beneficial effects on physical and mental health [@Ower2019; @Niedermeier2017a; @Niedermeier2017]. 
 However, mountain sports are also associated with the risk of accidents and injury [@Faulhaber2017; @Faulhaber2020], which could consequently lead to development of post-traumatic stress disorder (PTSD) or other stress-related mental disorders.
 
-Diagnostic symptoms of PTSD  include re-experiencing (criterion B), avoidance (criterion C), negative alterations in cognition and mood (criterion D) and hyper-arousal (criterion E) [@AmericanPsychiatricAssociation2013], which can occur following self-experiencing or witnessing of a traumatic event such as actual or threatened death, injury, physical or sexual violence. 
-PTSD may co-occur with symptoms of depression and anxiety and substance abuse disorders [@Gagnon-Sanschagrin2022; @Brady2000]. 
+Diagnostic symptoms of PTSD  include 
+re-experiencing (such as involuntary, intrusive memories, dreams or flashbacks of the traumatic event;, criterion B), 
+avoidance (such as avoiding memories, thoughts or external reminders related to the traumatic event, criterion C), 
+negative alterations in cognition and mood (criterion D) and
+hyper-arousal (such as irritability, problems with sleep or concentration, criterion E) [@AmericanPsychiatricAssociation2013], which can occur following self-experiencing or witnessing of a traumatic event such as actual or threatened death, injury, physical or sexual violence. 
+PTSD may co-occur with symptoms of depression and anxiety and substance <span custom-style = 'revision'>use</span> disorders [@Brady2000]. 
 Although most individuals have experienced at least one traumatic event during their lifetime [@Benjet2016], the prevalence of PTSD in the general European population has been estimated between 0.38 to 6.67% [@Burri2014]. 
 Yet, up to 26% of acute physical trauma patients have been reported to develop PTSD [@Joseph2020]. 
 
 So far it has proven difficult to reliably identify early predictors of PTSD development in accident victims. 
-While some recent studies on specific populations have identified risk factors, such as pre-existing psychological distress [@Ziobrowski2021] or symptoms of mental disorders [@Papini2018], others have focused on the arousal and stress reaction during acute trauma and peri-traumatic period as candidate predictors [@Schultebraucks2020]. 
+While some recent studies on specific populations have identified risk factors, such as pre-existing psychological distress <span custom-style = 'revision'>or mental disorders</span> [@Ziobrowski2021], others have focused on the arousal and stress reaction during acute trauma and peri-traumatic period as candidate predictors [@Schultebraucks2020]. 
 These results require validation and further generalization before they can be implemented into routine care [@Wafa2019; @Shalev2019]. 
+<span custom-style = 'revision'>Overall, combination of multiple demographic, clinical and mental factors seem to yield more accurate PTSD predictions compared to single variables [@Papini2018].</span>
 
-Resilience, i.e. the ability to recover from adversities can protect an individual from developing PTSD and can help to explain why most people do not develop PTSD despite the high prevalence of traumatic events in the general population [@Ahmed2007; @Bensimon2012]. 
+Resilience, i.e. the ability to recover from adversities can protect an individual from developing PTSD and can help to explain why most people do not develop PTSD despite the high prevalence of traumatic events in the general population [@Ahmed2007]. 
 Generally individuals who perform mountain sports display high resilience values [@Ower2019]. 
 Post-traumatic growth can occur in individuals struggling to overcome the consequences of a traumatic event and describes a psychological adjustment reaction with strengthened positive perceptions of self, others, one's life, and meaning of the event [@Tedeschi1996]. 
-Although both resilience and post-traumatic growth are salutogenetic concepts their exact link is still under investigation [@Levine2009].
+Although both resilience and post-traumatic growth are salutogenic concepts their exact link is still under investigation [@Levine2009].
 
-With the increasing popularity of mountain sports, it is essential to characterize the mental health consequences of accidents during mountain sports. 
-Prevention of PTSD or other mental health problems following an accident is essential to preserve the positive mental health effects of physical activity in an mountain environment despite the accident risk. 
+With the increasing popularity of mountain sports, it is <span custom-style = 'revision'>key</span> to characterize the mental health consequences of accidents during mountain sports. 
+Prevention of PTSD or other mental health problems following an accident is essential to preserve the positive mental health effects of physical activity in a mountain environment despite the <span custom-style = 'revision'>inherent</span> accident risk. 
 Available data on the consequences of accidents during mountain sports on mental health are scarce. 
-Prior studies were performed on mountain guides, rescuers or avalanche accident survivors and mostly lack clinical data [@Brugger2002; @Mikutta2022; @Traber2020; @Leonard2021; @Thordardottir2015; @Sommer2004]. 
-We analyzed mental health readouts such as symptoms of PTSD, anxiety, depression, and somatization, resilience, sense of coherence, post-traumatic growth and quality of life in `r nrow(ptsd$dataset)` individuals treated at the Hospital of the Medical University of Innsbruck (Austria) after a mountain sport accident by means of semi-supervised clustering. 
-Additionally, we searched for early sociodemographic and clinical predictors of mental health impairment following a mountain sport accident with a machine learning approach.
+Prior studies were performed on mountain guides, rescuers or avalanche accident survivors, mostly lack clinical data<span custom-style = 'revision'>, and focus on single aspects of mental health such as trauma exposure or PTSD</span> [@Brugger2002; @Mikutta2022; @Traber2020; @Leonard2021; @Thordardottir2015; @Sommer2004]. 
+<span custom-style = 'revision'>A characteristic of multiple facets of mental health following a mountain sport accident, including pathological and salutogenic features, is not clear at the moment.</span> 
+<span custom-style = 'revision'>Additionally, risk factors of mental health problems specific for mountain sport accidents in a non-professional setting have not been reported so far.</span> 
+<span custom-style = 'revision'>Identification of such risk-factors, and especially predictors available during acute medical management of the accident or a combination thereof, would greatly facilitate management of mountain sport accident by early, targeted psychological and psychiatric interventions.</span>
+
+<span custom-style = 'revision'>Here, we aimed to identify long-term, persistent patterns of mental health in a sample of `r nrow(ptsd$dataset)` individuals treated at the hospital of the Medical University of Innsbruck (Austria) after a mountain sport accident. 
+Such patterns were defined by symptoms of PTSD, anxiety, depression, and somatization, resilience, sense of coherence, post-traumatic growth and quality of life in a semi-supervised clustering analysis.</span>
+<span custom-style = 'revision'>Subsequently, by statistical hypothesis testing and machine learning, we searched for early sociodemographic and clinical factors that characterize the newly defined mental health subsets of patients with a special focus on individuals prone to mental health impairment.</span>
 
 \newpage
 
@@ -153,7 +162,7 @@ The study protocol was approved by the ethics committee of the Medical Universit
 
 ## Participants
 
-Individuals treated following a mountain sport accident at the Department for Orthopedics and Traumatology at the University Clinic of Innsbruck between 1^st^ January 2018 and 31^st^ December 2020 were screened for participation. 
+Individuals treated following a mountain sport accident at the Department for Orthopedics and Traumatology <span custom-style = 'revision'>of the hospital of the Medical University of Innsbruck</span> between 1^st^ January 2018 and 31^st^ December 2020 were screened for participation. 
 Individuals fulfilling the inclusion criteria: 
 hospital admission at least 6 months prior to the start of the study, 
 age $\geq$ 18 years, 
@@ -172,18 +181,18 @@ Sociodemographic (e.g. age, sex, education, profession, income, prior mountain s
 The psychometric battery consisted of German versions of assessment tools for symptoms of 
 PTSD (PCL-5: PTSD checklist for DSM-5) [@Bovin2016], 
 anxiety (GAD-7: 7-item general anxiety disorder scale) [@Spitzer2006], 
-depression (PHQ-9, <span custom-style = 'revision'>PHQ-2 and PHQ-8: 9-, 8- and 2-item patient health questionnaires</span> for depressive symptoms) [@Grafe2004], 
+depression (PHQ-9, <span custom-style = 'revision'> and PHQ-8: 9- and 8-item patient health questionnaires</span> for depressive symptoms) [@Grafe2004; @Kroenke2002a], 
 panic (PHQ-panic module) [@Grafe2004], 
 somatization (PHQ-15: 15-item patient health questionnaire of common somatic symptoms as a substitute for somatization) [@Kroenke2002], 
 resilience (RS13: 13-item resilience scale) [@Leppert2008], 
 sense of coherence (SOC-9L: Leipzig 9-item sense of coherence questionnaire) [@Schumacher2000], 
 quality of life (EUROHIS-QOL 8: 8-item EUROHIS project quality of life scale) [@Schmidt2006], 
 and post-traumatic growth (PTGI: post-traumatic growth inventory) [@Tedeschi1996]. 
-<span custom-style = 'revision'>Items of the PTGI and PTSD instruments were provided with a captions indicating that the questions refer to the mountain sport accident of interest ('The following questions refer to consequences of your accident').</span>
+<span custom-style = 'revision'>Items of the PTGI and PTSD instruments, and questions concerning flashbacks were provided with captions indicating that the questions refer to the mountain sport accident of interest ('The following questions refer to consequences of your mountain sport accident').</span>
 The tools displayed good-to-excellent consistency [@McDonald1999] (McDonald's $\omega$ > 0.8, __Supplementary Table S2__ and __S3__). 
 
 Clinically significant symptoms of anxiety (GAD-7 $\geq$ 10), 
-depression (PHQ-9 $\geq$ 11) [@Manea2012], 
+<span custom-style = 'revision'>depression (PHQ-9 $\geq$ 10) [@Humer2022],</span> 
 somatization (PHQ-15 $\geq$ 11) [@Kroenke2002] and 
 resilience classes (low: RS-13 0 - 65, moderate: 66 - 72, high: $\geq$ 73) [@Leppert2008] 
 were defined with published cutoffs. 
@@ -206,10 +215,10 @@ The training subset size (n = `r nrow(clust_globals$analysis_tbl$training)`) was
 
 ## Analysis endpoints
 
-The primary analysis endpoint was assessment of mental health following a mountain sport accident by clustering using standardized psychometric tools for symptoms of PTSD, anxiety, depression, panic, somatization, resilience, sense of coherence, post-traumatic growth, and quality of life. 
-The secondary analysis endpoints were 
-(1) to compare demographic, socioeconomic and clinical characteristics between the different mental health clusters of mountain accident victims and 
-(2) to identify patients at risk of mental disorders based on a set of explanatory variables available during acute medical treatment after mountain sport accidents.  
+<span custom-style = 'revision'>The primary analysis endpoint was identification of subsets of patients differing in long-term symptoms of PTSD, anxiety, depression, panic, somatization, resilience, sense of coherence, post-traumatic growth, and quality of life following a mountain sport accident. This endpoint was pursued by semi-supervised clustering analysis.</span> 
+<span custom-style = 'revision'>The secondary analysis endpoints were (1) comparison of demographic, socioeconomic and clinical characteristics of these newly defined subsets in a search for predictors of mental health disorders following a mountain sport accident, and (2) identification of</span> patients at risk of mental disorders based on a set of explanatory variables available during acute medical treatment after mountain sport accidents.
+<span custom-style = 'revision'>The secondary analysis endpoints were addressed by statistical hypothesis testing and machine learning.</span>
+
 
 ## Statistical analysis
 
@@ -244,9 +253,17 @@ The cluster assignment was predicted for the test subset and the classifiers' pe
 Surveys with complete psychometric data from `r nrow(ptsd$dataset)` individuals were analyzed (__Figure \@ref(fig:fig-consort)__). 
 The median time between the trauma center admission after the accident and the survey completion was 
 `r median(ptsd$dataset$obs_time)` days (interquartile range: `r quantile(ptsd$dataset$obs_time, c(0.25, 0.75)) %>% paste(collapse = ' - ')` days). 
-As compared with the analyzed participants, patients who did not respond to the study invitation were characterized by a higher frequency of biking accidents, lower rate of alpine ski/snowboard accidents, less severe injury, lower hospitalization and surgery rates, and fewer surgery diagnoses (__Supplementary Table S4__). 
-The survey participants excluded from the analysis due to incomplete psychometric data had significantly lower income, less severe injuries, more frequent injuries of the upper limbs, less frequently required hospitalization or surgery, and suffered less frequently from persistent physical health consequences of the accident than the analyzed participants (__Supplementary Table S5__). 
-Effect sizes of the differences between the included and excluded participants were weak (V $\leq$ 0.22 or r $\leq$ 0.15).
+As compared with the analyzed participants, patients who did not respond to the study invitation were characterized by a higher frequency of biking accidents and lower rate of alpine ski/snowboard accidents (<span custom-style = 'revision'>significant, `r filter(excl$test$no_response, variable == 'sport_type')$plot_cap`</span>). 
+<span custom-style = 'revision'>As compared with the analyzed participants participants, the non-responders were also characterized by significantly more frequent minor and less frequent severe injuries (`r filter(excl$test$no_response, variable == 'injury_sev_strata')$plot_cap`), overall lower injury grade (`r filter(excl$test$no_response, variable == 'injury_severity_ais')$plot_cap`), significantly lower rates of hospitalization (`r filter(excl$test$no_response, variable == 'hospitalization')$plot_cap`) and surgery (`r filter(excl$test$no_response, variable == 'surgery_done')$plot_cap`), as well as significantly lower surgery complexity reflected by surgical diagnosis numbers (`r filter(excl$test$no_response, variable == 'surgery_complexity')$plot_cap`).</span>
+<span custom-style = 'revision'>Effect sizes of those differences were small (__Supplementary Table S4__).</span> 
+The survey participants excluded from the analysis due to incomplete psychometric data had significantly 
+lower income <span custom-style = 'revision'>(`r filter(excl$test$missing, variable == 'household_income_class')$plot_cap`)</span>, 
+less severe injury <span custom-style = 'revision'>grade (`r filter(excl$test$missing, variable == 'injury_severity_ais')$plot_cap`)</span>, 
+more frequent injuries of the upper limbs <span custom-style = 'revision'>(`r filter(excl$test$missing, variable == 'injury_upper_limbs')$plot_cap`)</span>, 
+less frequently required hospitalization <span custom-style = 'revision'>(`r filter(excl$test$missing, variable == 'hospitalization')$plot_cap`)</span> or 
+surgery <span custom-style = 'revision'>(`r filter(excl$test$missing, variable == 'surgery_done')$plot_cap`)</span>, and 
+suffered less frequently from persistent physical health consequences of the accident than the analyzed participants <span custom-style = 'revision'>(`r filter(excl$test$missing, variable == 'accident_aftermath')$plot_cap`)</span>. 
+Effect sizes of the differences between the included and excluded participants were weak <span custom-style = 'revision'>(__Supplementary Table S5__).</span>
 
 The analyzed participants were predominantly middle-aged 
 (median: `r get_num_stats(ptsd$dataset, 'age', collapse = ', interquartile range: ')` years) and 
@@ -260,18 +277,31 @@ Annual household incomes of $\geq$ 45000 Euro were reported by
 Less than 10% of participants were smokers or at risk of problematic alcohol use defined as CAGE $\geq$ 2. 
 Pre-existing physical disorders were reported by 
 `r get_percent(ptsd$dataset, 'somatic_comorbidity')$percent['yes']`% of participants with cardiovascular, neurological and metabolic illness being the most frequent. 
-Mental disorders diagnosed by a physician before the accident affected 
-`r get_percent(ptsd$dataset, 'psych_comorbidity')$percent['yes']`% of the cohort with affective 
+Mental disorders diagnosed by a <span custom-style = 'revision'>health care professional prior to</span> the accident affected 
+`r get_percent(ptsd$dataset, 'psych_comorbidity')$percent['yes']`% of the cohort, with affective 
 (`r get_percent(mental$analysis_tbl, 'affective')$percent['yes']`%) and somatoform disorders 
-(`r get_percent(mental$analysis_tbl, 'somatoform')$percent['yes']`%) as the leading pre-existing mental conditions. 
+(`r get_percent(mental$analysis_tbl, 'somatoform')$percent['yes']`%) as the leading pre-existing mental <span custom-style = 'revision'>disorders</span>. 
 Four of ten participants had experienced by or witnessed a traumatic event prior to the accident, 
 `r sum(get_percent(ptsd$dataset, 'traumatic_number')$percent[c('2', '3+')])`% participants had been exposed to two or more traumatic events (__Table \@ref(tab:tab-cohort-demo)__). 
 
+<span custom-style = 'revision'>The age structure was similar, while males were significantly more frequent in the study cohort as compared with the general Austrian population (`r filter(aut_stats$test, variable == 'sex')$plot_cap`) [@StatistikAustria2023].</span> 
+<span custom-style = 'revision'>Individuals with secondary and tertiary education (`r filter(aut_stats$test, variable == 'education')$plot_cap`), as well as professionally active people and students (`r filter(aut_stats$test, variable == 'employment_status')$plot_cap`) were more frequent in the investigated sample than in the general Austrian population [@StatistikAustria2020; @StatistikAustria2021].</span>
+<span custom-style = 'revision'>In turn, rates of active smokers (`r filter(aut_stats$test, variable == 'smoking_status')$plot_cap`), and physical or mental illness were significantly lower in the study cohort (`r filter(aut_stats$test, variable == 'illness')$plot_cap`).</span> 
+<span custom-style = 'revision'>Effect sizes of these significant differences were small (__Supplementary Table S6__).</span>
+
 Mountain sport accidents in the past were reported by `r get_percent(ptsd$dataset, 'prior_accident')$percent['yes']`% of participants. 
-Most of the investigated accidents occurred during alpine skiing, snowboarding or cross-country skiing 
-(`r get_percent(ptsd$dataset, 'sport_type')$percent['ski/snowboard/cross-country']`%) followed by biking 
-(`r get_percent(ptsd$dataset, 'sport_type')$percent['biking']`%) and classical mountain sports such as climbing, hiking, mountaineering or back-country skiing 
-(`r get_percent(ptsd$dataset, 'sport_type')$percent['climbing/hiking/mountaineering/skitour']`%). 
+Most of the investigated accidents occurred 
+<span custom-style = 'revision'>during alpine skiing or snowboarding in secured areas of ski resorts (`r get_percent(ptsd$dataset, 'sport_type')$percent['alpine skiing/snowboarding']`%)</span> followed by biking 
+(`r get_percent(ptsd$dataset, 'sport_type')$percent['biking']`%), 
+<span custom-style = 'revision'>hiking (`r get_percent(ptsd$dataset, 'sport_type')$percent['hiking']`%), cross-country skiing (`r get_percent(ptsd$dataset, 'sport_type')$percent['cross-country skiing']`%), and sledding (`r get_percent(ptsd$dataset, 'sport_type')$percent['sledding']`%).</span> 
+<span custom-style = 'revision'>Mountain sports perceived as particularly risk-associated such as alpine skiing/snowboarding in non-secured areas (`r get_percent(ptsd$dataset, 'sport_type')$percent['ski touring/freeride']`%), ice-climbing (`r get_percent(ptsd$dataset, 'sport_type')$percent['ice climbing']`%), climbing (`r get_percent(ptsd$dataset, 'sport_type')$percent['ski touring/freeride']`%), mountaineering (`r get_percent(ptsd$dataset, 'sport_type')$percent['mountaineering']`%) and paragliding (`r get_percent(ptsd$dataset, 'sport_type')$percent['air sport']`%) comprised a minute fraction of all accident sports in the study cohort (__Table \@ref(tab:tab-cohort-accident)__)</span>
+<span custom-style = 'revision'>The profile of accident sports in the analyzed cohort differed significantly with weak effect size from distribution of sports in the Austrian statistic of mountain accidents in 2023 [@OsterreichischesKuratoriumfurAlpineSicherheit2024] (`r filter(lit_kurasi$test, variable == 'sport_detail')$plot_cap`).</span>
+<span custom-style = 'revision'>Frequency of alpine skiing/snowboarding, cross-country skiing, biking, and water sport accidents was significantly higher in the analyzed sample as compared with the national registry.</span> 
+<span custom-style = 'revision'>Percentages of ski/snowboard accidents in non-secured areas and hiking accidents were in turn significantly lower in the study cohort than in the national registry.</span>
+<span custom-style = 'revision'>Additionally, accidents in the winter season were more common  while accidents in the summer season were less frequent in the study cohort than in the national statistic (small effect size, `r filter(lit_kurasi$test, variable == 'accident_month')$plot_cap`).</span>
+<span custom-style = 'revision'>The age of study sample deviated significantly from the 2023 national registry data with weak effect size (`r filter(lit_kurasi$test, variable == 'age_class')$plot_cap`).</span>
+<span custom-style = 'revision'>In particular, accident victims aged 51 - 60 years were more frequent in the study cohort (__Supplementary Figure S1__).</span>
+
 One-third of participants were alone during the accident 
 (`r get_percent(ptsd$dataset, 'accident_alone')$percent['yes']`%) and, in most cases, were the only person responsible to the accident 
 (`r get_percent(ptsd$dataset, 'accident_culprit')$percent['self']`). 
@@ -279,7 +309,7 @@ Professional rescue service was involved in
 `r get_percent(ptsd$dataset, 'accident_rescue')$percent['rescue team']`% of the accidents. 
 In `r get_percent(ptsd$dataset, 'injury_sev_strata')$percent['2']`% of participants the injury severity was moderate (AIS 2) and in 
 `r get_percent(ptsd$dataset, 'injury_sev_strata')$percent['3+']`% severe-to-critical (AIS $\geq$ 3). 
-Limb injuries were the most common followed by injuries of the head and face (__Supplementary Figure S1A__). 
+Limb injuries were the most common followed by injuries of the head and face (__Supplementary Figure S2A__). 
 Hospitalization and surgery rates were 
 `r get_percent(ptsd$dataset, 'hospitalization')$percent['yes']`% and 
 `r get_percent(ptsd$dataset, 'surgery_done')$percent['yes']`%, respectively. 
@@ -287,53 +317,74 @@ Psychological or psychiatric support after the accident was provided to
 `r get_percent(ptsd$dataset, 'psych_support_post_accident')$percent['yes']`% individuals. 
 A subset of participants (`r get_percent(ptsd$dataset, 'psych_support_need')$percent['yes']`%), who had not received psychological or psychiatric support, declared a need for psychological or psychiatric support following the accident. 
 Persisting physical consequences of the accident were reported by 
-`r get_percent(ptsd$dataset, 'accident_aftermath')$percent['yes']`% of participants and flashbacks during mountain sport at the time of the questionnaire completion were observed in 
+`r get_percent(ptsd$dataset, 'accident_aftermath')$percent['yes']`% of participants and flashbacks <span custom-style = 'revision'>of the accident of interest</span> during mountain sport at the time of the questionnaire completion were observed in 
 `r get_percent(ptsd$dataset, 'unwilling_flashback')$percent['yes']`% of the cohort. 
 Although most individuals returned to the same mountain sport following the accident 
 (`r get_percent(ptsd$dataset, 'same_sport_type_post_accident')$percent['yes']`%), 
 `r get_percent(ptsd$dataset, 'caution_post_accident')$percent['more cautious']`% of all participants described their behavior during mountain sport as more cautious (__Table \@ref(tab:tab-cohort-accident)__). 
 
-At least one diagnostic criterion of PTSD defined as positive scoring of the B, C, D or E domains of the PCL-5 tool was met by 
-`r get_percent(ptsd$dataset, 'dsm5_cluster_class')$percent['positive']`% of participants. 
-The domain B PTSD symptoms were the most common (`r get_percent(ptsd$dataset, 'dsm5_B_class')$percent['positive']`%) and the domain D symptoms were the least frequent (`r get_percent(ptsd$dataset, 'dsm5_D_class')$percent['positive']`%). 
+<span custom-style = 'revision'>PTSD symptoms related to the mountain sport accident defined as positive scoring of at least one of the B, C, D or E domains of the PCL-5 tool were observed in</span> `r get_percent(ptsd$dataset, 'dsm5_cluster_class')$percent['positive']`% of participants. 
+<span custom-style = 'revision'>Concerning particular PCL-5 domains, positive scoring for the domain B was the most common (`r get_percent(ptsd$dataset, 'dsm5_B_class')$percent['positive']`%), and frequency of participants screened positive for the domain D was the lowest (`r get_percent(ptsd$dataset, 'dsm5_D_class')$percent['positive']`%).</span> 
 Solely `r digit2string(sum(reduce(cohort$ptsd_overlap$data, function(x, y) x * y) > 0))` patients 
-(`r signif(sum(reduce(cohort$ptsd_overlap$data, function(x, y) x * y) > 0)/nrow(cohort$ptsd_overlap$data), 2) * 100`%) were screened positive for all four diagnostic criteria of PTSD (__Table \@ref(tab:tab-cohort-mental)__, __Supplementary Figure S1BC__). 
+(`r signif(sum(reduce(cohort$ptsd_overlap$data, function(x, y) x * y) > 0)/nrow(cohort$ptsd_overlap$data), 2) * 100`%) were screened positive for all four diagnostic criteria <span custom-style = 'revision'>suggestive of manifest PTSD</span> (__Table \@ref(tab:tab-cohort-mental)__, __Supplementary Figure S2BC__). 
 Clinically relevant symptoms of 
 anxiety (`r get_percent(ptsd$dataset, 'gad7_total_class')$percent['positive']`%), 
 depression (`r get_percent(ptsd$dataset, 'phq9_total_class')$percent['positive']`%) 
 and somatization (`r get_percent(ptsd$dataset, 'phq_events_total_class')$percent['positive']`%) were rare in this cohort consisting of `r get_percent(ptsd$dataset, 'rs13_total_class')$percent['high']`% highly resilient individuals (__Table \@ref(tab:tab-cohort-mental)__). 
+<span custom-style = 'revision'>Mean scoring of quality of life assessed by the EUROHIS tool in the cohort was `r mean(ptsd$dataset$eurohis_total) %>% signif(2)` and was significantly higher that the mean of 4.08 reported for the comparable general German population (one-sample Wilcoxon test: r = `r ptsd$dataset %>% wilcox_effsize(eurohis_total ~ 1, mu = 4.08) %>% .$effsize %>% signif(2)`, p < 0.001) [@Schmidt2006].</span>
+<span custom-style = 'revision'>The general quality of life and housing domains were assigned the highest scores, while esteem was rated the lowest among the study participants.</span> 
+<span custom-style = 'revision'>The median total score of accident-related post-traumatic growth was `r median(ptsd$dataset$ptgi_total)` (interquartile range: `r quantile(ptsd$dataset$ptgi_total, c(0.25, 0.75)) %>% paste(collapse = ' to ')`), with the relations domain with the highest rating and the spiritual domain with the lowest scores (__Table \@ref(tab:tab-cohort-mental)__, __Supplementary Figure S3__).</span> 
 We could not observe any significant association of values of psychometric scores or frequency of mental health problems with the time between trauma center admission and survey completion (not shown).
+
+<span custom-style = 'revision'>As compared with general population estimates [@Hauffa2011; @Kilpatrick2013; @Koenen2017; @Kessler2017], frequency of traumatic events (`r lit_data$stats %>% get_est_ci(source == 'cohort', variable == 'traumatic_event', level == 'yes')`) and manifest PTSD in the study sample defined as positivity for all PCL-5 domains (`r lit_data$stats %>% get_est_ci(source == 'cohort', variable == 'dsm5_all_class', level == 'positive')`) was low but comparable to figures reported for the general German population by Hauffa and colleagues (traumatic events, CIDI tool: `r lit_data$stats %>% get_est_ci(source == 'hauffa_2011', variable == 'traumatic_event', level == 'yes')`, manifest PTSD, PDS tool: `r lit_data$stats %>% get_est_ci(source == 'hauffa_2011', variable == 'ptsd_lifetime', level == 'positive')`, __Supplementary Figure S4A__) [@Hauffa2011].</span>
+<span custom-style = 'revision'>Furthermore, frequency of traumatic events in the study cohort was significantly lower than in a sample of Swiss mountain rescuers reported by Mikutta et al. (`r lit_data$stats %>% get_est_ci(source == 'mikutta_2022', variable == 'traumatic_event', level == 'yes')`) [@Mikutta2022].</span> 
+<span custom-style = 'revision'>In turn, frequency of PTSD symptoms and of manifest PTSD measured with the PCL-5 instrument were similar in both cohorts (__Supplementary Figure S4B__).</span>
+
+<span custom-style = 'revision'>Our sample was characterized by significantly lower percentages of anxious (GAD-7 $\geq$ 10, `r lit_plots$depr_anx_stats %>% get_est_ci(source == 'cohort', disorder == 'anxiety')`) and depressive symptoms (PHQ-9 $\geq$ 10, `r lit_plots$depr_anx_stats %>% get_est_ci(source == 'cohort', disorder == 'depression')`) as compared with estimates for the general Austrian population in 2022 by Humer et al. (anxiety, GAD-7 $\geq$ 10: `r lit_plots$depr_anx_stats %>% get_est_ci(source == 'humer_2022', disorder == 'anxiety')`, depression, PHQ-9 $\geq$ 10: `r lit_plots$depr_anx_stats %>% get_est_ci(source == 'humer_2022', disorder == 'depression')`, __Supplementary Figure S5A__) [@Humer2022].</span> 
+<span custom-style = 'revision'>As assessed by the PHQ-8 instrument, the frequency of moderate-to-severe depressive symptoms in the study sample was similar to the frequency in the pre-pandemic general Austrian population estimated by a 2019 microcensus study [@StatistikAustria2019a] (__Supplementary Figure S5B__).</span>
+<span custom-style = 'revision'>The resilience scores in our study collective (mean: `r lit_plots$rs_stats %>% filter(source == 'cohort') %>% .$mean %>% signif(2)`, SD: `r lit_plots$rs_stats %>% filter(source == 'cohort') %>% .$sd %>% signif(2)`) were comparable with resilience levels in the Swiss mountain rescuer sample (mean: `r lit_plots$rs_stats %>% filter(source == 'chernova_2021') %>% .$mean %>% signif(2)`, SD: `r lit_plots$rs_stats %>% filter(source == 'chernova_2021') %>% .$sd %>% signif(2)`) [@Mikutta2022], and higher as compared with the general population estimates obtained by Chernova et al. with the same RS-13 tool (mean: `r lit_plots$rs_stats %>% filter(source == 'chernova_2021') %>% .$mean %>% signif(2)`, SD: `r lit_plots$rs_stats %>% filter(source == 'chernova_2021') %>% .$sd %>% signif(2)`, __Supplementary Figure S5C__) [@Chernova2021].</span>
 
 For clustering and modeling, the cohort was split into the 
 training (n = `r table(ptsd$dataset$partition)['training']`) and 
 test subset (n = `r table(ptsd$dataset$partition)['test']`). 
-The sole significant differences between these subsets concerned resilience class distribution and scores of quality of life, their effect size was weak (__Supplementary Table S6__). 
+The sole significant differences between these subsets concerned resilience class distribution and scores of quality of life, their effect size was weak <span custom-style = 'revision'>(__Supplementary Table S7__).</span>
 
 ## Three clusters of mental health response after mountain sport accidents
 
-To explore symptoms of PTSD and further facets of mental health following mountain sport accidents, we subjected the participants to medoid clustering in respect to a broad range of psychometric scores (__Supplementary Table S2__). 
-Three mental health clusters were identified in the training subset of the study cohort: 'neutral', 'PTG' (post-traumatic growth) and 'PTS' (post-traumatic stress) and named after their key mental characteristic (__Supplementary Figure S3__). 
+<span custom-style = 'revision'>To identify patterns</span> of mental health following mountain sport accidents, we subjected the participants to medoid clustering in respect to a broad range of psychometric scores (__Supplementary Table S2__). 
+Three mental health clusters were identified in the training subset of the study cohort: 'neutral', 'PTG' (post-traumatic growth) and 'PTS' (post-traumatic stress) and named after their key mental characteristic <span custom-style = 'revision'>(__Supplementary Figure S6__)</span>. 
 Subsequently, the mental health cluster assignment could be validated in the test subset as evident from comparable fractions of explained clustering variance 
 (training: `r signif(semi_clust$stats$frac_var[1], 2)`, test: `r signif(semi_clust$stats$frac_var[2], 2)`), 
 comparable average silhouette statistics 
 (training: `r signif(semi_clust$stats$sil_width[1], 2)`, test: `r signif(semi_clust$stats$sil_width[2], 2)`), 
-comparable cluster sizes, good visual cluster separation and high similarity between the corresponding clusters in the training and test cohort subsets (__Supplementary Figures S4 - S6__). 
+<span custom-style = 'revision'>similarly low frequency of potentially misclassified observations (fraction of observations with negative silhouette widths, training: `r signif(semi_clust$stats$frac_misclassified[1], 2)`, test: `r signif(semi_clust$stats$frac_misclassified[2], 2)`), and good preservation of the nearest neighborhood (fraction of 5-nearest neighbors in the same cluster, training: `r signif(semi_clust$stats$frac_np[1], 2)`, test: `r signif(semi_clust$stats$frac_np[2], 2)`).</span>
+<span custom-style = 'revision'>Furthermore, classification of the training and test individuals yielded similar distribution of cluster sizes,</span> good visual cluster separation and high similarity between the corresponding clusters in the training and test cohort subsets <span custom-style = 'revision'>(__Supplementary Figures S7 - S9__).</span>
 
-The mental health clusters were of approximately equal size. 
-The neutral cluster was characterized by low scores of PTSD symptoms, anxiety, depression, panic, somatization, and post-traumatic growth along with high ratings of sense of coherence, resilience and quality of life. 
+The mental health clusters were of approximately equal size <span custom-style = 'revision'>but differed significantly in psychometric characteristic.</span>
+The neutral cluster was characterized by <span custom-style = 'revision'>low scores of PCL-5 domains assessing PTSD symptoms as well as low ratings of</span> anxiety, depression, panic, somatization, and post-traumatic growth along with high ratings of sense of coherence, resilience and quality of life. 
 The PTG cluster demonstrated similarly low scores of major mental health disorders, high resilience and sense of coherence. 
 Its key characteristic were the highest levels of post-traumatic growth. 
-The remaining PTS cluster displayed the highest scores of PTSD symptoms, anxiety, depression, panic disorder, somatization as well as poor sense of coherence, and low resilience and low quality of life. 
-Post-traumatic growth scores in the PTS cluster were higher than in neutral but lower than in PTG cluster participants (__Figure \@ref(fig:fig-clust-psych)__, __Supplementary Table S7__). 
-Consequently, clinically relevant symptoms of 
-anxiety (PTS: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTS'), 'gad7_total_class')$percent['positive']`%), 
-depression (PTS: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTS'), 'phq9_total_class')$percent['positive']`%) and somatization (PTS: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTS'), 'phq_events_total_class')$percent['positive']`%) 
-were present virtually only in the PTS cluster. 
+The remaining PTS cluster displayed <span custom-style = 'revision'>the highest scores of PTSD symptoms measured by domains of the PCL-5 instrument, as well as the peak ratings of</span> anxiety, depression, somatization, poor sense of coherence, low resilience and low quality of life. 
+Post-traumatic growth scores in the PTS cluster were higher than in neutral but lower than in PTG cluster participants (__Figure \@ref(fig:fig-clust-psych)__, <span custom-style = 'revision'>__Supplementary Figure S9__</span>). 
+
+Clinically relevant symptoms of 
+anxiety (PTS: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTS'), 'gad7_total_class')$percent['positive']`%, <span custom-style = 'revision'>`r filter(clust_bcg$test, variable == 'gad7_total_class')$plot_cap`</span>), 
+depression (PTS: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTS'), 'phq9_total_class')$percent['positive']`%, <span custom-style = 'revision'>`r filter(clust_bcg$test, variable == 'phq9_total_class')$plot_cap`</span>) and 
+somatization (PTS: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTS'), 'phq_events_total_class')$percent['positive']`%, <span custom-style = 'revision'>`r filter(clust_bcg$test, variable == 'phq_events_total_class')$plot_cap`</span>) 
+were <span custom-style = 'revision'>significantly more frequent in the PTS cluster as compared with the PTG or neutral clusters.</span>
 Furthermore, frequencies of 
 low (PTS: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTS'), 'rs13_total_class')$percent['low']`%) and 
-moderate resilience classes (PTS: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTS'), 'rs13_total_class')$percent['moderate']`%) peaked in the PTS cluster. 
-Finally, frequency of flashbacks, PTSD symptoms specified by the B, C, D and E PCL-5 domains and frequency of individuals scoring positive for at least one diagnostic domain of PCL-5 
-(PTS: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTS'), 'dsm5_cluster_class')$percent['positive']`%) were the highest in PTS cluster individuals (__Figure \@ref(fig:fig-clust-symptoms)__, __Supplementary Table S8__). 
+moderate resilience classes (PTS: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTS'), 'rs13_total_class')$percent['moderate']`%, <span custom-style = 'revision'>`r filter(clust_bcg$test, variable == 'rs13_total_class')$plot_cap`</span>) peaked in the PTS cluster. 
+<span custom-style = 'revision'>Concerning PTSD symptoms, frequency of flashbacks as well as percentages of individuals screened positive for each of the B, C, D, and E PCL-5 domains were significantly higher in PTS cluster patients as compared with the remaining individuals.</span>
+<span custom-style = 'revision'>Analogically, the frequency of participants with PTSD symptoms defined by at least one positive PCL-5 domain was</span> the highest in <span custom-style = 'revision'>the</span> PTS cluster (`r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTS'), 'dsm5_cluster_class')$percent['positive']`%, <span custom-style = 'revision'>`r filter(clust_bcg$test, variable == 'dsm5_cluster_class')$plot_cap`</span>, __Figure \@ref(fig:fig-clust-symptoms)__, <span custom-style = 'revision'>__Supplementary Table S9__</span>). 
+
+<span custom-style = 'revision'>Next, we investigated, how the clustering of study participants is affected by missing observations, time after the accident, and factors that may influence mental health after the accident such as annual income, prior mountain sport accidents, injury severity, and hospitalization.</span> 
+<span custom-style = 'revision'>To this end, we re-created the clustering structure for the whole cohort, the study cohort appended with imputed missing observations, and the cohort data set depleted of categories of the variables listed above (e.g. the analysis cohort without high income participants or severe injuries) with the medoid clustering algorithm.</span> 
+<span custom-style = 'revision'>Next, we compared fractions of explained clustering variances between the clustering structures in the genuine cohort and the modified data sets in a kind of sensitivity analysis [@Thabane2013].</span>
+<span custom-style = 'revision'>As presented in __Supplementary Figure S10A__, differences in explained variance between the original clustering structure and clustering structures developed for the modified data sets were minor (genuine data set: `r se_summary$stats %>% filter(split_factor == 'global') %>% .$frac_var %>% signif(2)`, modified: `r se_summary$stats %>% filter(split_factor %in% c('missing', 'household_income_class', 'prior_accident', 'injury_sev_strata', 'hospitalization', 'accident_year')) %>% .$frac_var %>% range %>% signif(2) %>% paste(collapse = ' to ')`).</span>
+<span custom-style = 'revision'>There were no significant differences in distribution of the cluster sizes for the clustering schemes developed in the analyzed cohort and the modified data sets (__Supplementary Figure S10B__).</span>
+<span custom-style = 'revision'>Collectively, this lets us conclude that neither missing observations, differences in income, accidents in the past, time after accident, injury severity, nor hospitalization significantly affected quality and distribution of the mental health clusters.</span>
+<span custom-style = 'revision'>In the classification scheme developed for the data set appended with incomplete observations, the participants with missing psychometric data which had been successfully imputed were preferentially assigned to the PTS cluster (imputed observations in the PTS cluster: n = `r se_summary$missing_plots$color_bar_data %>% filter(clust_id == 'PTS', subset == 'missing') %>% nrow`, total imputed: n = `r table(se_summary$missing_plots$color_bar_data$subset)['missing']`, __Supplementary Figure S11__).</span>
 
 ## Demographic, socioeconomic and clinical characteristic of the mental health clusters
 
@@ -347,41 +398,36 @@ need for psychological or psychiatric support after the accident,
 persistent physical health consequences of the accident, 
 and caution during mountain sport following the accident) 
 were found to differ significantly between the mental health clusters. 
-The effect size of these differences was weak (__Supplementary Table S9__). 
+The effect size of these differences was weak <span custom-style = 'revision'>(__Supplementary Table S10__).</span>
 
-In more detail, individuals in the PTS cluster were the youngest of all participants and had the highest frequency of pre-existing mental disorders. 
-The neutral cluster was in turn substantially enriched in males, and tertiary education and high-income individuals; these effects were not significant. 
-Participants suffering from pre-existing physical illnesses were significantly enriched in the PTG and PTS clusters. 
-A similar, yet not significant tendency was observed for the frequency of prior traumatic events, which was higher in the PTG and PTS clusters as compared with neutral cluster individuals. 
-There were no substantial differences in frequency of search and rescue professionals and employment structure between the clusters (__Figure \@ref(fig:fig-clinic-factors)__, __Supplementary Figure S7__). 
-Participants reporting being alone during the accident, responsible for the accident, and requiring companion or professional rescue were enriched in the PTG cluster. 
-In turn, frequency of self-rescuers tended to be the highest in the neutral cluster. 
-These differences in accident and rescue circumstances were not significant. 
-We could not observe any substantial differences in accident season, mountain sport type, and numbers of injured persons between the clusters (__Figure \@ref(fig:fig-injury)A__, __Supplementary Figure S7__, __Supplementary Table S9__). 
-There were no significant differences in severity and injury and its location between the clusters. 
-However, moderate-to-severe injuries (AIS $\geq$ 2), hospitalization and surgery rates were substantially higher in the PTG and PTS clusters as compared with neutral cluster participants (not significant, __Figure \@ref(fig:fig-injury)__, __Supplementary Table S9__). 
-
+In more detail, individuals in the PTS cluster were the youngest of all participants <span custom-style = 'revision'>(global difference between the clusters: `r filter(clust_bcg$test, variable == 'age')$plot_cap`)</span> and had the highest frequency of pre-existing mental disorders <span custom-style = 'revision'>(`r filter(clust_bcg$test, variable == 'psych_comorbidity')$plot_cap`)</span>. 
+<span custom-style = 'revision'>Frequency of pre-existing physical disorders was significantly higher in the PTG and PTS that in the neutral cluster (`r filter(clust_bcg$test, variable == 'somatic_comorbidity')$plot_cap`).</span>
+<span custom-style = 'revision'>Differences in gender, income, employment and education, in frequency of search and rescue professionals and prior traumatic events between the clusters were not significant.</span>
+<span custom-style = 'revision'>We could not observe significant differences in frequency of being alone during the accident, or self-rescue, companion or professional rescue between the clusters.</span>
+<span custom-style = 'revision'>No significant differences in accident season, mountain sport type, and numbers of injured persons between the clusters were detected.</span>
+<span custom-style = 'revision'>Analogically, there were no significant differences in severity and injury and its location between the clusters (__Figures \@ref(fig:fig-clinic-factors)__ - __\@ref(fig:fig-injury)__, __Supplementary Figure S12__ - __S13__, __Supplementary Table S10__).</span>
+  
 There were no significant differences in rates of participants who received psychological or psychiatric support after the accident between the clusters. 
-Among PTG and PTS cluster individuals, `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTG'), 'psych_support_need')$percent['yes']`% and `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTS'), 'psych_support_need')$percent['yes']`%, respectively, reported need for psychological or psychiatric support following the accident as compared with none in the neutral cluster. 
+Among PTG and PTS cluster individuals, `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTG'), 'psych_support_need')$percent['yes']`% and `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTS'), 'psych_support_need')$percent['yes']`%, respectively, reported need for psychological or psychiatric support following the accident as compared with none in the neutral cluster <span custom-style = 'revision'>(`r filter(clust_bcg$test, variable == 'psych_support_need')$plot_cap`).</span>
 Frequency of participants suffering from persistent physical health consequences of the accident was the highest in the PTS cluster (PTS: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTS'), 'accident_aftermath')$percent['yes']`%, 
 PTG: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTG'), 'accident_aftermath')$percent['yes']`%, 
-neutral: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'neutral'), 'accident_aftermath')$percent['yes']`%). 
+neutral: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'neutral'), 'accident_aftermath')$percent['yes']`%, <span custom-style = 'revision'>`r filter(clust_bcg$test, variable == 'accident_aftermath')$plot_cap`</span>). 
 Analogically, PTS cluster patients reported the highest rates of cautious behavior during mountain sport following the accident 
 (PTS: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTS'), 'caution_post_accident')$percent['more cautious']`%, 
 PTG: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'PTG'), 'caution_post_accident')$percent['more cautious']`%, 
-neutral: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'neutral'), 'caution_post_accident')$percent['more cautious']`%). 
+neutral: `r get_percent(filter(clust_bcg$analysis_tbl, clust_id == 'neutral'), 'caution_post_accident')$percent['more cautious']`%, <span custom-style = 'revision'>`r filter(clust_bcg$test, variable == 'caution_post_accident')$plot_cap`</span>). 
 By contrast, percentages of participants who returned to the same mountain sport after the accident were comparable between the mental health clusters (__Figure \@ref(fig:fig-aftermath)__).
 
 ## Prediction of the mental health cluster assignment by demographic, socioeconomic and accident-related factors
 
-Finally, we intended to model the mental health cluster assignment with demographic, socioeconomic, clinical and accident-related factors available during acute medical management of the patient (__Supplementary Table S10__) with seven popular machine learning algorithms: 
+Finally, we intended to model the mental health cluster assignment with demographic, socioeconomic, clinical and accident-related factors available during acute medical management of the patient <span custom-style = 'revision'>(__Supplementary Table S11__)</span> with seven popular machine learning algorithms: 
 the random forests, 
 neural networks, 
 support vector machines, 
 recursive partitioning, 
 discriminant analysis, 
 elastic net regression, and 
-conditional random forests (__Supplementary Table S11__). 
+conditional random forests <span custom-style = 'revision'>(__Supplementary Table S12__)</span>. 
 Such models would enable early identification of mountain sport accident victims at risk of mental health problems. 
 
 The cluster assignment models employing early predictors demonstrated a moderate-to-excellent prediction performance in the training subset of the study cohort 
@@ -391,79 +437,113 @@ However, their accuracy in cross-validation and in the test subset was poor
 (test accuracy: `r paste0((filter(early_class$overall_stats, dataset == 'test')$correct_rate %>% range %>% signif(2)) * 100, '%') %>% paste(collapse = ' - ')`, 
 Cohen's $\kappa$: `r signif(range(filter(early_class$overall_stats, dataset == 'test')$kappa), 2) %>% paste(collapse = ' - ')`, 
 Brier score: `r signif(range(filter(early_class$overall_stats, dataset == 'test')$brier_score), 2) %>% paste(collapse = ' - ')`). 
-Concerning the early identification of the vulnerable PTS cluster patients, the conditional random forest, random forest and support vector machine models were able to differentiate between the PTS cluster and the pooled neutral and PTG clusters with the best sensitivity (test subset sensitivity $\geq$ `r min(signif(early_class$clust_stats %>% filter(dataset == 'test', clust_id == 'PTS') %>% top_n(n = 3, Se) %>% .$Se, 2) * 100)`%, __Figure \@ref(fig:fig-early-class)__, __Supplementary Table S12__). 
-Pre-existing mental disorder or physical illness, hospitalization and surgery, injury severity, age, rescue mode, education, annual income, and traumatic events in the past were among the most important explanatory factors employed by these models (__Supplementary Figure S8__). 
+Concerning the early identification of the vulnerable PTS cluster patients, the conditional random forest, random forest and support vector machine models were able to differentiate between the PTS cluster and the pooled neutral and PTG clusters with the best sensitivity (test subset sensitivity $\geq$ `r min(signif(early_class$clust_stats %>% filter(dataset == 'test', clust_id == 'PTS') %>% top_n(n = 3, Se) %>% .$Se, 2) * 100)`%, __Figure \@ref(fig:fig-early-class)__, <span custom-style = 'revision'>(__Supplementary Table S13__)</span>). 
+Pre-existing mental disorder or physical illness, hospitalization and surgery, injury severity, age, rescue mode, education, annual income, and traumatic events in the past were among the most important explanatory factors employed by these models <span custom-style = 'revision'>(__Supplementary Figure S14__).</span> 
 Of note, inclusion of follow-up-related variables such as received psychological or psychiatric support, psychological or psychiatric support need, physical health consequences or caution during mountain sport activity in the machine learning models did not improve their accuracy at prediction of the mental health cluster assignment in cross-validation or the test subset (test accuracy: `r paste0((filter(full_class$overall_stats, dataset == 'test')$correct_rate %>% range %>% signif(2)) * 100, '%') %>% paste(collapse = ' - ')`, 
 Cohen's $\kappa$: `r signif(range(filter(full_class$overall_stats, dataset == 'test')$kappa), 2) %>% paste(collapse = ' - ')`, 
-Brier score: `r signif(range(filter(full_class$overall_stats, dataset == 'test')$brier_score), 2) %>% paste(collapse = ' - ')`, __Supplementary Figures S9__ - __S10__, __Supplementary Table S10__). 
+Brier score: `r signif(range(filter(full_class$overall_stats, dataset == 'test')$brier_score), 2) %>% paste(collapse = ' - ')`, <span custom-style = 'revision'>__Supplementary Figures S15__ - __S16__, __Supplementary Table S14__</span>). 
 
 \newpage
 
 # Discussion
 
-We characterized mental health outcomes in individuals treated at a tertiary trauma center for an accident in mountain sport at a median of `r round(median(ptsd$dataset$obs_time)/30.436)` months following the incident. We identified three approximately equally sized subsets of participants with distinct mental health characteristic: (1) the neutral mental health cluster, (2) the PTG cluster characterized by a predominantly salutatory reaction to the accident manifested by post-traumatic growth, and (3) the PTS cluster hallmarked by symptoms of PTSD, anxiety, depression, panic disorder and somatization as well as low resilience, quality of life and sense of coherence. Individuals in the PTS cluster were characterized by younger age, the highest frequency of pre-existing mental disorders and persisting physical health consequences of the accident compared to individuals in the other two clusters. They reported a need for psychological or psychiatric support following the accident and more cautious behavior during mountain sports since the accident. However, even with robust machine learning algorithms we could not establish a reliable model to identify PTS cluster patients at risk of long-term mental health problems with data available during acute medical management of the mountain sport accident victim.
+We characterized mental health outcomes in individuals treated at a tertiary trauma center for an accident in mountain sport at a median of `r round(median(ptsd$dataset$obs_time)/30.436)` months following the incident. 
+We identified three approximately equally sized subsets of participants with distinct mental health characteristic: (1) the neutral mental health cluster, (2) the PTG cluster characterized by a predominantly salutatory reaction to the accident manifested by post-traumatic growth, and (3) the PTS cluster hallmarked by symptoms of PTSD, anxiety, depression, and somatization as well as low resilience, quality of life and sense of coherence. 
+Individuals in the PTS cluster were characterized by younger age, the highest frequency of pre-existing mental disorders and persisting physical health consequences of the accident compared to individuals in the other two clusters. 
+They reported a need for psychological or psychiatric support following the accident and more cautious behavior during mountain sports since the accident. 
+However, even with robust machine learning algorithms we could not establish a reliable model to identify PTS cluster patients at risk of long-term mental health problems with data available during acute medical management of the mountain sport accident victim.
 
-This study evaluates a broad palette of mental features including symptoms of anxiety and depression, somatiziation, resilience, sense of coherence and quality of life, post-traumatic growth and symptoms of PTSD in survivors of mountain sport accidents. 
+<span custom-style = 'revision'>The analyzed cohort was significantly enriched with males, secondary/tertiary graduates, professionally active, and physically healthier individuals as compared with the general Austrian population.</span>
+<span custom-style = 'revision'>We speculate that this reflects rather the overall characteristic of physically active inhabitants of the alpine region than a selection bias.</span>
+<span custom-style = 'revision'>Differences in the accident sport type, accident season, and age structure between the study cohort and the collective of mountain accident victims in the Austrian registry were of weak effect size.</span>
+<span custom-style = 'revision'>Within the analyzed sample, winter sport accidents in general, and, in particular, alpine skiing/snowboarding accidents in secured areas of ski resorts were significantly more frequent.</span>
+<span custom-style = 'revision'>Notably, we did not observe higher percentages of high-risk mountain sport types such as climbing, ski touring/freeride, paragliding or high mountain sport in the cohort as compared with the national registry.</span>
+<span custom-style = 'revision'>Analogically, there were no significant differences in frequency of such sports between the analyzed sample and non-responders to the study invitation.</span>
+<span custom-style = 'revision'>This lets us conclude that the study was unlikely biased towards risk-seeking individuals.</span>
+<span custom-style = 'revision'>As compared with the non-responders, injury severity, and hospitalization and surgery rates were significantly higher in the analyzed cohort, effect size of those differences was, however, small.</span>
+<span custom-style = 'revision'>Collectively, despite the low response rate, our study cohort can be regarded as reasonably representative sample of the entire collective of mountain sport accident victims in the alpine region.</span>
+
+This study evaluates a broad palette of <span custom-style = 'revision'>features of mental health</span> including symptoms of anxiety and depression, somatiziation, resilience, sense of coherence and quality of life, post-traumatic growth, and symptoms of PTSD <span custom-style = 'revision'>defined by positive screening of at least one PCL-5 domain</span> in survivors of mountain sport accidents. 
 This population is of special interest because, on one hand, mountain sports are generally considered beneficial for mental health [@Ower2019; @Niedermeier2017a]. 
 On the other hand, mountain sports are associated with specific individual physical and mental traits, and bear accident and injury risks [@Faulhaber2017; @Faulhaber2020]. 
-Not many studies have assessed PTSD rates following accidents in mountain sports. 
-Survivors of avalanches were affected by acute and long-term PTSD symptoms such as hyperarousal or sleep disorders at rates between 11% - 16% [@Thordardottir2015; @Leonard2021]. 
-This figure is comparable with `r get_percent(ptsd$dataset, 'dsm5_cluster_class')$percent['positive']`% participants of our study screened positive for at least one of of the PTSD symptom domains defined by the PCL-5 tool [@Bovin2016]. PTSD frequencies of 11.8% - 26% have been reported at 3 - 12 months after acute trauma [@Shalev2019; @Schultebraucks2020; @Joseph2020]. 
+<span custom-style = 'revision'>We compared rates of traumatic events measured by DIA-X tool [@Maercker2005], and of manifest PTSD defined as positive screening for all of the B, C, D and E of the PCL-5 instrument [@Bovin2016] in our cohort with published estimates for the general population.</span>
+<span custom-style = 'revision'>In such analysis, the frequency of both traumatic events (`r get_percent(ptsd$dataset, variable = 'traumatic_event')$percent['yes']`%) and manifest PTSD (`r signif(sum(reduce(cohort$ptsd_overlap$data, function(x, y) x * y) > 0)/nrow(cohort$ptsd_overlap$data), 2) * 100`%) in the cohort was significantly lower than in most multi-population surveys [@Darves-Bornoz2008; @Kilpatrick2013; @Koenen2017; @Kessler2017], and comparable with estimates provided for the German population by Hauffa and colleagues (traumatic events: `r lit_data$stats %>% filter(source == 'hauffa_2011', variable == 'traumatic_event', level == 'yes') %>% .$percent %>% signif(2)`%, manifest lifetime PTSD: `r lit_data$stats %>% filter(source == 'hauffa_2011', variable == 'ptsd_lifetime', level == 'positive') %>% .$percent %>% signif(2)`%) [@Hauffa2011].</span>
+<span custom-style = 'revision'>Despite the substantial burden of mountain sport accidents on medical system of alpine countries, with more than 13000 accidents in 2023 in Austria alone [@OsterreichischesKuratoriumfurAlpineSicherheit2024], not many studies assessed rates of PTSD and other mental disorders in survivors of mountain sport accidents.</span>. 
+<span custom-style = 'revision'>Survivors of avalanches reported long-term symptoms suggestive of PTSD</span> at rates between 11% - 16% [@Thordardottir2015; @Leonard2021]. 
+<span custom-style = 'revision'>Those estimates are</span> comparable with `r get_percent(ptsd$dataset, 'dsm5_cluster_class')$percent['positive']`% participants of our study screened positive for at least one of of the PTSD symptom domains defined by the PCL-5 tool [@Bovin2016]. 
+PTSD frequencies of 11.8% - 26% have been reported at 3 - 12 months after acute trauma [@Shalev2019; @Schultebraucks2020; @Joseph2020]. 
 However, in our cohort, solely `r signif(sum(reduce(cohort$ptsd_overlap$data, function(x, y) x * y) > 0)/nrow(cohort$ptsd_overlap$data), 2) * 100`% of participants demonstrated concomitant PCL-5 domain B, C, D and E symptoms suggestive of fully manifest PTSD. 
 
-Studies conducted on mountain guides and mountain rescue personnel, showed that 71% - 78% of them experienced a traumatic event [@Mikutta2022; @Sommer2004], while the reported frequency of PTSD was very low (0.9% - 2.7%) [@Mikutta2022; @Sommer2004]. 
-This is comparable to trauma event estimates for the general population [@PTSD2023; @Trautmann2018; @Burri2014] and, particularly, lower than in other potentially vulnerable groups such as emergency workers [@Berger2012]. 
-By contrast, a recent Swiss study found a prevalence of PTSD in up to 22% of mountain rescuers once differentiating between clinical interviews and self-reporting of symptoms for the assessment of PTSD [@Traber2020]. 
-
-Resilience has been proposed as a protective trait against negative mental health consequences following trauma [@Bensimon2012] and high resilience levels in mountain rescuers may explain low prevalence of PTSD in this population despite trauma exposure [@Mikutta2022]. 
+<span custom-style = 'revision'>Our study did not specifically address professional mountain rescuers or mountain sport professionals, and only `r get_percent(ptsd$dataset, 'trauma_risk_profession')$percent['yes']`% of the sample reported a search and rescue profession and `r get_percent(ptsd$dataset, 'sport_profession')$percent['yes']`% a mountain sport profession.</span>
+Studies conducted on mountain guides and mountain rescue personnel, showed that 71% - 78% of them experienced a traumatic event, while the reported frequency of PTSD was very low (0.9% - 2.7%) [@Mikutta2022; @Sommer2004]. 
+This is comparable to estimates <span custom-style = 'revision'>of traumatic events and manifest PTSD in</span> the general population [@Darves-Bornoz2008; @Kilpatrick2013; @Koenen2017; @Kessler2017] and, particularly, lower than in other potentially vulnerable groups such as emergency workers [@Berger2012]. 
+By contrast, a recent <span custom-style = 'revision'>French</span> study found PTSD in up to 22% of mountain rescuers once differentiating between clinical interviews and self-reporting of symptoms for the assessment of PTSD [@Traber2020]. 
+<span custom-style = 'revision'>A similarly low frequency of manifest PTSD and an analogical profile of single PTSD symptoms were observed in the study cohort and the cohort of mountain rescue workers investigated with the PCL-5 tool by Mikutta et al. (manifest PTSD: `r lit_data$stats %>% filter(source == 'mikutta_2022', variable == 'dsm5_all_class', level == 'positive') %>% .$percent %>% signif(2)`) [@Mikutta2022].</span> 
+Resilience has been proposed as a protective trait against negative mental health consequences following trauma [@Bensimon2012]. 
 Two-thirds of our study participants were classified as highly resilient [@Leppert2008]. 
-This observation may hence explain the low rate of manifest PTSD as well as lower frequencies of clinically relevant symptoms of anxiety and depression in our cohort than estimated for the general Austrian population [@Humer2022]. 
-The high resilience in the study cohort may also pertain to the high rating of quality of life 
-(EUROHIS, median: `r get_num_stats(ptsd$dataset, 'eurohis_total', collapse = ', interquartile range: ')`) comparable to the general western European population [@Schmidt2006]. 
+<span custom-style = 'revision'>Of note, both in the study cohort and the mountain rescuer collective by Mikutta et al. displayed substantially increased levels of resilience as compared with the general population [@Chernova2021; @Mikutta2022; @Leppert2008], which can explain low prevalence of manifest PTSD in individuals performing mountain sports in a free-time or professional setting.</span> 
+<span custom-style = 'revision'>It is likely that this high resilience is attributed to the protective effect of physical activity in an alpine environment [@Ower2019].</span>
+<span custom-style = 'revision'>The elevated resilience scores may also</span> explain lower frequencies of clinically relevant symptoms of anxiety and depression in our cohort than estimated for the general Austrian population <span custom-style = 'revision'>at the time of our survey</span> [@Humer2022]. 
+The high resilience in the study cohort may also pertain to the rating of quality of life <span custom-style = 'revision'>which was significantly higher than in the general western European population [@Schmidt2006].</span>
 
+<span custom-style = 'revision'>To our best knowledge, our study provides the first multi-faceted characteristic of long-term consequences of a mountain sport accidents for mental health.</span>
 By semi-supervised clustering, we identified mountain sport accident victims with co-existing symptoms of PTSD, depression, anxiety, somatization, as well as low sense of coherence and quality of life. 
 Those individuals assigned to the PTS subset may represent a clinically relevant risk group of post-traumatic mental disorders. 
 The psychometric characteristic of the PTS cluster corresponds to the multi-faceted mental symptoms described for 
-individuals following a traumatic event [@Gagnon-Sanschagrin2022; @Brady2000; @Bryant2019]. 
+individuals following a traumatic event [@Brady2000; @Bryant2019]. 
 Regarding early predictors of mental health problems in mountain accident victims, the PTS cluster was characterized by a significantly younger age as well as high rates of pre-existing physical and mental disorders. 
-It was also substantially enriched in females, low-to-moderate income participants, individuals requiring companion or professional rescue, hospitalization and surgery as compared with neutral cluster patients. 
 Of note, 
 female gender [@Shalev2019], 
 young age at traumatization [@Schultebraucks2020], 
 low income [@Carbone2019] and 
 pre-existing mental disorders [@Papini2018] have been proposed as risk factors of PTSD. 
 PTSD risk has also been previously associated with injury severity, head injuries, hospitalization length and pain [@Baecher2018; @Blanchard1995; @Galatzer-Levy2014]. 
-We could not establish any link between the mental health clusters and, in particular, the PTS cluster with objective injury severity measured with the AIS scale [@Gennarelli2006] or injury location. 
+<span custom-style = 'revision'>In our study,</span> we could not establish any link between the mental health clusters and, in particular, the PTS cluster with objective injury severity measured with the AIS scale [@Gennarelli2006] or injury location. 
 Intriguingly, subjective injury severity, which was not surveyed in our cohort, was shown to be a stronger predictor of PTSD symptoms than objective injury severity [@Gabert-Quillen2011]. 
-This phenomenon together with the longer time interval between hospital admission and survey than in most other studies and differences in composition of the study sample, may explain the lacking effect of injury on subsequent mental disorders in our collective. 
+This phenomenon together with the longer time interval between hospital admission and survey than in most other studies, and differences in <span custom-style = 'revision'>investigated populations</span>, may explain <span custom-style = 'revision'>the lack of</span> effect of injury <span custom-style = 'revision'>location or severity</span> on subsequent mental disorders in our collective. 
 Importantly, the percentage of participants having received psychological or psychiatric support after the accident was generally low in the study cohort (`r get_percent(ptsd$dataset, 'psych_support_post_accident')$percent['yes']`%) and did not differ between the mental health clusters. 
 Hence, it is unlikely that psychological or psychiatric intervention had any impact on classification of the participants.
 
-Early identification of trauma patients at risk of developing PTSD or further mental disorders has previously been tackled by diverse machine learning algorithms [@Schultebraucks2020; @Ziobrowski2021; @Galatzer-Levy2014; @Papini2018]. 
 In our hands, none of seven machine learning procedures using different mathematical principles, random forest, neural network, support vector machines, recursive partitioning, conditional random forest, discriminant analysis or elastic net regression, was able to reliably predict the mental health cluster assignment based on `r length(class_globals$variables$early)` demographic, socioeconomic, clinical and accident-related variables available during acute medical treatment of the patient. 
 This phenomenon is likely attributed to the lacking strong non-psychometric explanatory variables differentiating between the mental health clusters and, of clinical importance, highly specific markers of post-traumatic stress patients. 
-Interestingly, inclusion of peri-traumatic mental symptoms like PTSD features, flashbacks, hyperarousal, or subjective need for support was shown to be crucial for optimal prediction of long-term mental disorders or PTSD during recovery [@Gabert-Quillen2011; @Shalev2019; @Schultebraucks2020; @Ziobrowski2021; @Galatzer-Levy2014; @Papini2018]. 
+<span custom-style = 'revision'>Early identification of trauma patients at risk of developing PTSD or further mental disorders has previously been tackled by diverse machine learning algorithms [@Schultebraucks2020; @Ziobrowski2021; @Galatzer-Levy2014; @Papini2018].</span> 
+Interestingly, inclusion of peri-traumatic mental symptoms like PTSD features, flashbacks, hyperarousal, or subjective need for support was shown to be crucial for optimal prediction of long-term mental disorders or PTSD during recovery [@Shalev2019; @Schultebraucks2020; @Ziobrowski2021; @Galatzer-Levy2014; @Papini2018]. 
 Unfortunately, such variables were not available in our cohort investigated at least six months after the accident. 
+<span custom-style = 'revision'>On one hand side, the difficulty of prediction of long-term mental health impairment in our study cohort motivates the search for new, better predictors of mental disorders in survivors of mountain sport accidents.</span>
+<span custom-style = 'revision'>On the other hand side, it underlines the importance of a broad access to psychological and psychiatric support granted to such patients as a part of multi-disciplinary treatment and care [@AmericanCollegeofSurgeons2023].</span>
 
 # Limitations
 
 Our study bears limitations. 
 The overall analysis inclusion rate was low and, as indicated by comparison of the excluded and analyzed participants, the results were potentially affected by a selection bias towards individuals with higher social status and more severe injuries. 
+<span custom-style = 'revision'>Low response rates are unfortunately a problem of many studies tackling PTSD and mental disorders [@Ophuis2018] and may lead to under- or over-reporting of symptoms [@Angerpointner2020; @Merckelbach2019; @Takayanagi2014].</span>
+<span custom-style = 'revision'>Our comparison of demographic and accident-related features in the study cohort, Austrian population, and the national registry of alpine accidents indicates that the analyzed collective is a fairly representative sample of the general physically active population.</span>
+<span custom-style = 'revision'>However, we can not exclude that the low frequency of manifest PTSD, and clinically relevant symptoms of anxiety and depression is in part attributed to the low response rate and under-reporting of mental health problems.</span>
+<span custom-style = 'revision'>In fact, assignment of the survey participants with incomplete mental health battery to the PTS cluster suggests that mental health problems were one of the reasons of data missingness.</span>
+<span custom-style = 'revision'>Additionally, enrichment of the study sample with men and individuals of high social status, which are considered protective factors of mental health disorders, may have contributed to the low frequency of symptoms of PTSD, anxiety and depression.</span>
+<span custom-style = 'revision'>Therefore, our results may underestimate frequency of mental disorder symptoms in survivors of mountain sport accidents and have to be interpreted with caution.</span>
+<span custom-style = 'revision'>The aim of our study was to identity long-term patterns or alterations of mental health in survivors of mountain sports accidents.</span>
+<span custom-style = 'revision'>Yet, we cannot exclude the possibility, that mental disorder symptom frequency and clustering results were affected by other events than the accident of interest.</span>
+<span custom-style = 'revision'>This was in part addressed by the design of the survey questions which pointed to the mountain sport accident.</span>
+<span custom-style = 'revision'>As assessed by sensitivity analysis, our clustering structure was hardly affected by the time of between the accident and survey or prior mountain sport accidents.</span>
+<span custom-style = 'revision'>This suggests that the mental health clusters described by us reflect accident-specific alterations of mental health.</span>
+<span custom-style = 'revision'>However, to finally clarify the issue of the accident specificity of mental health alterations, follow-up studies with longitudinal design or a control group are required.</span>
 Furthermore, the study survey did not recorded potentially important explanatory factors for distinction between the mental health clusters such as rehabilitation need or ability to work. 
-Due to the cross-sectional design of the study, we were not able to assess peri-traumatic mental health, which has been proven crucial for identification of vulnerable patients  [@Shalev2019; @Schultebraucks2020; @Ziobrowski2021; @Papini2018]. 
+Due to the cross-sectional design of the study, we were not able to assess peri-traumatic mental health, which has been proven crucial for identification of vulnerable patients [@Shalev2019; @Schultebraucks2020; @Ziobrowski2021; @Papini2018]. 
 A longitudinal survey may have helped to assess individual trajectories of mental health reaction to the mountain sport accident. 
 Finally, this analysis only included individuals who were treated for a mountain sport accident at the local trauma department. 
 Individuals without contact to the medical system or bystanders, who can also be affected by PTSD, were not examined.
 
 # Conclusions and outlook
 
-Our study represents the first attempt to characterize symptoms of PTSD and further facets of mental health following mountain sport accidents. 
+Our study characterizes symptoms of PTSD and <span custom-style = 'revision'>other</span> facets of mental health following mountain sport accidents. 
 We identified symptoms of mental health impairment in roughly one third of the investigated individuals. 
-However, we could not identify robust predictors for impaired mental health at follow up among variables available during early medical treatment. 
-Hence, considering the increasing popularity of mountain sports, psychoeducational information and low threshold access to psychological support currently seems the most appropriate strategy for successful interdisciplinary management of individuals following accidents in mountain sport. 
-Psychoeducational information can include informative leaflets, information in the discharge letter, as well as access to websites or mobile applications outlining the normal reaction to a traumatic event as well as warning signs indicating the need for professional support. 
-Additionally low threshold contact information for psychological support are helpful. 
-We are currently implementing such measures at our hospital.
+<span custom-style = 'revision'>This finding is significant because people performing mountain sports are generally regarded as robust in terms of physical and mental health.</span>
+<span custom-style = 'revision'>However, despite high levels of resilience, these individuals are not free of risk of symptoms of PTSD, manifest PTSD, and other mental disorders.</span>
+<span custom-style = 'revision'>Destigmatization of such mental health problems is essential in the mountaineering community.</span>
+
+<span custom-style = 'revision'>In the current analysis,</span> we could not identify robust predictors <span custom-style = 'revision'>of</span> impaired mental health at follow up among variables available during early <span custom-style = 'revision'>routine</span> medical treatment.
+<span custom-style = 'revision'>Hence, until standardized robust predictor variables and screening protocols are available,</span> low threshold access to psychological support <span custom-style = 'revision'>as well as to psychoeducational measures</span> seems the most appropriate strategy for successful interdisciplinary management of individuals following accidents in mountain sport. 
 
 \newpage
 
@@ -475,11 +555,28 @@ The study analysis pipeline is available at https://github.com/PiotrTymoszuk/men
 # Acknowledgements
 
 We thank the participants for sharing their experiences with us. 
-This study was supported by a grant of the “Deutsche Gesellschaft für Berg- und Expeditionsmedizin”,  German Association for Mountain and Expedition Medicine to H.S. and K.H.
+This study was supported by a grant of the “Deutsche Gesellschaft für Berg- und Expeditionsmedizin”,  German Association for Mountain and Expedition Medicine to H.S. and K.H. 
+The project was conducted during the diploma thesis of H.S. The results of this study has been and will in the future be presented at scientific meetings.
 
 # Conflict of interests
 
 The authors declare no conflict of interest.
+
+# Authors’ contributions
+
+Conceptualization: HS, MS, PP, HB, MF, BS-U, KH; 
+Data Curation: HS, PT, MS, NK, KH; 
+Formal Analysis: HS, PT; 
+Funding Acquisition: HS, KH; 
+Investigation: HS, NK, KH; 
+Methodology: PT, KH; 
+Project Administration: BS-U, KH; 
+Resources: HS, NK; 
+Software: PT; 
+Supervision: MS, PP, HB, MF, BS-U, KH;
+Validation: all authors; 
+Visualization: HS, PT, KH; Writing – Original Draft Preparation: HS, PT, KH;  
+Writing – Review & Editing: all authors
 
 \newpage
 
@@ -505,7 +602,7 @@ flextable::flextable(tables$cohort_demo) %>%
 flextable::flextable(tables$cohort_accident) %>% 
   set_widths(c(8.5, 7.5)) %>% 
   footnote(2, 1, 
-           value = as_paragraph('ski/snowdoard/cross-country: alpine skiing, snowboarding and cross-country skiing\nsledding: sledding or bobsled\nclimbing/hiking/mountaineering: hiking, rock and ice climbing, mountaineering, skitouring\nbiking: mountainbike, tour and road cycling.'), 
+           value = as_paragraph('alpine skiing/snowboarding: alpine skiing or smowboarding in secured areas of ski resorts; aki touring/freeride: skiing or snowboarding besides secured areas of ski resorts; sledding: sledding and bob sledding; ice climbing: ice and mixed climbing; climbing: bouldering, sport and rock climbing; mountaineering: high mountain and glecier tours; biking: mountain, cross-country and road cycling; air sport: paragliding.'), 
            part = 'body', 
            ref_symbols = 'a') %>% 
   footnote(8, 1, 
