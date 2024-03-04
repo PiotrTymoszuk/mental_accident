@@ -52,15 +52,16 @@ set_flextable_defaults(font.family = 'Cambria', font.size = 9)
 
 Dear Editor,
 
-Thank you very much for the positive and very thoughtful review of our manuscript. We appreciate a lot the reviewers’ comments and suggestions to improve our manuscript. 
+Thank you very much for the positive and very thoughtful review of our manuscript. 
+We appreciate a lot the reviewers’ comments and suggestions to improve our manuscript. 
 We incorporated them in the revised text.
 Please find below the point-to-point response to the reviewers’ issues. 
-Since the reviewers requested more information and literature evidence, we also deleted few less important references from the initial submission to keep the bibliography within reasonable limits. 
-We also introduced three major changes to the manuscript text and data independently of the reviewers' requests:
+Since the reviewers requested more information in some points, we also deleted few less important references from the initial submission to keep the bibliography within reasonable limits. 
+We also included additional data and performed the following additional analyses: 
 
-1. We re-classified accident sport types according to the official scheme of the Austrian Board of Mountain Safety [@OsterreichischesKuratoriumfurAlpineSicherheit2024]. This allowed us to compare the profile of accident sports in our cohort with the national registry data. Please note, that the re-classification of the sport types requires us to re-train machine learning models of the mental health cluster assignment. For this reason, minor differences in performance of the models were observed as compared with the initial submission (e.g. in __Figure 7__). Still, they did not affected the general conclusions.
+1. We re-classified accident sport types according to the official scheme of the Austrian Board of Mountain Safety [@OsterreichischesKuratoriumfurAlpineSicherheit2024]. This allowed us to compare the profile of accident sports in our cohort with the national registry data. Please note, that the re-classification of the sport types requires us to re-train machine learning models of the mental health cluster assignment. Minor differences in performance of the models were observed as compared with the initial submission (e.g. in __Figure 7__), which did not affected the general conclusions.
 
-2. We identified clinically relevant symptoms of anxiety and depression with the uniform $\geq$ 10 point cutoff of, respectively, the GAD-7 and PHQ-9 tools in accordance with the work by Humer et al. This change allowed us for a direct comparison of frequency of clinically relevant anxious and depressive symptoms in our manuscript and the estimates for the general Austrian population at the time of our study survey [@Humer2022].
+2. We now identify clinically relevant symptoms of each of anxiety, depression and somatization with the uniform $\geq$ 10 point cutoff of, respectively, the GAD-7, PHQ-9 and PHQ-15 tools in accordance with the work by Humer et al. and Kroenke et al. [@Humer2022; @Kroenke2002]. This change allowed us for a direct comparison of frequency of clinically relevant anxious and depressive symptoms in our manuscript and the estimates for the general Austrian population at the time of our study survey [@Humer2022].
 
 3. We provided additional numeric measures of quality of the mental clusters, misclassification rate [@Rousseeuw1987] and neighborhood preservation [@Venna2001], which were used by us to argument for the excellent reproducibility of the mental clusters (__Supplementary Figure S8__).
 
@@ -121,9 +122,11 @@ There is a clear bias, however studies indicate that in mental health normally p
 ## Response 4
 
 We absolutely agree with your comment that the low response rate is a source of bias. 
-Unfortunately this is a challenge of many studies tackling with mental disorders such as PTSD, anxiety and depression.
+Unfortunately this is a challenge of many studies tackling with mental disorders such as PTSD, anxiety and depression. 
+Also, as stated now more clearly in the last paragraph of __Introduction__ and __Methods/Analysis endpoints__, the goal of the study was not to estimate prevalence of mental disorder in a representative sample of survivors of mountain sport accidents, but to explore phenotypes of mental health in this population in a _qualitative manner_. 
+We now provide this information at several points in the text. 
 
-To assess the potential effects of the low response rate on the cohort composition we included an extensive comparison of the analysis cohort with invited individuals and participants excluded due to incomplete psychometric data in the initial submission. 
+Nevertheless for better interpretation of our data and to put them into the broader context of the literature, we performed an extensive comparison of the analysis cohort with invited individuals and participants excluded due to incomplete psychometric data in the initial submission. 
 In the revised manuscript we investigated the potential selection bias in more detail, by comparing sociodemographic features of the cohort with the general Austrian population and by comparing characteristic of the mountain sport accident in the study cohort with a nation-wide collective of Austrian mountain accident victims. 
 
 As presented in __Supplementary Table S6__ and discussed in __Results/Characteristic of the study cohort__, the study sample was characterized by significantly higher frequencies of males, persons with tertiary education grade and actively employed as compared with the general Austrian population. 
@@ -132,13 +135,13 @@ Effect sizes of those differences were, however, very small (Cramer's V 0.00078 
 Results of the comparison of the accident characteristic are presented in __Supplementary Figure 1__ and described in __Results/Characteristic of the study cohort__. 
 They indicate significantly higher frequency of winter sport accidents in the study cohorts than in the Austrian data set. 
 Yet the effect size of the difference was again small (Cramer’s V ≤ 0.14). 
-Taken together, these analyses suggest that there is indeed a weak but significant selection bias towards men, well educated, professionally active and healthy individuals, and victims of winter sport accidents. 
+Taken together, these analyses suggest that there is indeed a small effect size but significant selection bias towards men, well educated, professionally active and healthy individuals, and victims of winter sport accidents. 
 We point this out in the limitation section of __Discussion__ of the revised manuscript.
 
 To address the possible under- or overestimation (see: __Point 10__, __Reviewer 2__) of mental disorder symptoms in the study cohort, we compared frequency of traumatic events, manifest PTSD, symptoms of anxiety and depression in the study cohort with large survey studies [@Hauffa2011; @Darves-Bornoz2008; @Kilpatrick2013; @Koenen2017; @Kessler2017; @Humer2022], as well as an Austrian 2019 general health microcensus study [@StatistikAustria2019a]. 
 Frequency of traumatic events and manifest PTSD in our sample was lower or comparable with the estimated prevalence in the general German population reported by Hauffa and colleagues [@Hauffa2011] (__Supplementary Figure S4A__). 
 Interestingly, frequency of manifest PTSD and frequency of the PCL-5 domain B, C, D, and E PTSD symptoms did not differ significantly from figures published by Mikutta et al. for Swiss mountain rescuers [@Mikutta2022] (__Supplementary Figure S4B__). 
-Furthermore, frequency of clinically relevant anxious (`r lit_plots$depr_anx_stats %>% get_est_ci(source == 'cohort', disorder == 'anxiety')`) and depressive symptoms (`r lit_plots$depr_anx_stats %>% get_est_ci(source == 'cohort', disorder == 'depression')`) assessed, respectively by the GAD-7 and PHQ-9 instruments, was significantly lower in the study cohort as compared with the 2022 estimates for the general Austrian population reported by Humer et al. (anxiety: `r lit_plots$depr_anx_stats %>% get_est_ci(source == 'humer_2022', disorder == 'anxiety')`, depression: `r lit_plots$depr_anx_stats %>% get_est_ci(source == 'humer_2022', disorder == 'depression')`, __Supplementary Figure S5A__) [@Humer2022]. 
+Furthermore, frequency of clinically relevant anxiety (`r lit_plots$depr_anx_stats %>% get_est_ci(source == 'cohort', disorder == 'anxiety')`) and depressive symptoms (`r lit_plots$depr_anx_stats %>% get_est_ci(source == 'cohort', disorder == 'depression')`) assessed, respectively by the GAD-7 and PHQ-9 instruments, was significantly lower in the study cohort as compared with the 2022 estimates for the general Austrian population reported by Humer et al. (anxiety: `r lit_plots$depr_anx_stats %>% get_est_ci(source == 'humer_2022', disorder == 'anxiety')`, depression: `r lit_plots$depr_anx_stats %>% get_est_ci(source == 'humer_2022', disorder == 'depression')`, __Supplementary Figure S5A__) [@Humer2022]. 
 These results let us reason that, despite the mountain accident, the overall mental health status of the study cohort was comparable to or better than the general population of German-speaking countries and we elaborate on this in __Results/Characteristic of the study cohort__ and __Discussion__.
 
 ## Point 5
@@ -200,24 +203,26 @@ Thank you for the constructive feedback and appreciation of our work!
 ## Point 10
 
 I would almost certainly expect there to be a strong self-selection bias in the obtained responses to your survey (i.e., those still dealing with the consequences of their accident), likely overestimating the prevalence of mental health-related impairment in these individuals. 
-In addition, the supplementary table S4 shows that respondents had more severe injuries requiring hospitalization and surgery compared to non-respondents, also reflecting self-selection of particularly affected individuals among those who experienced a mountaineering accident. Does that change the implication(s) of your results? 
+In addition, the supplementary table S4 shows that respondents had more severe injuries requiring hospitalization and surgery compared to non-respondents, also reflecting self-selection of particularly affected individuals among those who experienced a mountaineering accident. 
+Does that change the implication(s) of your results? 
 
 ## Response 10
 
 We absolutely agree that there is a selection bias in this study. 
+Of note, the primary goal of the study was the _qualitative_ characteristic of patterns of mental health in survivor of mountain sport accidents (see: last paragraph of __Introduction__ and __Methods/Analysis endpoints__). 
+We did not aim at determining prevalences of mental disorder symptoms in a representative sample of mountain accident victims in the Alps. 
 This was already pointed out in the limitations section of __Discussion__ of the initial submission. 
-As described in more detail in __Response 4__ we took now additional measures to better characterize the potential selection bias. 
+As described in more detail in __Response 4__ we took now additional measures to better characterize the potential selection bias, in order to allow the reader to put our data better into perspective of the existing data and literature. 
 From comparisons of our sample with the general Austrian population (__Supplementary Table S4__) and the collective of mountain accident victims in Austria in 2023 (__Supplementary Figure S1__), we infer that the study cohort consisted of significantly more males, highly educated and healthy individuals, and victims of winter sport accidents that expected for the general population. 
-Effect size of those differences was weak (Cramer's V effect size statistic $\leq$ 0.3)
+Effect size of those differences was small (Cramer's V effect size statistic $\leq$ 0.3)
 We elaborate on those findings in __Results/Characteristic of the study cohort__ and summarize these findings on the selection bias in the limitation part of __Discussion__. 
 Of note, the selection bias may explain low frequency of traumatic events prior to the mountain accident and rare cases of manifest PTSD in our cohort, as e.g. men and tertiary school graduates are less likely to be exposed to traumatic events and develop PTSD in the lifetime [@Darves-Bornoz2008] (__Supplementary Figure S1__). 
 We describe this possibility in __Discussion__ of the revised manuscript. 
 
 Next, we addressed the issue of under- or over-reporting of mental health symptoms in the study sample, which may be attributed to the selection bias of the sample. 
-To this end, we compared frequency of traumatic events, manifest PTSD, anxious and depressive symptoms in the study cohort with estimates for the general population (__Supplementary Figure S4__). 
+To this end, we compared frequency of traumatic events, manifest PTSD, anxiety and depressive symptoms in the study cohort with estimates for the general population (__Supplementary Figure S4__). 
 As outlined in __Response 4__ in more detail, frequency of traumatic events and manifest PTSD was at the lower tail of the reported prevalence and comparable with figures for the German population published by Hauffa and colleagues [@Hauffa2011]. 
-Anxious symptoms measured with the GAD-7 instrument were less common in the study cohort than in the Austrian population during the survey [@Humer2022]. 
-In turn, depending on the tool and time point of survey, overall depressive symptoms and symptoms of moderate-to-severe depression were lower or comparable with the general Austrian population (__Supplementary Figure S5__). 
+Symptoms of anxiety and depression were less common in the study cohort than in the Austrian population during the survey [@Humer2022] (__Supplementary Figure S5__). 
 We discuss in __Results/Characteristic of the study cohort__ and in __Discussion__, that the overall frequency of mental disorder symptoms in our cohort is, in spite of the accident, comparable with or event lower than in the general population. 
 It is hence possible that bias of the sample towards protective characteristic (education, male sex, economic status) compensates the negative effects of the accident and injury on mental health. 
 Additionally, in light of the comparison of the mental disorder symptoms in the cohort and estimates for the general population, over-reporting of mental disorder symptoms in the study cohort is unlikely. 
@@ -327,17 +332,19 @@ Indeed, a reliable model identifying at-risk individuals would have been interes
 ## Response 15
 
 Alone in Austria with 9 million inhabitants, there are over 900000 members of diverse alpine clubs [@VAVOE2024], which amounts to an enormous community of mountain sport enthusiasts, professional and free-time athletes. 
-The dark side of popularity of mountain sports are accidents whose number exceeded `r table(lit_kurasi$data$sport_detail$subset)['Austria'] %>% signif(2)` in 2023 in the nation-wide scale, according to the official counts by the mountain safety board [@OsterreichischesKuratoriumfurAlpineSicherheit2024]. 
+The flip side of popularity of mountain sports are accidents whose number exceeded `r table(lit_kurasi$data$sport_detail$subset)['Austria'] %>% signif(2)` in 2023 in the nation-wide scale, according to the official counts by the mountain safety board [@OsterreichischesKuratoriumfurAlpineSicherheit2024]. 
 By comparison, this number corresponds approximately to the cumulative yearly incidence of prostate and breast cancer in Austria [@StatistikAustria2023a]. 
 Despite these huge figures and the burden of mountain sport accidents on health system and economy of the alpine region, only a handful of papers has been published, which tackle single, isolated aspects of mental health of mountain sportspersons and victims of mountain sport accidents [@Brugger2002; @Mikutta2022; @Traber2020; @Leonard2021; @Thordardottir2015; @Sommer2004]. 
 Our study provides an integrated and 'holistic' characteristic of mental health after a mountain sport accident, by assessment of multiple dimensions of mental readouts with semi-supervised clustering and machine learning. 
 This is the prime point of novelty of our work.  
-Despite the positive effects of mountain sports on physical and mental health and the common perception of sportspersons as mentally strong individuals, our data suggest that a large subset of mountain accident victims, the PTS cluster, is prone to long-term mental health deterioration. 
+Despite the positive effects of mountain sports on physical and mental health and the common perception of sportspersons as mentally strong individuals, our data suggest that a subset of mountain accident victims, the PTS cluster, is prone to long-term mental health consequences. 
 This is another novel finding of out work. 
-As pointed out by the reviewer, there are many reports on markers and diagnostic tools of post-traumatic stress [@Sandweiss2011; @Shalev2019; @Schultebraucks2020; @Ziobrowski2021]. 
-Yet, we were not able to establish a reliable set of predictors of mental health disorders after the mountain sport accident. 
-This negative finding, which has not been reported so far, has profound clinical implications and underscores the need of widely accessible psychological support in management of this specific accidents. 
-We stress there three novel findings of our work in the first paragraph of __Discussion__ and the conclusion part of the revised manuscript.
+As pointed out by the reviewer, there are many reports on markers and diagnostic tools of post-traumatic stress [@Sandweiss2011; @Shalev2019; @Schultebraucks2020; @Ziobrowski2021], however, the early identification of individuals at risk of PTSD remains still challenging and no universally valid prediction models are yet available. 
+In the current sample, we were not able to establish a reliable set of predictors of mental health disorders after the mountain sport accident. 
+This negative finding, which has not been reported so far, underlines the importance of easily accessible psychological and psychiatric support in management of these specific accidents. 
+Additionally, the new guidelines by the American College of Surgeons concerning psychological and psychiatric management of acute trauma patients [@AmericanCollegeofSurgeons2023] could be applied and tested in this patient group in future studies.
+
+We describe the gap of of the existing knowledge on mental health in the context of mountain sports in the final part of __Introduction__ and stress the three novel findings of our work in the first paragraph of __Discussion__ and the conclusion part of the revised manuscript.
 
 ## Point 16
 
@@ -369,7 +376,7 @@ As a part of exploratory analysis of the study data set, we routinely investigat
 As presented in __Reviewer Figure R\@ref(fig:fig-miss-mental)__, the highest percentage of missing observations among the mental health assessment battery was observed for the resilience, depression, panic, quality of life, and anxiety variables. 
 Those tools were missing in all or almost all of the `r table(miss_mental$analysis_tbl$status)['excluded']` respondents excluded from the analysis due to incompleteness of the psychometric data. 
 In turn, for the PCL-5 instrument measuring PTSD symptoms, the missingness rates were the lowest (< 50% of excluded respondents). 
-We can hence only speculate, that the excluded survey participants found questions of the questionnaire concerning their fears, concerns, life satisfaction, and mental health problems too private. 
+We can hence only speculate, that the excluded survey participants found questions of the questionnaire concerning their fears, concerns, life satisfaction, and mental health problems too distressful. 
 This notion was also supported by results of the sensitivity analysis of the mental health clusters, where the majority of 'imputable' participants with missing psychometric data were assigned to the PTS cluster (__Supplementary Figure S11__). 
 
 Additionally, from our experience with other similar studies, a drop-out rate of 20 - 30% is quite common in longer surveys or questionnaires covering difficult topics such as mental health.
@@ -382,7 +389,7 @@ rev_figures$miss_mental$plot
 
 __Reviewer Figure R\@ref(fig:fig-miss-mental). Percentages of missing observations for the mental health assessment battery variables.__ 
 
-_Frequencies of missing observations per mental health assessment battery are expressed as percentages of the survey respondents with incomplete psychometric data and hence excluded from the analysis.__
+_Frequencies of missing observations per mental health assessment battery are expressed as percentages of the survey respondents with incomplete psychometric data and hence excluded from the analysis._
 
 ## Point 18
 
@@ -396,9 +403,10 @@ Thank you for raising this important point.
 Unfortunately, we can not answer it with published data. 
 A query in the data base of mountain accidents in Austria (Austrian Board of Mountain Safety) did not help either, because the records are fully anonymized, and assignment of multiple accidents to the same victim is not possible. 
 
-Based on the comparison of the accident sports in the study cohort and the nation-wide collective of accident victims in 2023 (__Supplementary Figure S1__), we can conclude that the global difference in sport frequency distribution was significant but weak ($\chi^2$ test with Cramer's V effect size statistic: `r filter(lit_kurasi$test, variable == 'sport_detail')$plot_cap`). 
+Based on the comparison of the accident sports in the study cohort and the nation-wide collective of accident victims in 2023 (__Supplementary Figure S1__), we can conclude that the global difference in sport frequency distribution was significant but small ($\chi^2$ test with Cramer's V effect size statistic: `r filter(lit_kurasi$test, variable == 'sport_detail')$plot_cap`). 
 In particular, we could not observe higher percentages of sports generally perceived as risky such as ski touring, ice climbing, climbing, mountaineering or paragliding in the analyzed cohort as compared with the Austrian data set. 
 This let us assume, that there are no large subsets of the cohort exposed to particularly high risk of injury. 
+However, we need to stress again that our cohort was not generated in a way to be a representative sample of mountain accident victims. 
 
 Additionally, we did not ask about severity or time frame of mountain sport accidents in the past, so it is hard to judge if and how they affected mental health at the time point of the survey. 
 As inferred from results of the sensitivity analysis presented in __Supplementary Figure S10__, prior mountain sport accidents had little impact on clustering of the study participants by their mental health features. 
@@ -421,9 +429,9 @@ Will the data be made openly accessible? This would be desirable.
 
 ## Response 20
 
-Unfortunately, the initial study protocol and patient's consent form did not include an open data strategy, and the data set still contains information which may enable identification of an individual such as localization of injury, accident and medical treatment date. 
+Unfortunately, the initial study protocol and patient's consent form did not include an open data strategy, and the data set still contains contains very sensitive mental health data in conjunction with information which may potentially enable identification of an individual such as localization of injury, accident and medical treatment date. 
 For this reason, our ethics committee did not agree on publication of the data set. 
-Its anonymous parts will be made available at request.
+Its anonymous parts will be made available to individual researchers at request.
 
 \newpage
 

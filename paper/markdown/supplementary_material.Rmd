@@ -105,7 +105,7 @@ In the study survey, items of the PTGI and PTSD instruments, and questions conce
 
 Clinically relevant symptoms of anxiety were defined as GAD-7 $\geq$ 10, 
 clinically relevant symptoms of depression were defined as PHQ-9 $\geq$ 10 [@Humer2022], 
-significant persistent somatic symptoms were defined as PHQ-15 $\geq$ 11 [@Kroenke2002]. 
+significant persistent somatic symptoms were defined as PHQ-15 $\geq$ 10 [@Kroenke2002]. 
 Resilience classes were defined as follows: low: RS-13 0 - 65, moderate: 66 - 72, high: $\geq$ 73 [@Leppert2008]. 
 For a comparison of frequency and severity of depressive symptoms in the study cohort with microcensus data for the general Austrian population, mild depressive symptoms were defined as 5 - 9, moderate symptoms as 10 - 14, moderately severe symptoms as 15 - 19, and severe symptoms as $\geq$ 20 points of the PHQ-8 score [@Kroenke2002a].
 
@@ -121,7 +121,6 @@ Participants positive for the B domain or C domain PTSD symptoms were identified
 Participants positive for the D or E domain PTSD symptoms were identified by at least two items per domain scored with 'moderate' or higher. 
 Significant PTSD symptoms where assumed in participants screened positive for at least one of the B, C, D or E PCL-5 domains. 
 Manifest PTSD was considered for participants positive for all four PCL-5 domains [@Bovin2016]. 
-
 
 Traumatic events prior to the mountain sport accident were assessed with the DIA-X tool (Diagnostic Expert System) [@Maercker2005]. 
 Direct personal experience or being a witness of a traumatic event specified by the DIA-X questionnaire or by an additional yes/no item ('other traumatic events') was scored as 1. 
@@ -157,7 +156,7 @@ Alpine skiing/snowboarding, ski touring/freeride, cross-country skiing, sledding
 Hiking, climbing, mountaineering, biking, air sport, and water sport were classified as summer sports. 
 Additional information on study variables and their stratification schemes are presented in __Supplementary Table S\@ref(tab:tab-analysis-vars)__.
 
-Information on  
+Information on 
 genders ($\geq$ 18 years, in 2023) [@StatistikAustria2023], 
 age ($\geq$ 18 years, in 2023) [@StatistikAustria2023], 
 education (15 - 64 years old, in 2020) [@StatistikAustria2020]
@@ -172,10 +171,7 @@ Yet these subsets of mountain accident victims constituted a minority of all nat
 
 Lifetime estimates of prevalence of traumatic events and PTSD in the general population were obtained from representative survey studies [@Hauffa2011; @Darves-Bornoz2008; @Kilpatrick2013; @Koenen2017; @Kessler2017]. 
 Frequency of traumatic events, manifest PTSD and PTSD symptoms subsumed under the B, C, D, and E domains of the PCL-5 instrument in Swiss mountain rescuers were extracted from the report by Mikutta et al. [@Mikutta2022]. 
-
 Data on frequency of clinically relevant anxious (GAD-7 $\geq$ 10) and depressive (PHQ-9 $\geq$ 10) symptoms in Austria in 2022 were obtained from a publication by Humer et al. [@Humer2022]. 
-Data on frequency and severity of depressive symptoms measured with the PHQ-8 instrument [@Kroenke2002a] in a pre-pandemic nation-wide Austrian 2019 microcensus study were obtained from a publication by Statistik Austria [@StatistikAustria2019a]. 
-
 Mean scores of resilient comping with their standard deviations (SD) obtained with the RS-13 tool were extracted from reports with samples of the German [@Leppert2008] and Tyrolean [@Chernova2021] populations, and from a cohort of Swiss mountain rescuers [@Mikutta2022]. 
 
 ## Consistency of psychometric tools and power analysis
@@ -210,13 +206,13 @@ Effects with p < 0.05 following the false discovery rate adjustment were conside
 Effect size of accuracy of predicted cluster assignment by machine learning classifiers was assessed by Cohen's $\kappa$ inter-rater reliability statistic [@Cohen1960; @McHugh2012]. 
 Intervals of effect sizes were defined as follows [@McHugh2012; @Field2013; @Cohen2013]:
 
-* r statistic: weak: < 0.3, moderate: 0.3 - 0.5, large: $\geq$ 0.5
+* r statistic: small: < 0.3, moderate: 0.3 - 0.5, large: $\geq$ 0.5
 
-* Cramer's V statistic: weak: < 0.3, moderate: 0.3 - 0.5, large: $\geq$ 0.5
+* Cramer's V statistic: small: < 0.3, moderate: 0.3 - 0.5, large: $\geq$ 0.5
 
-* $\eta^2$ statistic: weak: < 0.06, moderate: 0.06 - 0.14, large: $\geq$ 0.14
+* $\eta^2$ statistic: small: < 0.06, moderate: 0.06 - 0.14, large: $\geq$ 0.14
 
-* Cohen's $\kappa$ inter-rater reliability statistic: none: < 0.2, minimal: 0.2 - 0.4, weak: 0.4 - 0.6, moderate: 0.6 - 0.8, strong: $\geq$ 0.8
+* Cohen's $\kappa$ inter-rater reliability statistic: none: < 0.2, minimal: 0.2 - 0.4, small: 0.4 - 0.6, moderate: 0.6 - 0.8, large: $\geq$ 0.8
 
 ## Assessment of selection bias
 
@@ -332,7 +328,7 @@ For support vector machines and discriminant analysis, the variable importance w
 
 ## Data and code availability
 
-An RData file with anonymized patient data will be made available upon request to the corresponding author. 
+Anonymized patient data will be made available upon request to the corresponding author. 
 The study analysis pipeline is available at https://github.com/PiotrTymoszuk/mental_accident.
 
 \newpage
@@ -421,9 +417,13 @@ flextable::flextable(suppl_tables$missing) %>%
 
 flextable::flextable(suppl_tables$aut_population) %>% 
   set_widths(c(3.5, rep(5, 2), 2.8, 2.8)) %>% 
+  footnote(7, 1, 
+           value = as_paragraph('In the study survey: participants reporting a chronic pre-existing physical illness or a mental disorder diagnosed by a medical professional.'), 
+           ref_symbols = 'a', 
+           part = 'body') %>%
   footnote(1, 4:5, 
            value = as_paragraph('Numeric variables: Mann-Whitney test with r effect size statistic, categorical variables: \u03C7\u00B2 test with Cramer V effect size statistic.'), 
-           ref_symbols = 'a', 
+           ref_symbols = 'b', 
            part = 'header') %>% 
   theme_vanilla
 
@@ -573,15 +573,15 @@ flextable::flextable(suppl_tables$full_classifiers) %>%
 
 # Supplementary Figures
 
-```{r fig-accident, fig.width = figur::convert(suppl_figures$accident, to = 'in')$w, fig.height = figur::convert(suppl_figures$accident, to = 'in')$h, fig.cap = 'Mountain sport type, accident month, and age of the mountain accident victim in the study cohort and Austria.'}
+```{r fig-accident, fig.width = figur::convert(suppl_figures$accident, to = 'in')$w, fig.height = figur::convert(suppl_figures$accident, to = 'in')$h, fig.cap = 'Age, mountain sport type, and accident month in the study cohort and Austrian national registry of mountain accidents.'}
 
 suppl_figures$accident$plot
 
 ```
 
-__Supplementary Figure S\@ref(fig:fig-accident). Mountain sport type, accident month, and age of the mountain accident victim in the study cohort and Austria.__ 
+__Supplementary Figure S\@ref(fig:fig-accident). Age, mountain sport type, and accident month in the study cohort and Austrian national registry of mountain accidents.__ 
 
-_Mountain sport types (A), accident months (B) and age class distribution (C) were compared between the study cohort and victims of mountain sport accidents in Austria in 2023. Frequencies for the nation-wide data set of mountain accidents were extracted from the annual report of the Austrian Board of Mountain Safety. In the comparison of sport types, non-sportive mountain accidents (e.g. during hunting or forestry) were excluded from the national statistic. Non-classifiable sport types (category 'other') in the study cohort were excluded from the analysis presented in (C). In the comparison of the age class distribution, only individuals older than 20 years were included. Statistical significance of the global differences was determined by $\chi^2$ test with Cramer's V effect size statistic. Pairwise differences for particular sport types, months and age classes were assessed by $\chi^2$ test corrected for multiple testing with the Holm method. Percentages of categories within the complete observation sets are presented as bar plots. Bars are labeled with the corresponding percent values. Total observation numbers are displayed in the plot legends. Global effect sizes and p values are presented in the plot captions. Significant results of post-hoc tests are highlighted with bold X axis labels._
+_Age class distribution (A), mountain sport types (B), and accident months (C) were compared between the study cohort and victims of mountain sport accidents in Austria in 2023. Frequencies for the nation-wide data set of mountain accidents were extracted from the annual report of the Austrian Board of Mountain Safety. In the comparison of the age class distribution, only individuals older than 20 years were included. In the comparison of sport types, non-sportive mountain accidents (e.g. during hunting or forestry) were excluded from the national statistic. Non-classifiable sport types (category 'other') in the study cohort were excluded from the analysis presented in (C). Statistical significance of the global differences was determined by $\chi^2$ test with Cramer's V effect size statistic. Pairwise differences for particular sport types, months and age classes were assessed by $\chi^2$ test corrected for multiple testing with the Holm method. Percentages of categories within the complete observation sets are presented as bar plots. Bars are labeled with the corresponding percent values. Total observation numbers are displayed in the plot legends. Global effect sizes and p values are presented in the plot captions. Significant results of post-hoc tests are highlighted with bold X axis labels._
 
 _alpine skiing: alpine skiing and snowboarding in secured areas of ski resorts; ski touring/freeride: alpine skiing and snowboarding performed besides secured areas of ski resorts; sledding: sledding and bob sledding; ice climbing: ice and mixed climbing; climbing: bouldering, sport and rock climbing; mountaineering: high mountain and glacier tours; biking: road, cross-country and mountain biking._ 
 
@@ -629,25 +629,23 @@ _Frequency estimates of traumatic events, manifest PTSD and PTSD symptoms with b
 
 _(A) Comparison of frequencies of traumatic events and manifest PTSD in the study cohort with estimates of population prevalence of lifetime traumatic events and manifest PTSD in published surveys. Tools used for identification of traumatic events and PTSD symptoms are indicated in the Y axis (CIDI: composite international diagnostic interview, DSM-5: diagnostic and statistical manual of mental disorders, 5^th^ edition, PDS: post-traumatic stress diagnostic scale)._
 
-_(B) Comparison of frequencies of traumatic events, manifest PTSD and PTSD symptoms in the study cohort and the cohort of Swiss mountain rescuers reported by Mikutta and colleagues. PTSD symptoms were assessed by the PCL-5 tool and are subsumed under the B, C, B, and E domains. Manifest PTSD is defined as positivity for all domains of the PCL-5 instrument._ 
+_(B) Comparison of manifest PTSD and PTSD symptoms in the study cohort and the cohort of Swiss mountain rescuers reported by Mikutta and colleagues. PTSD symptoms were assessed by the PCL-5 tool and are subsumed under the B, C, B, and E domains. Manifest PTSD is defined as positivity for all domains of the PCL-5 instrument._ 
 
 \newpage
 
-```{r fig-mental-literature, fig.width = figur::convert(suppl_figures$mental_literature, to = 'in')$w, fig.height = figur::convert(suppl_figures$mental_literature, to = 'in')$h, fig.cap = 'Comparison of frequency of anxious and depressive symptoms and of resilience scoring in the study cohort and literature.'}
+```{r fig-mental-literature, fig.width = figur::convert(suppl_figures$mental_literature, to = 'in')$w, fig.height = figur::convert(suppl_figures$mental_literature, to = 'in')$h, fig.cap = 'Comparison of frequency of clinically relevant symptoms of anxiety and depression, and of resilience scoring in the study cohort and literature.'}
 
 suppl_figures$mental_literature$plot
 
 ```
 
-__Supplementary Figure S\@ref(fig:fig-mental-literature). Comparison of frequency of anxious and depressive symptoms and of resilience scoring in the study cohort and literature.__ 
+__Supplementary Figure S\@ref(fig:fig-mental-literature). Comparison of frequency of clinically relevant symptoms of anxiety and depression, and of resilience scoring in the study cohort and literature.__ 
 
 _Frequency estimates of mental disorder symptoms with bias-corrected and accelerated (BCA) 95% confidence computed by bootstrap are depicted in Forest plots. Mean resilience scores obtained with the RS13 tool with standard deviations (SD) are shown in a Forest plot._
 
 _(A) Comparison of frequency of anxious and depressive symptoms measured by the GAD-7 and PHQ-9 instruments in the study cohort with frequency of anxious and depressive symptoms reported in a representative sample of Austrian population in 2022 by Humer and colleagues._
 
-_(B) Comparison of frequency and severity of depressive symptoms measured by the PHQ-8 tool in the study cohort with 2019 estimates for the general Austrian population._
-
-_(C) Comparison of resilient comping scores in the study cohort, the cohort of Swiss mountain rescuers published by Mikutta et al., and samples of the Tyrolean (Chernova et al.) and German population (Leppert et al.)_
+_(C) Comparison of scores of resilient coping in the study cohort, the cohort of Swiss mountain rescuers published by Mikutta et al., and samples of the Tyrolean (Chernova et al.) and German population (Leppert et al.) investigated with the RS13 instrument._
 
 \newpage
 
