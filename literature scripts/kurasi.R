@@ -86,26 +86,16 @@
   lit_kurasi$age_class$own_data <- ptsd$dataset %>% 
     filter(age > 20) %>% 
     mutate(age_class = cut(age, 
-                           c(-Inf, 30, 40, 50, 60, 70, 80, 90, Inf), 
+                           c(-Inf, 30, 60, Inf), 
                            c('21 - 30', 
-                             '31 - 40', 
-                             '41 - 50', 
-                             '51 - 60', 
-                             '61 - 70', 
-                             '71 - 80', 
-                             '81 - 90', 
-                             '91+'))) %>% 
+                             '31 - 60', 
+                             '60+'))) %>% 
     .$age_class
   
   lit_kurasi$age_class$kurasi_data <- 
     c(rep('21 - 30', 2033), 
-      rep('31 - 40', 1691), 
-      rep('41 - 50', 1890), 
-      rep('51 - 60', 2386), 
-      rep('61 - 70', 1559), 
-      rep('71 - 80', 640), 
-      rep('81 - 90', 223), 
-      rep('91+', 10))
+      rep('31 - 60', 1691 + 1890 + 2386), 
+      rep('60+', 1559 + 640 + 223 + 10))
   
   lit_kurasi$age_class$data <- 
     map2_dfr(c('cohort', 'Austria'), 
@@ -114,13 +104,8 @@
                      age_class = .y)) %>% 
     mutate(age_class = factor(age_class,
                               c('21 - 30', 
-                                '31 - 40', 
-                                '41 - 50', 
-                                '51 - 60', 
-                                '61 - 70', 
-                                '71 - 80', 
-                                '81 - 90', 
-                                '91+')))
+                                '31 - 60', 
+                                '60+')))
   
 # Detailed sport type -------
   
@@ -134,11 +119,11 @@
   
   lit_kurasi$sport_detail$kurasi_data[['climbing']] <- 544 + 11 + 4
   
-  lit_kurasi$sport_detail$kurasi_data[['air sport']] <- 295
+  lit_kurasi$sport_detail$kurasi_data[['air sports']] <- 295
   
   lit_kurasi$sport_detail$kurasi_data[['mountaineering']] <- 90
   
-  lit_kurasi$sport_detail$kurasi_data[['water sport']] <- 45
+  lit_kurasi$sport_detail$kurasi_data[['water sports']] <- 45
   
   lit_kurasi$sport_detail$kurasi_data[['alpine skiing/snowboarding']] <- 6177 + 238
   
@@ -172,9 +157,9 @@
     mutate(season = ifelse(sport_detail %in% c('hiking', 
                                                'biking', 
                                                'climbing', 
-                                               'air sport', 
+                                               'air sports', 
                                                'mountaineering', 
-                                               'water sport'), 
+                                               'water sports'), 
                            'summer', 'winter'), 
            season = factor(season, c('winter', 'summer')), 
            sport_detail = factor(sport_detail, levels(ptsd$dataset$sport_type)), 
@@ -344,16 +329,6 @@
                      scales = 'free', 
                      space = 'free'))
 
-  lit_kurasi$panels$age_class <- lit_kurasi$panels$age_class + 
-    facet_grid(. ~ age_class, 
-               scales = 'free')
-
-  lit_kurasi$panels[c("age_class")] <- 
-    lit_kurasi$panels[c("age_class")] %>% 
-    map(~.x + 
-          theme(strip.background = element_blank(), 
-                strip.text = element_blank()))
-  
 # Labeling significant results of post-hoc tests --------
   
   insert_msg('Post-hoc test significance')

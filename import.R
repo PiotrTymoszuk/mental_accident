@@ -437,7 +437,7 @@
                                     'skating' = 'other'; 
                                     'mountaineering' = 'mountaineering'; 
                                     'skitouring' = 'ski touring/freeride'; 
-                                    'paragliding' = 'air sport'; 
+                                    'paragliding' = 'air sports'; 
                                     'sport climbing/bouldering' = 'climbing'; 
                                     'snowboarding' = 'alpine skiing/snowboarding'; 
                                     'ice climbing' = 'ice climbing'; 
@@ -446,7 +446,7 @@
                                     'figeln' = 'ski touring/freeride'; 
                                     'ski jumping' = 'other'; 
                                     'other winter' = 'other'; 
-                                    'other water' = 'water sport'"), 
+                                    'other water' = 'water sports'"), 
            sport_type = factor(sport_type, 
                                c('alpine skiing/snowboarding', 
                                  'ski touring/freeride', 
@@ -457,8 +457,8 @@
                                  'climbing', 
                                  'mountaineering', 
                                  'biking', 
-                                 'air sport', 
-                                 'water sport', 
+                                 'air sports', 
+                                 'water sports', 
                                  'other')))
   
 # Counts of injured body regions ------
@@ -795,7 +795,7 @@
   
   ptsd$cleared <- ptsd$cleared %>% 
     mutate(phq_events_total_class = cut(phq_events_total, 
-                                        c(-Inf, 10, Inf), 
+                                        c(-Inf, 9, Inf), 
                                         c('negative', 'positive')))
   
 # PHQD psychical satisfaction, depression and anxiety ------

@@ -11,9 +11,8 @@
   insert_msg('Figure S1: accident characteristic')
   
   suppl_figures$accident <- lit_kurasi$panels[c("sport_detail", 
-                                                "accident_month", 
-                                                "age_class")] %>% 
-    map2(., c(68, 25, 35), 
+                                                "accident_month")] %>% 
+    map2(., c(68, 25), 
          ~.x + 
            expand_limits(y = .y) + 
            theme(axis.title.x = element_blank()))
@@ -23,16 +22,22 @@
   
   suppl_figures$accident <- suppl_figures$accident %>% 
     plot_grid(plotlist = ., 
-              nrow = 3, 
+              nrow = 2, 
               axis = 'tblr',
-              rel_heights = c(1.2, 1, 1), 
-              labels = LETTERS, 
+              rel_heights = c(1.3, 1), 
+              labels = c('B', 'C'), 
               label_size = 10) %>%
+    plot_grid(plot_grid(lit_kurasi$panels$age_class + 
+                          expand_limits(y = 65), 
+                        ncol = 2, 
+                        rel_widths = c(0.65, 0.35)), ., 
+              nrow = 2, 
+              rel_heights = c(1, 2.3)) %>% 
     as_figure(label = 'figure_s1_accident_characteristic', 
               ref_name = 'accident', 
-              caption = paste('Mountain sport type, accident month, and age of', 
-                              'the mountain accident victim in the study cohort', 
-                              'and Austria.'), 
+              caption = paste('Age, mountain sport type, and accident month', 
+                              'in the study cohort and Austrian national', 
+                              'registry of mountain accidents.'), 
               w = 180, 
               h = 230)
 
@@ -97,13 +102,10 @@
     list(lit_plots$trauma_plots$general,
          lit_plots$ptsd_plot$general + 
            scale_x_continuous(limits = c(-0.5, 10)), 
-         plot_grid(lit_plots$trauma_plots$alpine, 
-                   get_legend(lit_plots$ptsd_symptom_plot), 
-                   nrow = 2, 
-                   rel_heights = c(2, 1)), 
          lit_plots$ptsd_symptom_plot + 
            theme(legend.position = 'none') + 
-           scale_x_continuous(limits = c(-0.5, 25))) %>% 
+           scale_x_continuous(limits = c(-0.5, 25)), 
+         get_legend(lit_plots$ptsd_symptom_plot)) %>% 
     plot_grid(plotlist = ., 
               ncol = 2, 
               axis = 'tblr', 
@@ -125,10 +127,7 @@
   suppl_figures$mental_literature <- 
     plot_grid(lit_plots$depr_anx_plot + 
                 expand_limits(x = 35) + 
-                labs(title = 'Anxious and depressive symptoms'), 
-              lit_plots$aut_plot + 
-                labs(title = 'Depressive symptoms') + 
-                theme(legend.position = 'bottom'), 
+                labs(title = 'Symptoms of anxiety and depression'), 
               lit_plots$rs_plot, 
               ncol = 2, 
               align = 'hv', 
@@ -137,11 +136,12 @@
               label_size = 10) %>% 
     as_figure(label = 'figure_s5_anxiety_depression_resilience_literature', 
               ref_name = 'mental_literature', 
-              caption = paste('Comparison of frequency of anxious and', 
-                              'depressive symptoms and of resilience scoring', 
+              caption = paste('Comparison of frequency of clinically relevant', 
+                              'symptoms of anxiety and depression, and', 
+                              'of resilience scoring', 
                               'in the study cohort and literature.'), 
               w = 180, 
-              h = 200)
+              h = 105)
   
 # Figure S6: cluster development ------
   
